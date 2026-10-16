@@ -1,0 +1,1594 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#111111">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black">
+<meta name="description" content="Vélez Up Beta · prototipo universitario de estilismo digital. No es una app oficial de Vélez.">
+<title>Vélez Up Beta</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<link rel="icon" type="image/png" href="icons/favicon-32.png">
+<meta name="apple-mobile-web-app-title" content="Vélez Up">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Jost:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --negro:#111111; --hueso:#F4F1EC; --grafito:#3A3F48; --cognac:#9C5A2E; --blanco:#FFFFFF;
+  --piedra:#9A948B; --hueso-2:#EBE7E0;
+  --linea:rgba(58,63,72,.18); --linea-suave:rgba(58,63,72,.09); --grafito-40:rgba(58,63,72,.35);
+  --font-display:'Cormorant Garamond','Times New Roman',Georgia,serif;
+  --font-text:'Glacial Indifference','Jost',system-ui,sans-serif;
+  --t-hero:44px; --t-h1:28px; --t-h2:21px; --t-body:14px; --t-small:12px; --t-micro:11px;
+  --s1:4px; --s2:8px; --s3:16px; --s4:24px; --s5:32px;
+  --radio:2px; --trazo:1.5px; --toque:48px; --t-anim:220ms; --ease:cubic-bezier(.2,.7,.2,1);
+  --tab-h:66px;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{-webkit-text-size-adjust:100%}
+html,body{height:100%}
+/*SAFE*/html{box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}/*/SAFE*/
+body{background:var(--hueso);color:var(--negro);font-family:var(--font-text);font-size:var(--t-body);line-height:1.5;font-weight:400;-webkit-font-smoothing:antialiased;overflow:hidden}
+button,input{font:inherit;color:inherit}
+button{background:none;border:0;cursor:pointer;-webkit-tap-highlight-color:transparent}
+a{color:inherit;text-decoration:none}
+svg{display:block}
+:focus{outline:none}
+:focus-visible{outline:2px solid var(--negro);outline-offset:2px}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+
+/* ---------- Marco ---------- */
+#app{position:relative;width:100%;height:100%;display:flex;flex-direction:column;background:var(--hueso);overflow:hidden}
+.desk-note{display:none}
+@media (min-width:760px) and (min-height:700px){
+  body{background:#1a1a1a;display:flex;align-items:center;justify-content:center;gap:56px;overflow:auto}
+  #app{width:390px;height:844px;flex:none;border:10px solid #0c0c0c;border-radius:40px;box-shadow:0 30px 80px rgba(0,0,0,.5),0 0 0 1px rgba(255,255,255,.08)}
+  .desk-note{display:block;color:var(--hueso);max-width:220px;font-size:var(--t-small);line-height:1.6;opacity:.85}
+  .desk-note b{font-family:var(--font-display);font-weight:500;font-size:28px;display:block;letter-spacing:.3em;line-height:1;margin-bottom:var(--s3)}
+  .desk-note i{display:block;font-family:var(--font-display);font-style:italic;font-size:18px;letter-spacing:.02em;margin-top:var(--s2);opacity:.8}
+}
+
+/* ---------- Tipografía ---------- */
+.hero,.h1,.h2,.disp{font-family:var(--font-display);font-weight:500;text-transform:uppercase;line-height:1.05;letter-spacing:.14em}
+.hero{font-size:var(--t-hero);letter-spacing:.18em} .h1{font-size:var(--t-h1);letter-spacing:.1em} .h2{font-size:var(--t-h2);letter-spacing:.16em}
+.serif{font-family:var(--font-display)}
+.ital{font-family:var(--font-display);font-style:italic;font-weight:400;text-transform:none;letter-spacing:.01em}
+.small{font-size:var(--t-small)} .micro{font-size:var(--t-micro)}
+.sec{color:var(--grafito)}
+.up{text-transform:uppercase;letter-spacing:.22em;font-weight:500;font-size:10px}
+.center{text-align:center}
+p+p{margin-top:var(--s2)}
+.eyebrow{display:flex;align-items:center;gap:10px;font-size:10px;letter-spacing:.24em;text-transform:uppercase;color:var(--grafito);font-weight:500}
+.eyebrow::after{content:"";flex:1;height:1px;background:var(--linea)}
+.black .eyebrow,.dark .eyebrow{color:rgba(244,241,236,.7)} .black .eyebrow::after,.dark .eyebrow::after{background:rgba(244,241,236,.25)}
+
+/* ---------- Logo ---------- */
+.logo{display:inline-flex;align-items:baseline;gap:8px;line-height:1}
+.logo .wm{font-family:var(--font-display);font-weight:500;font-size:21px;letter-spacing:.32em;text-transform:uppercase}
+.logo .tag-up{font-size:9px;letter-spacing:.3em;text-transform:uppercase;color:var(--grafito);font-weight:500;transform:translateY(-1px)}
+.dark .logo .tag-up{color:rgba(244,241,236,.6)}
+.logo.big .wm{font-size:44px;letter-spacing:.36em;padding-left:.36em}
+.logo.big .tag-up{font-size:11px;letter-spacing:.5em;padding-left:.5em}
+.logo.big{flex-direction:column;align-items:center;gap:14px}
+.logo .beta{font-size:8px;letter-spacing:.22em;text-transform:uppercase;border:1px solid currentColor;padding:3px 6px 2px;border-radius:2px;opacity:.55;font-weight:500;line-height:1;transform:translateY(-2px)}
+.logo.big .beta{font-size:9px}
+
+/* ---------- Pantalla ---------- */
+#view{flex:1;min-height:0;display:flex;flex-direction:column}
+.screen{flex:1;min-height:0;overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch;overscroll-behavior:contain;display:flex;flex-direction:column;padding-block:var(--s3) var(--s5);padding-left:max(var(--s4), env(safe-area-inset-left, 0px));padding-right:max(var(--s4), env(safe-area-inset-right, 0px));gap:20px;animation:enter .32s var(--ease)}
+.screen>*{flex:none}
+.screen.dark{background:var(--negro);color:var(--hueso)}
+.screen.notabs{padding-bottom:var(--s5)}
+@keyframes enter{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+.topbar{display:flex;align-items:center;justify-content:space-between;min-height:var(--toque);margin-bottom:calc(-1 * var(--s2))}
+.topbar .title{font-family:var(--font-display);font-size:14px;letter-spacing:.3em;text-transform:uppercase;font-weight:500}
+.ava-btn{width:var(--toque);height:var(--toque);display:flex;align-items:center;justify-content:center}
+.ava-btn .mini{display:none}
+.ava-btn .mini svg{width:100%;height:100%}
+.stack{display:flex;flex-direction:column;gap:var(--s2)}
+.stack.lg{gap:var(--s3)}
+.row{display:flex;align-items:center;gap:var(--s2)}
+.between{justify-content:space-between}
+.wrap{flex-wrap:wrap}
+.grow{flex:1;min-width:0}
+.mt{margin-top:var(--s3)} .mt2{margin-top:var(--s2)} .mt4{margin-top:var(--s4)}
+.push{margin-top:auto}
+.hr{height:1px;background:var(--linea)}
+.bleed{margin-left:calc(-1 * var(--s4));margin-right:calc(-1 * var(--s4))}
+
+/* ---------- Paneles (menú sobre imagen) ---------- */
+.panel{position:relative;overflow:hidden;background:var(--negro);color:var(--hueso);border-radius:var(--radio);isolation:isolate}
+.panel .art{position:absolute;inset:-10% -20%;z-index:0;pointer-events:none;opacity:.32}
+.panel .art svg{width:100%;height:100%}
+.panel .art.drift svg{animation:drift 28s ease-in-out infinite alternate}
+@keyframes drift{from{transform:translate3d(-2%,0,0) rotate(-.5deg)}to{transform:translate3d(2%,-1.5%,0) rotate(.5deg)}}
+.panel::after{content:"";position:absolute;inset:0;z-index:1;background:linear-gradient(180deg,rgba(17,17,17,.1) 0%,rgba(17,17,17,.0) 35%,rgba(17,17,17,.55) 100%);pointer-events:none}
+.panel .inner{position:relative;z-index:2;display:flex;flex-direction:column;justify-content:flex-end;gap:6px;padding:var(--s4);min-height:100%}
+.panel.photo{background-size:cover;background-position:center}
+.panel.photo .art{display:none}
+.panel.grain::before{content:"";position:absolute;inset:0;z-index:1;opacity:.14;mix-blend-mode:overlay;background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 .6 0'/></filter><rect width='160' height='160' filter='url(%23n)'/></svg>");pointer-events:none}
+.panel.light{background:var(--hueso-2);color:var(--negro)}
+.panel.light::after{background:linear-gradient(180deg,rgba(244,241,236,0) 40%,rgba(244,241,236,.6) 100%)}
+.tile{display:flex;flex-direction:column;gap:8px;text-align:left}
+.tile .panel{height:120px}
+.tile .cap{font-size:10px;letter-spacing:.24em;text-transform:uppercase;color:var(--grafito);display:flex;justify-content:space-between;align-items:center}
+.tile .panel .inner{padding:var(--s3)}
+.tile .ic{color:var(--hueso);opacity:.9}
+
+/* ---------- Botones ---------- */
+.btn{display:flex;align-items:center;justify-content:center;gap:10px;width:100%;min-height:46px;padding:0 var(--s3);border-radius:var(--radio);text-transform:uppercase;letter-spacing:.22em;font-weight:500;font-size:11px;transition:transform var(--t-anim) var(--ease),opacity var(--t-anim),background var(--t-anim)}
+.btn:active{transform:scale(.985)}
+.btn-primary{background:var(--cognac);color:var(--blanco)}
+.btn-secondary{border:1px solid var(--negro);color:var(--negro);background:transparent}
+.dark .btn-secondary{border-color:rgba(244,241,236,.6);color:var(--hueso)}
+.btn-ghost{min-height:var(--toque);letter-spacing:.18em;font-weight:500;font-size:11px;color:var(--grafito)}
+.btn-ghost u,.btn-ghost span{text-decoration:none;border-bottom:1px solid currentColor;padding-bottom:3px}
+.dark .btn-ghost{color:rgba(244,241,236,.75)}
+.btn[disabled]{opacity:.4;pointer-events:none}
+.btn-row{display:flex;gap:var(--s2)}
+.btn-row .btn{flex:1}
+.icon-btn{width:var(--toque);height:var(--toque);display:inline-flex;align-items:center;justify-content:center;border-radius:50%;flex:none;transition:background var(--t-anim)}
+.icon-btn:active{background:var(--linea-suave)}
+.icon-btn.bordered{border:1px solid var(--negro)}
+.link{border-bottom:1px solid currentColor}
+
+/* ---------- Chips ---------- */
+.chips{display:flex;gap:var(--s2);flex-wrap:wrap}
+.chips.scroll{flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none;margin:0 calc(-1 * var(--s4));padding:0 var(--s4)}
+.chips.scroll::-webkit-scrollbar{display:none}
+.chip{text-decoration:none;height:32px;padding:0 12px;border:1px solid var(--grafito-40);border-radius:var(--radio);display:inline-flex;align-items:center;gap:8px;font-size:11px;letter-spacing:.08em;white-space:nowrap;color:var(--negro);transition:background var(--t-anim),color var(--t-anim),border-color var(--t-anim);flex:none;position:relative;background:transparent}
+.chip::before{content:"";position:absolute;inset:-7px 0}
+.chip.on{background:var(--negro);color:var(--hueso);border-color:var(--negro)}
+.chip.sw{width:36px;height:36px;padding:0;justify-content:center;border-radius:50%;border-color:var(--linea)}
+.chip.sw.on{background:transparent;border-color:var(--negro);box-shadow:inset 0 0 0 2px var(--hueso)}
+.chip .dot{width:22px;height:22px;border-radius:50%;border:1px solid rgba(17,17,17,.15)}
+.chip.sw.on .dot{width:24px;height:24px}
+.chip.sm{height:30px;padding:0 10px;font-size:11px}
+.chip.wheel{position:relative;overflow:hidden;cursor:pointer}
+.chip.wheel input{position:absolute;inset:0;opacity:0;width:100%;height:100%;cursor:pointer}
+.dark .chip{border-color:rgba(244,241,236,.4);color:var(--hueso)} .dark .chip.on{background:var(--hueso);color:var(--negro);border-color:var(--hueso)}
+
+/* ---------- Tarjetas ---------- */
+.card{background:var(--blanco);border:1px solid var(--linea);border-radius:var(--radio);padding:var(--s3)}
+.card.black{background:var(--negro);color:var(--hueso);border-color:var(--negro)}
+.card.flat{background:transparent}
+.card.tap{text-decoration:none;cursor:pointer;transition:transform var(--t-anim) var(--ease);display:block}
+.card.tap:active{transform:scale(.99)}
+.tag{display:inline-flex;align-items:center;height:22px;padding:0 8px;border:1px solid var(--linea);border-radius:var(--radio);font-size:9px;letter-spacing:.18em;text-transform:uppercase;color:var(--grafito);white-space:nowrap;font-weight:500}
+.tag.cognac{border-color:var(--cognac);color:var(--cognac)}
+.tag.solid{background:var(--negro);color:var(--hueso);border-color:var(--negro)}
+.black .tag,.dark .tag{border-color:rgba(244,241,236,.35);color:var(--hueso)}
+
+/* ---------- Formulario ---------- */
+.input{width:100%;height:var(--toque);border:0;border-bottom:1px solid var(--grafito);border-radius:0;padding:0;background:transparent;font-size:16px;letter-spacing:.02em;transition:border-color var(--t-anim)}
+.input:focus{border-bottom-color:var(--negro);border-bottom-width:2px}
+.input::placeholder{color:var(--piedra)}
+label.lbl{display:block;font-size:10px;letter-spacing:.24em;text-transform:uppercase;color:var(--grafito);margin-bottom:var(--s2);font-weight:500}
+.field{display:flex;flex-direction:column;gap:6px}
+
+/* ---------- Avatar ---------- */
+.avatar-wrap{display:flex;justify-content:center}
+.board-wrap{display:flex;justify-content:center;align-items:center;background:var(--hueso-2);border-radius:var(--radio);width:100%;height:320px;padding:6px;border:0}
+.board-wrap svg{height:100%;width:100%;display:block}
+.board-wrap.stage-arma{height:360px}
+.board .pop{animation:bpop .5s var(--ease);transform-box:fill-box;transform-origin:center}
+@keyframes bpop{0%{opacity:0;transform:translateY(10px) scale(.94)}100%{opacity:1;transform:none}}
+.spin .board-wrap svg{animation:spin .8s var(--ease)}
+.mono{display:inline-flex;align-items:center;justify-content:center;border-radius:50%;border:1px solid var(--negro);font-family:var(--font-display);font-weight:500;letter-spacing:0;background:var(--hueso-2);color:var(--negro);flex:none;line-height:1}
+.gtile{display:flex;flex-direction:column;gap:10px;text-align:left;border:1px solid var(--linea);padding:6px;border-radius:var(--radio);background:var(--blanco);transition:border-color var(--t-anim),box-shadow var(--t-anim)}
+.gtile .board-wrap{height:210px}
+.gtile .glabel{display:flex;justify-content:space-between;align-items:center;font-family:var(--font-display);font-size:18px;letter-spacing:.2em;text-transform:uppercase;padding:2px 6px 6px}
+.gtile.on{border-color:var(--negro);box-shadow:inset 0 0 0 1px var(--negro)}
+.avatar-stage{height:300px;display:flex;justify-content:center;position:relative}
+.avatar-stage.sm{height:200px}
+.avatar-stage svg{height:100%;width:auto;max-width:100%;transition:opacity var(--t-anim)}
+.avatar-stage.pedestal::after{content:"";position:absolute;left:50%;bottom:4px;width:46%;height:14px;transform:translateX(-50%);border-radius:50%;background:radial-gradient(ellipse at center,rgba(17,17,17,.16),rgba(17,17,17,0) 70%);pointer-events:none}
+.avatar-stage.swap svg{animation:swap .35s var(--ease)}
+@keyframes swap{0%{opacity:.35;transform:translateY(3px)}100%{opacity:1;transform:none}}
+.opt-group{display:flex;flex-direction:column;gap:10px}
+.opt-group .lbl{margin:0}
+
+/* ---------- Barra de pestañas ---------- */
+#tabbar{flex:none;background:var(--negro);color:var(--hueso);display:flex;height:var(--tab-h);padding-left:env(safe-area-inset-left, 0px);padding-right:env(safe-area-inset-right, 0px);border-top:1px solid rgba(244,241,236,.08)}
+#tabbar[hidden]{display:none}
+.tab{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;position:relative;color:var(--hueso);opacity:.5;transition:opacity var(--t-anim)}
+.tab.on{opacity:1}
+.tab.on::before{content:"";position:absolute;top:-1px;left:18px;right:18px;height:1px;background:var(--hueso)}
+.tab .lbl{font-size:9px;letter-spacing:.24em;text-transform:uppercase;font-weight:500;line-height:1}
+.tab-sign{width:12px;display:flex;align-items:center;justify-content:center;font-family:var(--font-display);font-size:16px;opacity:.35;align-self:center;margin-bottom:10px}
+
+/* ---------- Medidor ---------- */
+.meter .eq{font-family:var(--font-display);font-size:12.5px;letter-spacing:.07em;line-height:1.2;text-transform:uppercase;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.meter .bar{height:2px;display:flex;background:var(--grafito-40);margin-top:8px;position:relative}
+.meter .bar i{display:block;height:100%;background:var(--negro);transition:width .5s var(--ease)}
+.meter .msg{margin-top:8px;font-size:12px;color:var(--grafito);display:flex;align-items:center;gap:var(--s2);height:20px;white-space:nowrap;overflow:hidden}
+.meter.trend .msg{color:var(--negro)}
+.meter.trend .msg span{font-family:var(--font-display);font-style:italic;font-size:15px}
+.mini-meter{height:2px;display:flex;background:var(--grafito-40)}
+.mini-meter i{display:block;height:100%;background:var(--negro)}
+.black .mini-meter{background:rgba(244,241,236,.3)} .black .mini-meter i{background:var(--hueso)}
+
+/* ---------- Creador ---------- */
+.eqline{font-family:var(--font-display);font-size:15px;line-height:1.25;text-transform:uppercase;letter-spacing:.1em;height:38px;font-weight:500;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.arma-head{display:flex;flex-direction:column;gap:8px;height:118px}
+.stage-arma{height:290px!important}
+.eqline em{font-style:italic;text-transform:none;letter-spacing:.02em;font-weight:400}
+.zone-row{display:flex;align-items:center;gap:var(--s2);min-height:60px;border-top:1px solid var(--linea-suave)}
+.zone-row:last-child{border-bottom:1px solid var(--linea-suave)}
+.zone-row .arrow{width:56px;height:56px;display:flex;align-items:center;justify-content:center;flex:none;color:var(--grafito);transition:color var(--t-anim)}
+.zone-row .arrow:active{color:var(--negro)}
+.zone-row .piece{text-decoration:none;flex:1;display:flex;align-items:center;gap:12px;min-height:var(--toque);text-align:left;min-width:0}
+.zone-row .piece .ic{width:42px;height:42px;display:flex;align-items:center;justify-content:center;flex:none;border:1px solid var(--linea);background:var(--blanco)}
+.zone-row .piece .ic svg{width:26px;height:26px}
+.zone-row .piece .nm{display:flex;flex-direction:column;min-width:0;gap:2px}
+.zone-row .piece .nm b{font-weight:500;font-size:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.zone-row .piece .nm span{font-size:10px;color:var(--grafito);letter-spacing:.18em;text-transform:uppercase}
+.zone-row.flash .piece{animation:slideL var(--t-anim) var(--ease)}
+.zone-row.flashR .piece{animation:slideR var(--t-anim) var(--ease)}
+@keyframes slideL{from{transform:translateX(10px);opacity:.3}to{transform:none;opacity:1}}
+@keyframes slideR{from{transform:translateX(-10px);opacity:.3}to{transform:none;opacity:1}}
+.spin .avatar-stage svg{animation:spin .8s var(--ease)}
+@keyframes spin{0%{opacity:.2;transform:translateY(8px) scale(.98)}60%{opacity:.7}100%{opacity:1;transform:none}}
+
+/* ---------- Cuadrículas ---------- */
+.grid2{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:var(--s3)}
+.grid3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:var(--s2)}
+.grid5{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:var(--s1)}
+.cat{display:flex;flex-direction:column;align-items:center;gap:8px;padding:var(--s2) 0;min-height:var(--toque);font-size:9px;letter-spacing:.18em;text-transform:uppercase;color:var(--grafito)}
+.cat .ic{width:48px;height:48px;border:1px solid var(--linea);border-radius:50%;display:flex;align-items:center;justify-content:center;background:var(--blanco);color:var(--negro);transition:background var(--t-anim),color var(--t-anim)}
+.cat:active .ic{background:var(--negro);color:var(--hueso)}
+.carousel{display:flex;gap:var(--s3);overflow-x:auto;scrollbar-width:none;margin:0 calc(-1 * var(--s4));padding:0 var(--s4) 4px;scroll-snap-type:x mandatory}
+.carousel::-webkit-scrollbar{display:none}
+.carousel>*{flex:0 0 190px;scroll-snap-align:start}
+.look-card{background:var(--blanco);border:1px solid var(--linea);border-radius:var(--radio);padding:10px;display:flex;flex-direction:column;gap:8px;text-align:left}
+.look-card .board-wrap{height:190px}
+.look-card .nm{font-family:var(--font-display);font-weight:500;font-size:17px;letter-spacing:.04em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.look-card .meta{font-size:9px;color:var(--grafito);letter-spacing:.18em;text-transform:uppercase;display:flex;justify-content:space-between;align-items:center}
+.like{display:inline-flex;align-items:center;gap:5px;min-width:var(--toque);min-height:36px;padding:0 6px;justify-content:center;font-size:12px;color:var(--grafito);letter-spacing:.04em}
+.like.on{color:var(--negro)} .like.on svg{fill:var(--negro)}
+.badge{display:flex;flex-direction:column;align-items:center;text-align:center;gap:8px;padding:12px 6px;border:1px solid var(--linea);border-radius:var(--radio);background:var(--blanco);min-height:110px;justify-content:center}
+.badge .ic{width:42px;height:42px;border-radius:50%;background:var(--negro);color:var(--hueso);display:flex;align-items:center;justify-content:center}
+.badge.off{color:var(--grafito)} .badge.off .ic{background:transparent;color:var(--piedra);border:1px solid var(--linea)}
+.badge b{font-size:9px;letter-spacing:.14em;text-transform:uppercase;line-height:1.3;font-weight:500}
+.badge span{font-size:10px;color:var(--grafito);line-height:1.3}
+.progress{height:2px;background:var(--grafito-40);overflow:hidden}
+.progress i{display:block;height:100%;background:var(--negro);transition:width .5s var(--ease)}
+.black .progress,.panel .progress{background:rgba(244,241,236,.3)} .black .progress i,.panel .progress i{background:var(--hueso)}
+.list-item{text-decoration:none;color:inherit;display:flex;align-items:center;gap:var(--s3);padding:10px 0;border-top:1px solid var(--linea-suave);min-height:52px;font-size:13px}
+.list-item:last-child{border-bottom:1px solid var(--linea-suave)}
+.list-item .ttl{font-weight:500}
+.num{font-family:var(--font-display);font-size:84px;line-height:.85;font-weight:400;letter-spacing:.02em}
+.steps{display:grid;grid-template-columns:repeat(4,1fr);gap:var(--s1)}
+.step{display:flex;flex-direction:column;align-items:center;gap:6px;text-align:center;font-size:9px;letter-spacing:.2em;text-transform:uppercase;color:var(--grafito)}
+.step b{font-family:var(--font-display);font-size:30px;color:var(--negro);line-height:1;font-weight:400}
+.segs{display:flex;gap:6px}
+.segs i{flex:1;height:1px;background:var(--grafito-40)}
+.segs i.on{background:var(--negro)}
+.dark .segs i{background:rgba(244,241,236,.3)} .dark .segs i.on{background:var(--hueso)}
+.opt{display:flex;align-items:center;justify-content:space-between;width:100%;min-height:50px;padding:var(--s2) var(--s3);border:1px solid var(--linea);border-radius:var(--radio);background:var(--blanco);text-align:left;font-size:14px;transition:background var(--t-anim),color var(--t-anim),border-color var(--t-anim)}
+.opt.on,.opt:active{background:var(--negro);color:var(--hueso);border-color:var(--negro)}
+.fbar{display:flex;flex-direction:column;gap:8px}
+.fbar .lab{display:flex;justify-content:space-between;font-family:var(--font-display);font-size:18px;letter-spacing:.14em;line-height:1;text-transform:uppercase;font-weight:500}
+.fbar .lab.sub{font-size:13px;letter-spacing:.2em;color:var(--grafito)}
+.fbar .bar{height:3px;background:var(--grafito-40);overflow:hidden}
+.fbar .bar i{display:block;height:100%;background:var(--negro)}
+.dark .fbar .bar{background:rgba(244,241,236,.25)} .dark .fbar .bar i{background:var(--hueso)}
+.compare{display:grid;gap:var(--s2)}
+.compare .col{border:1px solid var(--linea);border-radius:var(--radio);padding:var(--s2);background:var(--blanco);font-size:var(--t-small);display:flex;flex-direction:column;gap:4px}
+.compare .col b{font-family:var(--font-display);font-size:22px;font-weight:500;letter-spacing:.1em;text-transform:uppercase}
+.scale{display:flex;gap:4px}
+.scale i{flex:1;height:4px;background:var(--grafito-40)}
+.scale i.on{background:var(--negro)}
+.mapsvg{width:100%;height:auto;display:block}
+.big-look{display:flex;flex-direction:column;gap:var(--s3);align-items:center;text-align:center}
+.pieces{display:flex;flex-direction:column;width:100%;font-size:var(--t-small)}
+.pieces div{display:flex;justify-content:space-between;border-top:1px solid var(--linea-suave);padding:8px 0}
+
+/* ---------- Hoja inferior ---------- */
+#sheet{position:absolute;inset:0;z-index:20;display:none}
+#sheet.open{display:block}
+#sheet .back{position:absolute;inset:0;background:rgba(17,17,17,.55);animation:fade var(--t-anim) ease-out;backdrop-filter:blur(2px);-webkit-backdrop-filter:blur(2px)}
+#sheet .panel-sheet{position:absolute;left:0;right:0;bottom:0;max-height:88%;background:var(--hueso);border-radius:6px 6px 0 0;display:flex;flex-direction:column;animation:up .32s var(--ease);padding-bottom:env(safe-area-inset-bottom)}
+#sheet .handle{width:32px;height:3px;background:var(--grafito);border-radius:2px;margin:12px auto 6px;flex:none;opacity:.5}
+#sheet .body{overflow-y:auto;padding:var(--s2) var(--s4) var(--s4);display:flex;flex-direction:column;gap:var(--s3)}
+@keyframes up{from{transform:translateY(48px);opacity:0}to{transform:none;opacity:1}}
+@keyframes fade{from{opacity:0}to{opacity:1}}
+.prod-hero{display:flex;justify-content:center;align-items:center;height:150px;background:var(--blanco);border:1px solid var(--linea);border-radius:var(--radio)}
+.prod-hero svg{width:120px;height:120px}
+.combo{display:flex;flex-direction:column;align-items:center;gap:6px;padding:12px 6px;border:1px solid var(--linea);border-radius:var(--radio);background:var(--blanco);font-size:11px;text-align:center;line-height:1.25;min-height:var(--toque)}
+.combo svg{width:40px;height:40px}
+.combo .micro{font-size:9px;letter-spacing:.14em;text-transform:uppercase}
+
+/* ---------- Toast / banner ---------- */
+#toast{position:absolute;left:var(--s4);right:var(--s4);top:40px;z-index:30;background:var(--negro);color:var(--hueso);padding:12px var(--s3);border-radius:var(--radio);font-size:10px;letter-spacing:.2em;text-transform:uppercase;font-weight:500;text-align:center;opacity:0;transform:translateY(-18px) scale(.98);transition:opacity .35s var(--ease),transform .45s var(--ease);pointer-events:none;display:flex;align-items:center;justify-content:center;gap:12px}
+#toast.show{opacity:1;transform:none}
+#toast .pts{font-family:var(--font-display);font-size:30px;letter-spacing:.02em;line-height:1;font-weight:400;text-transform:none;animation:pop .6s var(--ease)}
+@keyframes pop{0%{transform:scale(.6);opacity:0}60%{transform:scale(1.12)}100%{transform:none;opacity:1}}
+#disclaimer{flex:none;background:var(--hueso-2);color:var(--grafito);font-size:8.5px;letter-spacing:.1em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;text-transform:uppercase;text-align:center;padding:6px max(var(--s3), env(safe-area-inset-right, 0px)) 6px max(var(--s3), env(safe-area-inset-left, 0px));border-bottom:1px solid var(--linea);font-weight:500;line-height:1.3}
+#banner{display:none;flex:none;background:var(--grafito);color:var(--hueso);font-size:10px;letter-spacing:.14em;text-transform:uppercase;padding:7px var(--s3);text-align:center}
+#banner.show{display:block}
+
+/* ---------- Cortina (ruleta) ---------- */
+#veil{position:absolute;inset:0;z-index:25;background:var(--negro);color:var(--hueso);transform:translateY(102%);transition:transform .42s var(--ease);display:flex;align-items:center;justify-content:center;overflow:hidden}
+#veil.show{transform:none}
+#veil .art{position:absolute;inset:-10% -20%;opacity:.32;color:rgba(244,241,236,.9)}
+#veil .art svg{width:100%;height:100%}
+#veil .txt{position:relative;text-align:center}
+#veil .txt .ital{font-size:26px}
+#veil .txt .up{opacity:.6;margin-top:10px;display:block}
+#veil .line{width:40px;height:1px;background:var(--hueso);margin:18px auto 0;opacity:.6;transform-origin:center;animation:grow 1s var(--ease) infinite alternate}
+.wm-anim{animation:track 1.5s var(--ease) both}
+@keyframes track{from{letter-spacing:.9em;opacity:0}to{letter-spacing:.36em;opacity:1}}
+.tag-anim .w{display:inline-block;opacity:0;animation:rise .7s var(--ease) forwards}
+
+/* ---------- Trazo de vuelo ---------- */
+.vuelo path{stroke-dasharray:100;stroke-dashoffset:100;animation:draw 1.2s var(--ease) forwards}
+@keyframes draw{to{stroke-dashoffset:0}}
+.fade-in{animation:fade .5s ease-out}
+.rise{animation:rise .7s var(--ease) both}
+.rise.d1{animation-delay:.12s} .rise.d2{animation-delay:.24s} .rise.d3{animation-delay:.36s} .rise.d4{animation-delay:.5s}
+@keyframes rise{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+.rule-grow{height:1px;background:currentColor;opacity:.5;transform-origin:center;animation:grow 1s var(--ease) both}
+@keyframes grow{from{transform:scaleX(0)}to{transform:scaleX(1)}}
+
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation:none!important;transition:none!important}
+  .vuelo path{stroke-dashoffset:0}
+  .rise,.tag-anim .w,.wm-anim{opacity:1!important}
+}
+@media (max-width:360px){
+  :root{--t-hero:40px;--t-h1:28px;--t-h2:22px}
+  .screen{padding-left:max(var(--s3), env(safe-area-inset-left, 0px));padding-right:max(var(--s3), env(safe-area-inset-right, 0px))}
+  .bleed{margin-left:calc(-1 * var(--s3));margin-right:calc(-1 * var(--s3))}
+  .chips.scroll{margin:0 calc(-1 * var(--s3));padding:0 var(--s3)}
+  .carousel{margin:0 calc(-1 * var(--s3));padding:0 var(--s3) 4px}
+  .carousel>*{flex-basis:170px}
+  .logo.big .wm{font-size:38px}
+}
+</style>
+</head>
+<body>
+<div class="desk-note"><b>VÉLEZ</b>Vélez Up Beta · proyecto universitario de Gestión del Diseño 2. No es una app oficial de Vélez. Ábrelo en tu celular para la mejor experiencia.<i>Tu estilo toma vuelo.</i></div>
+<div id="app">
+  <div id="disclaimer" role="note">Proyecto universitario · No es una app oficial de Vélez</div>
+  <div id="banner" role="status">En este modo tu progreso no se guarda.</div>
+  <div id="view"></div>
+  <nav id="tabbar" aria-label="Pestañas" hidden></nav>
+  <div id="veil" aria-hidden="true"></div>
+  <div id="sheet" aria-hidden="true"></div>
+  <div id="toast" role="status" aria-live="polite"></div>
+</div>
+<script src="assets.js?v=5"></script>
+<script>
+'use strict';
+/* =====================================================================
+   DATA · catálogo, fragancias, quiz, looks demo, insignias
+   ===================================================================== */
+const COLORS = {
+  negro:  {name:'Negro',        hex:'#212333'},
+  hueso:  {name:'Blanco hueso', hex:'#F4F1EC'},
+  crema:  {name:'Crema',        hex:'#E6DBD1'},
+  grafito:{name:'Grafito',      hex:'#3A3F48'},
+  blanco: {name:'Blanco',       hex:'#F5E7E1'},
+  cognac: {name:'Cognac',       hex:'#9C5A2E'},
+  azul:   {name:'Azul',         hex:'#4C698B'},
+  verde:  {name:'Verde',        hex:'#4F6143'},
+  rosa:   {name:'Rosa',         hex:'#F78E7E'},
+  lila:   {name:'Lila',         hex:'#946FC7'},
+  naranja:{name:'Naranja',      hex:'#F0A259'},
+  gris:   {name:'Gris',         hex:'#9595A3'}
+};
+const LINES = {flyup:'Fly Up', velez:'Vélez', 'velez-cuero':'Vélez · cuero'};
+const P = (id,name,short,zone,line,e,color,occ,icon,gender,asset) => ({id,name,short,zone,line,e,color:COLORS[color],colorKey:color,occasions:occ.split(''),icon,gender:gender||'u',asset:asset||null,illustrative:true});
+const DATA = {
+  zones:[
+    {id:'cabeza',  label:'Cabeza'},
+    {id:'superior',label:'Superior'},
+    {id:'inferior',label:'Inferior'},
+    {id:'calzado', label:'Calzado'},
+    {id:'bolso',   label:'Bolso'},
+    {id:'detalle', label:'Detalle de cuero'}
+  ],
+  occasions:[{id:'T',label:'Trabajo'},{id:'S',label:'Salida'},{id:'F',label:'Fin de semana'},{id:'V',label:'Viaje'},{id:'E',label:'Evento'}],
+  products:[
+    // cabeza
+    P('c1','Gorra crema','Gorra','cabeza','flyup',22,'crema','SFV','gorra','u','B64'),
+    P('c2','Gorro tejido naranja','Gorro','cabeza','flyup',25,'naranja','FV','gorro','u','B73'),
+    P('c3','Bucket verde','Bucket','cabeza','flyup',30,'verde','SFV','gorro','u','B28'),
+    P('c4','Boina café','Boina','cabeza','velez',70,'cognac','TSE','gorro','m','B22'),
+    P('c5','Sombrero de ala','Sombrero','cabeza','velez',72,'cognac','SE','gorro','m','B10'),
+    P('c6','Sombrero negro','Sombrero','cabeza','velez',74,'negro','TSE','gorro','u','B83'),
+    P('c7','Gorro rosa','Gorro','cabeza','flyup',24,'rosa','FV','gorro','m','B55'),
+    // superior · urbano
+    P('s1','Camiseta negra','Camiseta','superior','flyup',35,'negro','TSFV','camiseta','u','B25'),
+    P('s2','Camiseta crema','Camiseta','superior','flyup',40,'crema','TSFV','camiseta','u','C5'),
+    P('s3','Camiseta coral','Camiseta','superior','flyup',35,'rosa','SFV','camiseta','m','B67'),
+    P('s4','Camiseta terracota','Camiseta','superior','flyup',38,'naranja','SFV','camiseta','u','A9'),
+    P('s5','Camiseta estampada','Camiseta','superior','flyup',30,'crema','SFV','camiseta','u','B16'),
+    P('s6','Hoodie negro','Hoodie','superior','flyup',15,'negro','FV','hoodie','u','C1'),
+    P('s7','Chaqueta sherpa negra','Chaqueta','superior','flyup',45,'negro','TSFV','bomber','u','B88'),
+    P('s8','Chaqueta de jean estampada','Chaqueta jean','superior','flyup',38,'azul','SFV','bomber','u','B87'),
+    P('s9','Puffer lila','Puffer','superior','flyup',20,'lila','FV','bomber','m','B6'),
+    P('s10','Puffer amarilla','Puffer','superior','flyup',20,'naranja','FV','bomber','u','B17'),
+    P('s24','Camisa estampada verde','Camisa','superior','flyup',40,'verde','SFV','camisa','h','B81'),
+    P('s19','Top coral','Top','superior','flyup',40,'rosa','SE','camiseta','m','B20'),
+    // superior · elegante
+    P('s11','Camisa blanca','Camisa','superior','velez',72,'blanco','TE','camisa','u','B33'),
+    P('s12','Camisa de rayas','Camisa','superior','velez',66,'crema','TS','camisa','u','B45'),
+    P('s13','Cuello tortuga crema','Tortuga','superior','velez',70,'crema','TSE','hoodie','u','B78'),
+    P('s14','Suéter azul','Suéter','superior','velez',58,'azul','TFV','hoodie','u','B77'),
+    P('s15','Blazer camel','Blazer','superior','velez',82,'crema','TE','chaqueta','u','B54'),
+    P('s16','Abrigo a cuadros','Abrigo','superior','velez',78,'crema','TE','chaqueta','u','B2'),
+    P('s17','Cárdigan verde','Cárdigan','superior','velez',60,'verde','TFV','chaqueta','u','C4'),
+    P('s18','Chaqueta oliva','Chaqueta','superior','velez',62,'verde','TSV','chaqueta','h','A26'),
+    P('s20','Top tejido','Top','superior','velez',55,'naranja','SE','camiseta','m','A23'),
+    P('s21','Cárdigan rosa','Cárdigan','superior','velez',62,'rosa','TS','chaqueta','m','B58'),
+    P('s22','Suéter tejido crema','Suéter','superior','velez',60,'crema','TFV','hoodie','u','B30'),
+    P('s23','Chaqueta beige','Chaqueta','superior','velez',68,'crema','TSV','chaqueta','u','B14'),
+    // inferior · urbano
+    P('i1','Jean recto','Jean','inferior','flyup',40,'azul','TSFV','jean','u','B1'),
+    P('i2','Jean índigo','Jean','inferior','flyup',42,'azul','TSFV','jean','u','B31'),
+    P('i3','Jean claro','Jean','inferior','flyup',35,'azul','SFV','jean','u','B41'),
+    P('i4','Jean relajado','Jean','inferior','flyup',38,'azul','SFV','jean','u','B47'),
+    P('i5','Jean oscuro','Jean','inferior','flyup',42,'azul','TSFV','jean','u','B36'),
+    P('i6','Cargo negro','Cargo','inferior','flyup',22,'negro','SFV','cargo','u','B40'),
+    P('i7','Jean verde','Jean','inferior','flyup',36,'verde','SFV','jean','u','B61'),
+    P('i16','Falda larga de jean','Falda','inferior','flyup',45,'lila','SFV','falda','m','B26'),
+    P('i17','Short beige','Short','inferior','flyup',28,'crema','SF','jogger','u','A25'),
+    P('i18','Short lila','Short','inferior','flyup',25,'lila','SF','jogger','m','A24'),
+    // inferior · elegante
+    P('i8','Pantalón café','Pantalón','inferior','velez',75,'cognac','TE','pantalon','u','B76'),
+    P('i9','Pantalón camel','Pantalón','inferior','velez',70,'cognac','TE','pantalon','u','A16'),
+    P('i10','Pantalón crema','Pantalón','inferior','velez',62,'crema','TS','pantalon','u','A8'),
+    P('i11','Pantalón ancho crema','Pantalón','inferior','velez',66,'crema','TSE','pantalon','m','B63'),
+    P('i12','Pantalón ancho rosa','Pantalón','inferior','velez',70,'rosa','TSE','pantalon','m','B18'),
+    P('i13','Pantalón ancho verde','Pantalón','inferior','velez',62,'verde','TS','pantalon','m','B57'),
+    P('i14','Falda midi café','Falda','inferior','velez',76,'cognac','TSE','falda','m','A2'),
+    P('i15','Falda lila','Falda','inferior','velez',70,'lila','TSE','falda','m','B92'),
+    P('i19','Falda estampada','Falda','inferior','velez',60,'negro','SE','falda','m','B82'),
+    // calzado
+    P('z1','Tenis crema','Tenis','calzado','flyup',35,'crema','TSFV','tenis','u','B95'),
+    P('z2','Tenis negros','Tenis','calzado','flyup',30,'negro','SFV','tenis','u','B93'),
+    P('z3','Tenis de color','Tenis','calzado','flyup',25,'crema','SFV','tenis','u','B32'),
+    P('z4','Tenis chunky','Tenis','calzado','flyup',25,'crema','SF','tenis','u','B51'),
+    P('z5','Tenis blancos','Tenis','calzado','flyup',34,'blanco','TSFV','tenis','u','A13'),
+    P('z6','Tenis de lona café','Tenis','calzado','flyup',30,'cognac','SFV','tenis','u','A14'),
+    P('z7','Tenis bicolor','Tenis','calzado','flyup',30,'negro','SFV','tenis','u','B94'),
+    P('z8','Botín chunky de cuero','Botín','calzado','velez-cuero',82,'negro','TSEV','botin','u','B12'),
+    P('z9','Botín chelsea de cuero','Botín','calzado','velez-cuero',85,'negro','TSEV','botin','u','B37'),
+    P('z10','Mocasín de cuero','Mocasín','calzado','velez-cuero',90,'cognac','TE','mocasin','u','B29'),
+    P('z11','Bota plataforma de cuero','Bota','calzado','velez-cuero',75,'negro','SE','botin','m','B52'),
+    P('z12','Tacón de cuero','Tacón','calzado','velez-cuero',92,'blanco','TE','mocasin','m','B27'),
+    P('z13','Mule de cuero','Mule','calzado','velez-cuero',80,'negro','TSE','mocasin','m','B60'),
+    P('z14','Botín de cuero taupe','Botín','calzado','velez-cuero',80,'crema','TSV','botin','m','A28'),
+    P('z15','Sandalia de cuero','Sandalia','calzado','velez-cuero',60,'cognac','SFV','mocasin','u','B35'),
+    // bolso
+    P('b1','Morral urbano negro','Morral','bolso','flyup',25,'negro','TFV','morral','u','H_BACKPACK'),
+    P('b2','Riñonera','Riñonera','bolso','flyup',15,'negro','SFV','rinonera','u','B97'),
+    P('b3','Bolso satchel de cuero','Bolso','bolso','velez-cuero',75,'cognac','TSFVE','crossbody','u','B38'),
+    P('b4','Bolso cruzado de cuero','Bolso','bolso','velez-cuero',70,'negro','TSFVE','crossbody','u','B43'),
+    P('b5','Bolso de mano de cuero','Bolso','bolso','velez-cuero',85,'cognac','TSE','crossbody','m','B48'),
+    P('b6','Tote de cuero','Tote','bolso','velez-cuero',85,'cognac','TVE','tote','u','B84'),
+    P('b7','Tote de lona','Tote','bolso','flyup',30,'crema','SFV','tote','u','B5'),
+    P('b8','Bolso balde gris','Bolso','bolso','flyup',40,'gris','TFV','crossbody','m','B46'),
+    P('b9','Bolso redondo','Bolso','bolso','velez',60,'crema','SE','crossbody','m','B56'),
+    // detalle de cuero
+    P('d1','Cinturón de cuero negro','Cinturón','detalle','velez-cuero',80,'negro','TSFVE','cinturon','u','H_BELT_N'),
+    P('d2','Cinturón de cuero cognac','Cinturón','detalle','velez-cuero',85,'cognac','TSFVE','cinturon','u','H_BELT_C'),
+    P('d3','Billetera de cuero','Billetera','detalle','velez-cuero',75,'cognac','TSFVE','billetera','u','H_WALLET'),
+    P('d4','Tarjetero de cuero negro','Tarjetero','detalle','velez-cuero',80,'negro','TSFVE','tarjetero','u','H_CARD')
+  ],
+  fragrances:[
+    {id:'f-ambar',name:'Ámbar',type:'EDT'},{id:'f-indigo',name:'Índigo',type:'EDT'},{id:'f-jade',name:'Jade',type:'EDT'},
+    {id:'f-beauty',name:'Beauty',type:'EDT'},{id:'f-entropia',name:'Entropía',type:'EDT'},{id:'f-bora',name:'Bora',type:'EDT'},
+    {id:'f-garden',name:'Garden',type:'EDT'},{id:'f-ambrosia',name:'Ambrosia',type:'EDT'},{id:'f-bosco',name:'Bosco',type:'EDT'},
+    {id:'f-acqua',name:'Acqua',type:'EDT'},{id:'f-vera',name:'Vera',type:'EDP',audience:'mujer'}
+  ],
+  fragTypes:{EDT:'Eau de Toilette',EDP:'Eau de Parfum'},
+  feelings:['fresca','cálida','dulce','cítrica','amaderada','floral'],
+  quiz:[
+    {q:'¿Cómo es tu día típico?',opts:[
+      {t:'Oficina o estudio',e:2,u:0},{t:'Ciudad en movimiento',e:0,u:2},{t:'Mitad y mitad',e:1,u:1},{t:'Deporte y actividad',e:0,u:2}]},
+    {q:'¿Para qué momento armas tu look?',opts:[
+      {t:'Trabajo',occ:'T'},{t:'Salida con amigos',occ:'S'},{t:'Fin de semana',occ:'F'},{t:'Viaje',occ:'V'},{t:'Evento',occ:'E'}]},
+    {q:'¿Qué colores usas más?',opts:[
+      {t:'Negros y grises',e:1,u:1,color:'oscuros'},{t:'Neutros y tierra',e:2,u:0,color:'tierra'},{t:'Blanco total',e:1,u:0,color:'blanco'},{t:'Contraste y color',e:0,u:2,color:'contraste'}]},
+    {q:'¿Qué te importa más en una pieza?',opts:[
+      {t:'Comodidad',e:0,u:2},{t:'Que combine con todo',e:1,u:1},{t:'Que se note el diseño',e:2,u:0},{t:'Que sea práctica',e:0,u:1}]},
+    {q:'¿Con qué pieza empiezas tu look?',opts:[
+      {t:'Bolso o morral',anchor:'bolso'},{t:'Tenis',anchor:'tenis'},{t:'Chaqueta',anchor:'chaqueta'},{t:'Sorpréndeme',anchor:'random'}]}
+  ],
+  colorPref:{oscuros:['negro','grafito'],tierra:['cognac','hueso'],blanco:['blanco','hueso'],contraste:['azul','blanco','cognac']},
+  profiles:{
+    elegancia:{title:'Elegancia urbana',line:'Empiezas por lo clásico y le pones ciudad.'},
+    balanceada:{title:'Fórmula balanceada',line:'Tienes la fórmula completa: solo falta armarla.'},
+    flow:{title:'Flow urbano',line:'Tu ritmo es la calle; el cuero le da presencia.'}
+  },
+  campaign:['Elegancia + Urbano = Tendencia','Un elemento cambia todo el look','Tu estilo toma vuelo','Ve un paso más allá','Lujo urbano'],
+  points:{quiz:50,firstLook:100,saveLook:20,trendLook:30,share:50,publish:20,fragrance:10,qr:80,reto:150},
+  levels:[{id:'DESPEGUE',min:0,unlock:'Looks y retos'},{id:'ALTURA',min:200,unlock:'Acceso anticipado a lanzamientos Fly Up'},{id:'VUELO',min:500,unlock:'Asesoría de estilo en tienda y personalización de una pieza'}],
+  badges:[
+    {id:'formula',   name:'Descubrí mi fórmula', cond:'Completa el quiz',               icon:'destello'},
+    {id:'primer-look',name:'Primer Total Look',  cond:'Guarda tu primer look',          icon:'mas'},
+    {id:'tendencia', name:'En Tendencia',        cond:'Guarda un look en Tendencia',    icon:'vuelo'},
+    {id:'momentos',  name:'3 momentos',          cond:'Reto del mes: 3 looks, 3 momentos', icon:'insignia'},
+    {id:'olfativo',  name:'Explorador olfativo', cond:'Registra 3 fragancias',          icon:'frasco'},
+    {id:'tienda',    name:'En la tienda',        cond:'Escanea el QR de visita',        icon:'qr'},
+    {id:'comunidad', name:'Comunidad',           cond:'Publica tu primer look',         icon:'igual'}
+  ],
+  benefits:[
+    {level:'ALTURA',name:'Acceso anticipado a lanzamientos Fly Up'},
+    {level:'VUELO',name:'Asesoría de estilo en tienda'},
+    {level:'VUELO',name:'Personalización de una pieza'}
+  ],
+  demoLooks:[
+    {id:'demo_01',g:'mujer',author:'demo_01',name:'Lunes de estudio',occasion:'T',items:{superior:'s2',inferior:'i1',calzado:'z5',bolso:'b4',detalle:'d1'},likes:24},
+    {id:'demo_02',g:'mujer',author:'demo_02',name:'Azotea 6 p. m.',occasion:'S',items:{cabeza:'c1',superior:'s7',inferior:'i2',calzado:'z1',bolso:'b4',detalle:'d1'},likes:41},
+    {id:'demo_03',g:'mujer',author:'demo_03',name:'Aeropuerto sin afanes',occasion:'V',items:{cabeza:'c2',superior:'s6',inferior:'i6',calzado:'z2',bolso:'b6',detalle:'d4'},likes:33},
+    {id:'demo_04',g:'mujer',author:'demo_04',name:'Viernes de oficina',occasion:'T',items:{superior:'s15',inferior:'i11',calzado:'z12',bolso:'b5'},likes:12},
+    {id:'demo_05',g:'mujer',author:'demo_05',name:'Sábado en el parque',occasion:'F',items:{cabeza:'c3',superior:'s3',inferior:'i18',calzado:'z4',bolso:'b7'},likes:18},
+    {id:'demo_06',g:'mujer',author:'demo_06',name:'Cena con historia',occasion:'E',items:{superior:'s7',inferior:'i14',calzado:'z4',bolso:'b5',detalle:'d2'},likes:29},
+    {id:'demo_07',g:'mujer',author:'demo_07',name:'Domingo de brunch',occasion:'F',items:{cabeza:'c1',superior:'s5',inferior:'i3',calzado:'z3',bolso:'b9',detalle:'d2'},likes:37},
+    {id:'demo_08',g:'mujer',author:'demo_08',name:'Reunión sin corbata',occasion:'T',items:{superior:'s11',inferior:'i1',calzado:'z9',bolso:'b8',detalle:'d1'},likes:21},
+    {id:'demo_09',g:'mujer',author:'demo_09',name:'Ciudad en movimiento',occasion:'S',items:{cabeza:'c1',superior:'s1',inferior:'i6',calzado:'z2',bolso:'b4',detalle:'d1'},likes:45},
+    {id:'demo_10',g:'mujer',author:'demo_10',name:'Escapada de fin de semana',occasion:'V',items:{cabeza:'c2',superior:'s14',inferior:'i4',calzado:'z14',bolso:'b6'},likes:26},
+    {id:'demo_11',g:'mujer',author:'demo_11',name:'Noche de galería',occasion:'E',items:{superior:'s15',inferior:'i16',calzado:'z2',detalle:'d3'},likes:52},
+    {id:'demo_12',g:'mujer',author:'demo_12',name:'Primer día',occasion:'T',items:{superior:'s13',inferior:'i10',calzado:'z10',bolso:'b5',detalle:'d2'},likes:15},
+    {id:'demo_13',g:'hombre',author:'demo_13',name:'Lunes de estudio',occasion:'T',items:{superior:'s2',inferior:'i1',calzado:'z5',bolso:'b4',detalle:'d1'},likes:22},
+    {id:'demo_14',g:'hombre',author:'demo_14',name:'Azotea 6 p. m.',occasion:'S',items:{cabeza:'c1',superior:'s7',inferior:'i5',calzado:'z1',bolso:'b4',detalle:'d1'},likes:39},
+    {id:'demo_15',g:'hombre',author:'demo_15',name:'Aeropuerto sin afanes',occasion:'V',items:{cabeza:'c2',superior:'s6',inferior:'i6',calzado:'z2',bolso:'b6',detalle:'d4'},likes:31},
+    {id:'demo_16',g:'hombre',author:'demo_16',name:'Viernes de oficina',occasion:'T',items:{superior:'s11',inferior:'i9',calzado:'z10',bolso:'b6'},likes:14},
+    {id:'demo_17',g:'hombre',author:'demo_17',name:'Sábado en el parque',occasion:'F',items:{cabeza:'c3',superior:'s4',inferior:'i17',calzado:'z3',bolso:'b2'},likes:17},
+    {id:'demo_18',g:'hombre',author:'demo_18',name:'Cena con historia',occasion:'E',items:{superior:'s8',inferior:'i8',calzado:'z2',bolso:'b3',detalle:'d2'},likes:27},
+    {id:'demo_19',g:'hombre',author:'demo_19',name:'Domingo de brunch',occasion:'F',items:{cabeza:'c1',superior:'s5',inferior:'i3',calzado:'z6',bolso:'b3',detalle:'d2'},likes:35},
+    {id:'demo_20',g:'hombre',author:'demo_20',name:'Reunión sin corbata',occasion:'T',items:{superior:'s12',inferior:'i1',calzado:'z8',bolso:'b7',detalle:'d1'},likes:20},
+    {id:'demo_21',g:'hombre',author:'demo_21',name:'Ciudad en movimiento',occasion:'S',items:{cabeza:'c1',superior:'s1',inferior:'i6',calzado:'z7',bolso:'b4',detalle:'d1'},likes:43},
+    {id:'demo_22',g:'hombre',author:'demo_22',name:'Escapada de fin de semana',occasion:'V',items:{cabeza:'c2',superior:'s14',inferior:'i4',calzado:'z9',bolso:'b6'},likes:25},
+    {id:'demo_23',g:'hombre',author:'demo_23',name:'Noche de galería',occasion:'E',items:{superior:'s7',inferior:'i8',calzado:'z2',detalle:'d3'},likes:48},
+    {id:'demo_24',g:'hombre',author:'demo_24',name:'Primer día',occasion:'T',items:{superior:'s13',inferior:'i10',calzado:'z10',bolso:'b6',detalle:'d2'},likes:13}
+  ],
+  // Imágenes opcionales para los paneles (claves: campaign, vive, tienda). Vacío = líneas generadas.
+  images:{}
+};
+const byId = Object.fromEntries(DATA.products.map(p=>[p.id,p]));
+const fragById = Object.fromEntries(DATA.fragrances.map(f=>[f.id,f]));
+const occLabel = id => (DATA.occasions.find(o=>o.id===id)||{}).label||'';
+const zoneLabel = id => (DATA.zones.find(z=>z.id===id)||{}).label||'';
+
+/* =====================================================================
+   ICONS · iconos lineales 24 px, trazo 1,75
+   ===================================================================== */
+const ICON_PATHS = {
+  gorra:'<path d="M5 14a7 7 0 0 1 14 0v1.5H5z"/><path d="M19 14h2a1.5 1.5 0 0 1 0 3h-2z"/><path d="M12 7V5"/>',
+  gorro:'<path d="M5 15a7 8 0 0 1 14 0v4H5z"/><path d="M5 15h14"/><circle cx="12" cy="6" r="1.5"/>',
+  camiseta:'<path d="M8 4h8l5 3-2 4-2-1v10H7V10l-2 1-2-4z"/><path d="M9 4a3 2.5 0 0 0 6 0"/>',
+  hoodie:'<path d="M8 5h8l5 3-2 4-2-1v9H7v-9l-2 1-2-4z"/><path d="M8 5c0-3 8-3 8 0"/><path d="M9 14h6v4H9z"/>',
+  chaqueta:'<path d="M8 4h8l5 3-1 9h-3v4H7v-4H4L3 7z"/><path d="M12 7v13M9 4l3 3 3-3"/>',
+  bomber:'<path d="M8 4h8l5 3-1 9h-3v4H7v-4H4L3 7z"/><path d="M12 5v15M7 17h10M4 12h3M17 12h3"/>',
+  camisa:'<path d="M8 4h8l5 3-1 9h-3v4H7v-4H4L3 7z"/><path d="M12 8v12M9 4l3 4 3-4"/><circle cx="12" cy="11" r=".5"/><circle cx="12" cy="15" r=".5"/>',
+  jogger:'<path d="M6 3h12l1 15-1 3h-4l-2-9-2 9H6l-1-3z"/><path d="M6 6h12"/>',
+  jean:'<path d="M6 3h12l1 18h-5l-2-10-2 10H5z"/><path d="M6 6h12"/><path d="M8 7v2M16 7v2"/>',
+  cargo:'<path d="M6 3h12l1 18h-5l-2-10-2 10H5z"/><path d="M6 6h12"/><path d="M6 11h3v4H6zM15 11h3v4h-3z"/>',
+  pantalon:'<path d="M7 3h10l1 18h-4l-2-11-2 11H6z"/><path d="M7 6h10M9.5 9v10M14.5 9v10"/>',
+  falda:'<path d="M8 3h8l4 18H4z"/><path d="M8 6h8"/>',
+  tenis:'<path d="M3 16c0-2 2-3 4-4l3-4h2l3 3 6 2c1 0 2 1 2 2v2H3z"/><path d="M3 18h20M10 10l2 2"/>',
+  botin:'<path d="M8 3h6v9l6 3v3H6v-6l2-2z"/><path d="M6 15h14"/>',
+  mocasin:'<path d="M3 15c0-2 3-5 9-5s9 3 9 5v2H3z"/><path d="M8 13c2-1 6-1 8 0"/>',
+  morral:'<rect x="6" y="6" width="12" height="15" rx="3"/><path d="M9 6V4h6v2M6 12h12"/>',
+  rinonera:'<path d="M3 10c0-2 1-3 3-3h12c2 0 3 1 3 3v4c0 2-1 3-3 3H6c-2 0-3-1-3-3z"/><path d="M3 12h18"/>',
+  crossbody:'<rect x="5" y="10" width="14" height="10" rx="2"/><path d="M8 10c0-4 2-6 4-6s4 2 4 6M5 14h14"/>',
+  tote:'<path d="M5 8h14l-1 13H6z"/><path d="M9 8V5a3 3 0 0 1 6 0v3"/>',
+  cinturon:'<rect x="2" y="9" width="20" height="6" rx="1"/><rect x="9" y="7" width="6" height="10" rx="1"/>',
+  billetera:'<rect x="3" y="6" width="18" height="12" rx="2"/><path d="M15 10h6v4h-6z"/>',
+  tarjetero:'<rect x="4" y="5" width="16" height="14" rx="2"/><path d="M4 11h16"/>',
+  frasco:'<rect x="7" y="9" width="10" height="12" rx="2"/><path d="M10 9V6h4v3M9 4h6"/>',
+  tienda:'<path d="M3 9l2-5h14l2 5"/><path d="M3 9c0 2 1.5 3 3 3s3-1 3-3c0 2 1.5 3 3 3s3-1 3-3c0 2 1.5 3 3 3s3-1 3-3"/><path d="M5 12v9h14v-9M10 21v-5h4v5"/>',
+  qr:'<rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><path d="M14 14h3v3h-3zM19 14h2M14 19h2M19 19h2v2"/>',
+  insignia:'<circle cx="12" cy="9" r="6"/><path d="M8 14l-2 7 6-3 6 3-2-7"/>',
+  compartir:'<path d="M12 3v12M8 7l4-4 4 4M5 12v8h14v-8"/>',
+  descargar:'<path d="M12 3v12M8 11l4 4 4-4M5 20h14"/>',
+  corazon:'<path d="M12 20s-7-4.5-7-10a4 4 0 0 1 7-2.5A4 4 0 0 1 19 10c0 5.5-7 10-7 10z"/>',
+  ruleta:'<path d="M3 7h4l10 10h4M17 5l3 2-3 2M17 15l3 2-3 2M3 17h4l3-3"/>',
+  izq:'<path d="M15 5l-7 7 7 7"/>',
+  der:'<path d="M9 5l7 7-7 7"/>',
+  atras:'<path d="M19 12H5M11 5l-7 7 7 7"/>',
+  destello:'<path d="M12 2l2 8 8 2-8 2-2 8-2-8-8-2 8-2z"/><path d="M5 5l3 3M19 5l-3 3M5 19l3-3M19 19l-3-3"/>',
+  mas:'<path d="M12 5v14M5 12h14"/>',
+  igual:'<path d="M5 9h14M5 15h14"/>',
+  vuelo:'<path d="M3 19C7 10 13 6 21 5c-4 2-6 5-7 9"/>',
+  perfil:'<circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-7 8-7s8 3 8 7"/>',
+  cerrar:'<path d="M6 6l12 12M18 6L6 18"/>',
+  editar:'<path d="M4 20h4L19 9l-4-4L4 16z"/>',
+  borrar:'<path d="M5 7h14M9 7V4h6v3M7 7l1 13h8l1-13"/>',
+  ninguno:'<circle cx="12" cy="12" r="8"/><path d="M6.5 6.5l11 11"/>',
+  check:'<path d="M5 12l5 5 9-10"/>',
+  info:'<circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 8v.5"/>',
+  candado:'<rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/>',
+  pin:'<path d="M12 21s6-5.5 6-11a6 6 0 0 0-12 0c0 5.5 6 11 6 11z"/><circle cx="12" cy="10" r="2"/>',
+  externo:'<path d="M14 4h6v6M20 4l-9 9M18 14v6H4V6h6"/>',
+  reiniciar:'<path d="M4 12a8 8 0 1 0 3-6.2M4 4v5h5"/>',
+  comparar:'<path d="M9 4v16M15 4v16M4 9h5M15 9h5M4 15h5M15 15h5"/>'
+};
+const ICONS = {
+  svg(name, o={}){
+    const size = o.size||24;
+    const fill = o.fill||'none';
+    const stroke = o.stroke||'currentColor';
+    return `<svg viewBox="0 0 24 24" width="${size}" height="${size}" fill="${fill}" stroke="${stroke}" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" class="ic-${name}${o.cls?' '+o.cls:''}">${ICON_PATHS[name]||ICON_PATHS.ninguno}</svg>`;
+  },
+  product(p, size=24){ return ICONS.svg(p.icon,{size,fill:p.color.hex,stroke:'#111111'}); },
+  vuelo(size=120, cls=''){
+    return `<svg viewBox="0 0 120 60" width="${size}" height="${size/2}" fill="none" stroke="currentColor" stroke-width="1.25" stroke-linecap="round" class="vuelo ${cls}" aria-hidden="true"><path pathLength="100" d="M4 52C24 24 56 10 116 6c-26 6-40 18-46 36"/></svg>`;
+  }
+};
+
+/* =====================================================================
+   BOARD · tablero del look (flat lay) con las prendas reales de GARM
+   viewBox 300 × 400 · cada zona tiene su lugar fijo
+   ===================================================================== */
+const BOARD = (() => {
+  let uid = 0;
+  // x, y, ancho, alto del espacio · mw = ancho máximo de la prenda
+  const SLOTS = {
+    inferior:{x:30, y:178,w:150,h:214,mw:124},
+    superior:{x:8,  y:8,  w:180,h:182,mw:176},
+    cabeza:  {x:196,y:12, w:96, h:72, mw:92},
+    bolso:   {x:194,y:94, w:100,h:118,mw:96},
+    detalle: {x:192,y:224,w:100,h:62, mw:88},
+    calzado: {x:188,y:298,w:106,h:90, mw:104}
+  };
+  const ORDER = ['inferior','superior','cabeza','bolso','detalle','calzado'];
+  const LABEL = {cabeza:'Cabeza',superior:'Superior',inferior:'Inferior',calzado:'Calzado',bolso:'Bolso',detalle:'Detalle de cuero'};
+  const asset = p => p && p.asset && (typeof GARM!=='undefined') && GARM[p.asset];
+  const paths = A => A.p.map(([c,d]) => `<path d="${d}" fill="${c}"/>`).join('');
+  function piece(p, zone, u, changed){
+    const A = asset(p); if(!A) return '';
+    const S = SLOTS[zone];
+    const s = Math.min(S.mw/100, S.h/A.h);
+    const h = A.h*s;
+    const cx = S.x + S.w/2, top = S.y + (zone==='inferior' ? 0 : (S.h-h)/2);
+    return `<g class="bp${changed?' pop':''}" filter="url(#ds${u})"><g transform="translate(${cx.toFixed(1)} ${top.toFixed(1)}) scale(${s.toFixed(4)})">${paths(A)}</g></g>`;
+  }
+  function empty(zone){
+    const S = SLOTS[zone];
+    return `<g class="bslot"><rect x="${S.x+6}" y="${S.y+6}" width="${S.w-12}" height="${S.h-12}" rx="2" fill="none" stroke="rgba(58,63,72,.22)" stroke-dasharray="2 4"/><text x="${S.x+S.w/2}" y="${S.y+S.h/2+3}" text-anchor="middle" font-family="Jost, sans-serif" font-size="7.5" letter-spacing="1.6" fill="rgba(58,63,72,.5)">${LABEL[zone].toUpperCase()}</text></g>`;
+  }
+  // items: {zona: id}; o.placeholders muestra los espacios vacíos; o.changed = Set de zonas recién cambiadas
+  function render(items={}, o={}){
+    const u = ++uid; let body = '';
+    for(const z of ORDER){
+      const v = items[z]; const p = v ? (typeof v==='string' ? byId[v] : v) : null;
+      body += p ? piece(p, z, u, o.changed && o.changed.has(z)) : (o.placeholders ? empty(z) : '');
+    }
+    const size = o.width ? `width="${o.width}" height="${o.height||Math.round(o.width*4/3)}"` : '';
+    return `<svg xmlns="http://www.w3.org/2000/svg" class="board" viewBox="0 0 300 400" preserveAspectRatio="xMidYMid meet" ${size} role="img" aria-label="${o.label||'Tablero del look'}"><defs><filter id="ds${u}" x="-20%" y="-20%" width="140%" height="140%"><feDropShadow dx="0" dy="2.5" stdDeviation="3" flood-color="#111111" flood-opacity=".14"/></filter></defs>${body}</svg>`;
+  }
+  function thumb(p, size=40){
+    const A = asset(p); if(!A) return null;
+    return `<svg viewBox="-54 -4 108 ${A.h+8}" width="${size}" height="${size}" preserveAspectRatio="xMidYMid meet" aria-hidden="true">${paths(A)}</svg>`;
+  }
+  return {render, thumb};
+})();
+
+/* =====================================================================
+   STORE · estado + guardar/cargar en el navegador (velezup:v1)
+   ===================================================================== */
+const STORE = (() => {
+  const KEY = 'velezup:v1';
+  let memoryOnly = false;
+  const defaults = () => ({
+    version:1, onboarded:false,
+    avatar:{v:3,gender:null,name:'',skin:4,hair:'ref',hairColor:1,eyeColor:0,beard:0,glasses:0,lips:0,body:1,height:1},
+    quiz:null,
+    looks:[], olfactory:[],
+    points:0, badges:[], lastQrVisit:null, likes:{},
+    flags:{quizDone:false,firstLook:false,shared:false,fragCount:0,retoDone:false,firstPublish:false},
+    draft:{items:{},occasion:null,fragrance:null,name:'',editing:null},
+    seq:1
+  });
+  let state = defaults();
+  function load(){
+    try{
+      const raw = localStorage.getItem(KEY);
+      if(raw){ const parsed = JSON.parse(raw); state = Object.assign(defaults(), parsed); state.flags = Object.assign(defaults().flags, parsed.flags||{}); state.draft = Object.assign(defaults().draft, parsed.draft||{});
+        if(parsed.avatar && parsed.avatar.v!==3){ const a=parsed.avatar; state.avatar = Object.assign(defaults().avatar, {name:a.name||'', gender:a.gender||null}); }
+        // limpieza: ids de catálogos anteriores
+        const clean = items => { const o={}; for(const k in (items||{})) if(byId[items[k]]) o[k]=items[k]; return o; };
+        state.draft.items = clean(state.draft.items);
+        state.looks = state.looks.map(l=>Object.assign(l,{items:clean(l.items)}));
+        if(state.quiz && state.quiz.recommended && Object.values(state.quiz.recommended).some(id=>!byId[id])) delete state.quiz.recommended;
+      }
+      localStorage.setItem(KEY+':test','1'); localStorage.removeItem(KEY+':test');
+    }catch(e){ memoryOnly = true; }
+    return state;
+  }
+  function save(){
+    if(memoryOnly) return false;
+    try{ localStorage.setItem(KEY, JSON.stringify(state)); return true; }
+    catch(e){ memoryOnly = true; document.getElementById('banner').classList.add('show'); return false; }
+  }
+  function reset(){ state = defaults(); try{ localStorage.removeItem(KEY); }catch(e){} save(); }
+  return { get state(){return state;}, load, save, reset, get memoryOnly(){return memoryOnly;} };
+})();
+
+/* =====================================================================
+   LOGIC · medidor, perfil del quiz, look recomendado, ruleta, combina con, puntos
+   ===================================================================== */
+const LOGIC = (() => {
+  const gender = () => (STORE.state.avatar && STORE.state.avatar.gender) || 'mujer';
+  const pool = () => DATA.products.filter(p => p.gender==='u' || p.gender===gender());
+  function evaluate(items){
+    const pieces = DATA.zones.map(z=>items[z.id]).filter(Boolean).map(v=>typeof v==='string'?byId[v]:v).filter(Boolean);
+    const n = pieces.length;
+    const elegance = n ? Math.round(pieces.reduce((a,p)=>a+p.e,0)/n) : 0;
+    const urban = n ? 100-elegance : 0;
+    const hasFlyUp = pieces.some(p=>p.line==='flyup');
+    const hasCuero = pieces.some(p=>p.line==='velez-cuero');
+    let status, msg;
+    if(n<4){ status='armando'; msg=`Suma piezas: te faltan ${4-n} para un Total Look.`; }
+    else if(elegance<35 || !hasCuero){ status='urbano'; msg='Suma un detalle de cuero y lleva tu look a otro nivel.'; }
+    else if(elegance>65 || !hasFlyUp){ status='elegancia'; msg='Suma una pieza Fly Up y ponle ciudad a tu look.'; }
+    else { status='tendencia'; msg='Tu estilo toma vuelo'; }
+    return {n,elegance,urban,hasFlyUp,hasCuero,status,trend:status==='tendencia',msg,pieces};
+  }
+  // distancia a Tendencia (menor = mejor)
+  function distance(items){
+    const ev = evaluate(items);
+    let d = Math.max(0, 35-ev.elegance, ev.elegance-65);
+    if(ev.n<4) d += (4-ev.n)*25;
+    if(!ev.hasFlyUp) d += 30;
+    if(!ev.hasCuero) d += 30;
+    return d;
+  }
+  function quizResult(answers){
+    let E=0,U=0, occasion='T', color='oscuros', anchor='random';
+    answers.forEach((ai,qi)=>{
+      const o = DATA.quiz[qi].opts[ai]; if(!o) return;
+      E += o.e||0; U += o.u||0;
+      if(o.occ) occasion=o.occ; if(o.color) color=o.color; if(o.anchor) anchor=o.anchor;
+    });
+    const elegance = (E+U) ? Math.round(E/(E+U)*100) : 50;
+    const profile = elegance>=60 ? 'elegancia' : elegance>=40 ? 'balanceada' : 'flow';
+    return {answers,elegance,profile,occasion,color,anchor};
+  }
+  function seeded(seed){ let s = (seed*9301+49297)%233280; return ()=>{ s=(s*9301+49297)%233280; return s/233280; }; }
+  function candidates(zone, occasion){
+    const all = pool().filter(p=>p.zone===zone);
+    const m = occasion ? all.filter(p=>p.occasions.includes(occasion)) : all;
+    return m.length ? m : all;
+  }
+  // Look recomendado: pieza ancla + una pieza por zona cercana a la Elegancia del perfil; luego se cambia una pieza a la vez hasta Tendencia
+  function buildLook({occasion,target,color,anchor,seed=1,zones}){
+    const rnd = seeded(seed);
+    const pref = DATA.colorPref[color]||[];
+    const tgt = Math.min(62, Math.max(38, target||50));
+    const score = p => Math.abs(p.e-tgt) - (pref.includes(p.colorKey)?8:0) + rnd()*2;
+    zones = zones || ['superior','inferior','calzado','bolso'];
+    const items = {};
+    if(anchor==='bolso'){ items.bolso = best(candidates('bolso',occasion)); }
+    else if(anchor==='tenis'){ items.calzado = best(candidates('calzado',occasion).filter(p=>p.icon==='tenis')); }
+    else if(anchor==='chaqueta'){ items.superior = best(candidates('superior',occasion).filter(p=>['chaqueta','bomber'].includes(p.icon))); }
+    else if(anchor==='random'){ const z = zones[Math.floor(rnd()*zones.length)]; items[z] = best(candidates(z,occasion)); }
+    function best(list){ return list.slice().sort((a,b)=>score(a)-score(b))[0]?.id; }
+    for(const z of zones){ if(!items[z]) items[z] = best(candidates(z,occasion)); }
+    // ajuste: una pieza a la vez
+    for(let i=0;i<14;i++){
+      const ev = evaluate(items);
+      if(ev.trend) break;
+      if(!ev.hasCuero){
+        const z = !items.detalle ? 'detalle' : 'bolso';
+        const pick = candidates(z,occasion).filter(p=>p.line==='velez-cuero').sort((a,b)=>score(a)-score(b))[0];
+        if(pick){ items[z]=pick.id; continue; }
+      }
+      if(!ev.hasFlyUp){
+        const z = ['calzado','superior','inferior'].find(zz=>candidates(zz,occasion).some(p=>p.line==='flyup'));
+        const pick = candidates(z,occasion).filter(p=>p.line==='flyup').sort((a,b)=>score(a)-score(b))[0];
+        if(pick){ items[z]=pick.id; continue; }
+      }
+      if(ev.elegance<35 || ev.elegance>65){
+        const low = ev.elegance<35;
+        const filled = Object.keys(items).filter(z=>items[z]);
+        let bestSwap=null, bestD=distance(items);
+        for(const z of filled){
+          for(const p of pool().filter(p=>p.zone===z)){
+            if(low ? p.e<=byId[items[z]].e : p.e>=byId[items[z]].e) continue;
+            const trial = Object.assign({},items,{[z]:p.id});
+            const d = distance(trial) + (p.occasions.includes(occasion)?0:3);
+            if(d<bestD){ bestD=d; bestSwap={z,id:p.id}; }
+          }
+        }
+        if(bestSwap){ items[bestSwap.z]=bestSwap.id; continue; }
+      }
+      break;
+    }
+    return items;
+  }
+  // Ruleta: al azar por zona respetando la ocasión; 20 intentos; primera en Tendencia o la más cercana
+  function roulette(occasion){
+    let bestItems=null, bestD=Infinity;
+    for(let t=0;t<20;t++){
+      const items={};
+      for(const z of DATA.zones){
+        const all = pool().filter(p=>p.zone===z.id);
+        const m = occasion ? all.filter(p=>p.occasions.includes(occasion)) : all;
+        const opts = m.length ? m : (Math.random()<0.5 ? [] : all);
+        if(opts.length) items[z.id] = opts[Math.floor(Math.random()*opts.length)].id;
+      }
+      const d = distance(items);
+      if(d===0) return items;
+      if(d<bestD){ bestD=d; bestItems=items; }
+    }
+    // ninguna llegó: se ajusta una pieza a la vez hacia Tendencia
+    const fixed = buildLook({occasion, target:50, color:null, anchor:'random', seed:Math.floor(Math.random()*9999), zones:['cabeza','superior','inferior','calzado','bolso','detalle'].filter(z=>bestItems&&bestItems[z])});
+    return distance(fixed) < bestD ? fixed : bestItems;
+  }
+  // Combina con: otras zonas, ocasión compartida, |Δe| ≤ 30, prioriza la otra línea
+  function combinesWith(p){
+    const other = q => (p.line==='velez-cuero') ? q.line==='flyup' : q.line==='velez-cuero';
+    return pool()
+      .filter(q=>q.zone!==p.zone && q.occasions.some(o=>p.occasions.includes(o)) && Math.abs(q.e-p.e)<=30)
+      .sort((a,b)=> (other(a)?0:1)-(other(b)?0:1) || Math.abs(a.e-p.e)-Math.abs(b.e-p.e))
+      .slice(0,3);
+  }
+  function level(points){
+    let lv = DATA.levels[0];
+    for(const l of DATA.levels) if(points>=l.min) lv=l;
+    const next = DATA.levels.find(l=>l.min>points);
+    return {lv,next,progress: next ? (points-lv.min)/(next.min-lv.min) : 1};
+  }
+  function shortEq(items){
+    const names = DATA.zones.map(z=>items[z.id]).filter(Boolean).map(id=>byId[id].short.toUpperCase());
+    return names.length ? names.join(' + ') + ' = TU LOOK' : 'ELIGE PIEZAS = TU LOOK';
+  }
+  function retoProgress(){
+    const occ = new Set(STORE.state.looks.map(l=>l.occasion).filter(Boolean));
+    return Math.min(3, occ.size);
+  }
+  let lastItems = null;
+  function changedZones(items){
+    const ch = new Set();
+    if(lastItems) for(const z of DATA.zones) if((items[z.id]||null)!==(lastItems[z.id]||null) && items[z.id]) ch.add(z.id);
+    lastItems = Object.assign({}, items);
+    return ch;
+  }
+  return {evaluate,distance,quizResult,buildLook,roulette,combinesWith,level,shortEq,retoProgress,candidates,pool,gender,changedZones};
+})();
+
+/* =====================================================================
+   UI · toast, hoja inferior, confirmación (nunca alert/confirm del navegador)
+   ===================================================================== */
+const UI = (() => {
+  let toastT = null, confirmResolve = null, touchY = null;
+  function toast(msg, html){
+    const t = document.getElementById('toast'); if(html) t.innerHTML = html; else t.textContent = msg; t.classList.remove('show'); void t.offsetWidth; t.classList.add('show');
+    clearTimeout(toastT); toastT = setTimeout(()=>t.classList.remove('show'), 2600);
+  }
+  function sheet(html, o={}){
+    const s = document.getElementById('sheet');
+    if(s.classList.contains('open') && s.querySelector('.body')){ s.querySelector('.body').innerHTML = html; s.querySelector('.panel-sheet').setAttribute('aria-label', o.label||'Detalle'); return; }
+    s.innerHTML = `<div class="back" data-act="closeSheet"></div><div class="panel-sheet" role="dialog" aria-modal="true" aria-label="${o.label||'Detalle'}"><div class="handle"></div><div class="body">${html}</div></div>`;
+    s.classList.add('open'); s.setAttribute('aria-hidden','false');
+    const panel = s.querySelector('.panel-sheet');
+    panel.addEventListener('touchstart', e=>{ touchY = e.touches[0].clientY; }, {passive:true});
+    panel.addEventListener('touchmove', e=>{ if(touchY!==null && s.querySelector('.body').scrollTop<=0 && e.touches[0].clientY-touchY>90){ touchY=null; closeSheet(); } }, {passive:true});
+    const f = panel.querySelector('button, input'); if(f && o.focus) f.focus();
+  }
+  function closeSheet(){
+    const s = document.getElementById('sheet'); s.classList.remove('open'); s.setAttribute('aria-hidden','true'); s.innerHTML='';
+    if(confirmResolve){ confirmResolve(false); confirmResolve=null; }
+  }
+  function isOpen(){ return document.getElementById('sheet').classList.contains('open'); }
+  function confirm({title,text,ok='Confirmar',cancel='Cancelar',danger=false}){
+    return new Promise(res=>{
+      confirmResolve = res;
+      sheet(`<h2 class="h2">${title}</h2><p class="sec">${text||''}</p><div class="btn-row mt"><button class="btn btn-secondary" data-act="confirmNo">${cancel}</button><button class="btn ${danger?'btn-secondary':'btn-primary'}" data-act="confirmYes">${ok}</button></div>`,{label:title});
+    });
+  }
+  function confirmAnswer(v){ const r = confirmResolve; confirmResolve=null; closeSheet(); if(r) r(v); }
+  return {toast,sheet,closeSheet,isOpen,confirm,confirmAnswer};
+})();
+
+/* =====================================================================
+   PUNTOS E INSIGNIAS
+   ===================================================================== */
+const POINTS = (() => {
+  function add(n, label){
+    const st = STORE.state; st.points += n; STORE.save();
+    UI.toast('', `<b class="pts">+${n}</b><span>puntos${label?' · '+esc(label):''}</span>`);
+  }
+  function badge(id){
+    const st = STORE.state; if(st.badges.includes(id)) return false;
+    st.badges.push(id); STORE.save();
+    const b = DATA.badges.find(x=>x.id===id);
+    setTimeout(()=>UI.toast(`Insignia: ${b?b.name:id}`), 900);
+    return true;
+  }
+  function checkReto(){
+    const st = STORE.state;
+    if(!st.flags.retoDone && LOGIC.retoProgress()>=3){ st.flags.retoDone=true; STORE.save(); setTimeout(()=>{ add(DATA.points.reto,'reto del mes'); badge('momentos'); }, 1800); }
+  }
+  return {add,badge,checkReto};
+})();
+
+/* =====================================================================
+   ROUTER · navegación por #ruta
+   ===================================================================== */
+const ROUTER = (() => {
+  function parse(){
+    const raw = (location.hash||'').replace(/^#/,'');
+    const [path, qs] = raw.split('?');
+    const parts = path.split('/').filter(Boolean);
+    return {path:'/'+parts.join('/'), parts, query:Object.fromEntries(new URLSearchParams(qs||''))};
+  }
+  function go(hash){ if(location.hash==='#'+hash){ render(); } else location.hash = hash; }
+  function replace(hash){ history.replaceState(null,'','#'+hash); render(); }
+  function back(){ if(history.length>1) history.back(); else go('/descubre'); }
+  return {parse,go,replace,back};
+})();
+
+/* =====================================================================
+   COMPONENTES
+   ===================================================================== */
+const esc = s => String(s==null?'':s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const today = () => { const d=new Date(); return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`; };
+const fmtDate = iso => { try{ return new Date(iso).toLocaleDateString('es-CO',{day:'numeric',month:'short'}); }catch(e){ return ''; } };
+
+// ART · líneas topográficas generadas (fondo de los paneles, sin fotos)
+const ART = {
+  topo(seed=1, lines=9, w=600, h=360){
+    let s=(seed*9301+49297)%233280; const r=()=>{ s=(s*9301+49297)%233280; return s/233280; };
+    let out='';
+    for(let i=0;i<lines;i++){
+      const y0=(i+1)*(h/(lines+1)); const a1=16+r()*26, a2=10+r()*18, f1=1+r()*1.5, f2=2+r()*2, ph=r()*6.28;
+      let d=`M-40 ${y0.toFixed(1)}`;
+      for(let x=0;x<=w+40;x+=20){ const y=y0+Math.sin(x/w*6.28*f1+ph)*a1+Math.sin(x/w*6.28*f2+ph*2)*a2; d+=` L${x} ${y.toFixed(1)}`; }
+      out+=`<path d="${d}" opacity="${(0.35+r()*0.5).toFixed(2)}"/>`;
+    }
+    return `<svg viewBox="0 0 ${w} ${h}" preserveAspectRatio="xMidYMid slice" fill="none" stroke="currentColor" stroke-width=".8" aria-hidden="true">${out}</svg>`;
+  },
+  panel(inner, o={}){
+    const img = (DATA.images||{})[o.image];
+    const style = (o.height?`height:${o.height}px;`:'') + (img?`background-image:url('${img}');`:'');
+    return `<div class="panel grain${img?' photo':''}${o.light?' light':''} ${o.cls||''}" style="${style}"><div class="art drift" style="color:${o.light?'rgba(17,17,17,.35)':'rgba(244,241,236,.9)'}">${ART.topo(o.seed||1, o.lines||9)}</div><div class="inner">${inner}</div></div>`;
+  }
+};
+const C = {
+  logo(big=false){ return `<div class="logo${big?' big':''}" aria-label="Vélez Up, versión beta"><span class="wm">Vélez</span><span class="tag-up">Up</span><span class="beta">Beta</span></div>`; },
+  topbar(o={}){
+    const st = STORE.state;
+    const left = o.back ? `<button class="icon-btn" data-act="back" aria-label="Volver">${ICONS.svg('atras',{size:22})}</button>` : C.logo();
+    const right = o.noProfile ? (o.title?'<span style="width:48px"></span>':'') : `<a class="ava-btn" href="#/perfil" aria-label="Perfil y ajustes">${C.mono(36)}</a>`;
+    return `<div class="topbar">${left}${o.title?`<div class="title">${o.title}</div>`:''}${right}</div>`;
+  },
+  tabbar(active){
+    const tabs = [['descubre','Descubre','destello'],['arma','Arma','mas'],['comparte','Comparte','igual'],['vive','Vive','vuelo']];
+    const signs = ['+','+','='];
+    return tabs.map((t,i)=>`<a class="tab${active===t[0]?' on':''}" href="#/${t[0]}" ${active===t[0]?'aria-current="page"':''}>${ICONS.svg(t[2],{size:21})}<span class="lbl">${t[1]}</span></a>${i<3?`<span class="tab-sign" aria-hidden="true">${signs[i]}</span>`:''}`).join('');
+  },
+  mono(size=36){
+    const n = (STORE.state.avatar && STORE.state.avatar.name || '').trim();
+    const ch = n ? n[0].toUpperCase() : 'V';
+    return `<span class="mono" style="width:${size}px;height:${size}px;font-size:${Math.round(size*.46)}px" aria-hidden="true">${esc(ch)}</span>`;
+  },
+  stage(items, cls='', o={}){
+    return `<div class="board-wrap ${cls}">${BOARD.render(items, o)}</div>`;
+  },
+  meter(items){
+    const ev = LOGIC.evaluate(items);
+    const eq = ev.n ? `Elegancia ${ev.elegance} % + Urbano ${ev.urban} % = ${ev.trend?'Tendencia':'…'}` : 'Elegancia + Urbano = Tendencia';
+    return `<div class="meter${ev.trend?' trend':''}" role="group" aria-label="Medidor de la fórmula"><div class="eq">${eq}</div><div class="bar" aria-hidden="true"><i style="width:${ev.elegance}%"></i></div><div class="msg" aria-live="polite">${ev.trend?ICONS.vuelo(44):''}<span>${ev.msg}</span></div></div>`;
+  },
+  mini(ev){ return `<div class="mini-meter" aria-label="Elegancia ${ev.elegance} %"><i style="width:${ev.elegance}%"></i></div>`; },
+  lookCard(look, o={}){
+    const ev = LOGIC.evaluate(look.items);
+    const likes = STORE.state.likes[look.id];
+    const count = (look.likes||0) + (likes?1:0);
+    return `<div class="look-card">
+      <button class="board-wrap tap" data-act="${o.act||'openLook'}" data-arg="${look.id}" aria-label="Ver look ${esc(look.name)}">${BOARD.render(look.items,{label:''})}</button>
+      <div class="nm">${esc(look.name)}</div>
+      ${C.mini(ev)}
+      <div class="meta"><span>${occLabel(look.occasion)}${ev.trend?' · Tendencia':''}</span>${o.like!==false?`<button class="like${likes?' on':''}" data-act="like" data-arg="${look.id}" aria-label="Me gusta, ${count}" aria-pressed="${!!likes}">${ICONS.svg('corazon',{size:16})}${count}</button>`:''}</div>
+    </div>`;
+  },
+  subnav(active){
+    const items=[['vive','Puntos'],['olfato','Olfato'],['tienda','Tienda']];
+    return `<div class="chips" role="tablist">${items.map(i=>`<a class="chip${active===i[0]?' on':''}" href="#/${i[0]}" role="tab" aria-selected="${active===i[0]}">${i[1]}</a>`).join('')}</div>`;
+  },
+  zoneRow(zone, occasion){
+    const st = STORE.state, id = st.draft.items[zone.id], p = id?byId[id]:null;
+    const piece = p
+      ? `<button class="piece" data-act="openFicha" data-arg="${p.id}" aria-label="Ver ficha de ${esc(p.name)}"><span class="ic">${BOARD.thumb(p,34)||ICONS.product(p,26)}</span><span class="nm"><b>${esc(p.name)}</b><span>${zone.label} · ${LINES[p.line]}</span></span></button>`
+      : `<div class="piece"><span class="ic sec">${ICONS.svg('ninguno',{size:22})}</span><span class="nm"><b class="sec" style="font-weight:400">Ninguno</b><span>${zone.label}</span></span></div>`;
+    return `<div class="zone-row" data-zone="${zone.id}"><button class="arrow" data-act="zonePrev" data-arg="${zone.id}" aria-label="Anterior pieza de ${zone.label.toLowerCase()}">${ICONS.svg('izq',{size:22})}</button>${piece}<button class="arrow" data-act="zoneNext" data-arg="${zone.id}" aria-label="Siguiente pieza de ${zone.label.toLowerCase()}">${ICONS.svg('der',{size:22})}</button></div>`;
+  },
+  fragRow(){
+    const st = STORE.state, f = st.draft.fragrance ? fragById[st.draft.fragrance] : null;
+    const piece = f
+      ? `<a class="piece" href="#/olfato" aria-label="Ver fragancias"><span class="ic">${ICONS.svg('frasco',{size:22})}</span><span class="nm"><b>${f.name}</b><span>Fragancia · ${DATA.fragTypes[f.type]}</span></span></a>`
+      : `<a class="piece" href="#/olfato"><span class="ic sec">${ICONS.svg('frasco',{size:22})}</span><span class="nm"><b class="sec" style="font-weight:400">El detalle final</b><span>Fragancia · opcional</span></span></a>`;
+    return `<div class="zone-row"><button class="arrow" data-act="fragPrev" aria-label="Anterior fragancia">${ICONS.svg('izq',{size:22})}</button>${piece}<button class="arrow" data-act="fragNext" aria-label="Siguiente fragancia">${ICONS.svg('der',{size:22})}</button></div>`;
+  },
+  swatches(label, field, list, current, o={}){
+    const custom = /^#[0-9a-f]{6}$/i.test(current||'');
+    const customVal = custom ? current : (o.color ? (typeof list[0]==='string'?list[0]:list[0].c) : '');
+    return `<div class="opt-group"><label class="lbl">${label}</label><div class="chips${o.scroll?' scroll':''}">${list.map((it,i)=>{
+      const id = (field==='hair' && it && it.id!==undefined) ? it.id : i; const on = current===id; const val = typeof it==='string'?it:(it.c||it);
+      const name = typeof it==='string'?it:(it.n||it.label||'');
+      if(o.color) return `<button class="chip sw${on?' on':''}" data-act="setAv" data-arg="${field}:${i}" aria-label="${label} ${name||i+1}" aria-pressed="${on}"><span class="dot" style="background:${val}"></span></button>`;
+      return `<button class="chip${on?' on':''}" data-act="setAv" data-arg="${field}:${id}" aria-pressed="${on}">${name}</button>`;
+    }).join('')}${(o.color && o.free!==false)?`<label class="chip sw wheel${custom?' on':''}" aria-label="${label}: elegir color libre" title="Color libre"><span class="dot" style="background:${custom?customVal:'conic-gradient(#e85d5d,#e8b35d,#9ad26a,#5dc1e8,#8a6de8,#e85dc1,#e85d5d)'}"></span><input type="color" value="${customVal}" data-input="color" data-field="${field}" aria-label="${label} personalizado"></label>`:''}</div></div>`;
+  }
+};
+function looksForYou(){
+  const q = STORE.state.quiz || {elegance:50,color:'oscuros',occasion:'T'};
+  const order = [q.occasion, ...['S','F','V','E','T'].filter(o=>o!==q.occasion)].slice(0,3);
+  const names = {T:'Para tu trabajo',S:'Para una salida',F:'Para el fin de semana',V:'Para un viaje',E:'Para un evento'};
+  return order.map((occ,i)=>({id:'fy_'+occ, name:names[occ], occasion:occ, items:LOGIC.buildLook({occasion:occ,target:q.elegance,color:q.color,anchor:'random',seed:11+i,zones:['superior','inferior','calzado','bolso','detalle']})}));
+}
+function recLook(){
+  const q = STORE.state.quiz; if(!q) return null;
+  const valid = q.recommended && Object.values(q.recommended).every(id => byId[id] && (byId[id].gender==='u' || byId[id].gender===LOGIC.gender()));
+  if(!valid){ q.recommended = LOGIC.buildLook({occasion:q.occasion,target:q.elegance,color:q.color,anchor:q.anchor,seed:(q.answers||[]).join('')*1+7}); STORE.save(); }
+  return q.recommended;
+}
+function findLook(id){
+  if(!id) return null;
+  if(id.startsWith('demo_')) return DATA.demoLooks.find(l=>l.id===id);
+  if(id.startsWith('fy_')) return looksForYou().find(l=>l.id===id);
+  return STORE.state.looks.find(l=>l.id===id);
+}
+function loadDraft(look, editing=null){
+  const st = STORE.state;
+  st.draft = {items:Object.assign({},look.items), occasion:look.occasion||null, fragrance:look.fragrance||null, name:editing?look.name:'', editing};
+  STORE.save();
+}
+
+/* =====================================================================
+   SCREENS · una función por pantalla (P0 a P14)
+   ===================================================================== */
+const SCREENS = {
+  bienvenida(){
+    const tag = 'Tu estilo toma vuelo.'.split(' ').map((w,i)=>`<span class="w" style="animation-delay:${1.1+i*.16}s">${w}</span>`).join(' ');
+    return `<div class="screen dark notabs center" style="padding:0;gap:0">
+      ${ART.panel(`
+        <div class="push"></div>
+        <div class="logo big"><span class="wm wm-anim">Vélez</span><span class="row rise" style="animation-delay:.9s;gap:10px"><span class="tag-up">Up</span><span class="beta">Beta</span></span></div>
+        <div class="rule-grow" style="width:40px;margin:26px auto 24px;animation-delay:1s"></div>
+        <p class="ital tag-anim" style="font-size:26px">${tag}</p>
+        <p class="up rise" style="opacity:.55;margin-top:14px;animation-delay:1.9s">Elegancia + Urbano = Tendencia</p>
+        <div class="push"></div>
+        <div class="stack lg rise" style="width:100%;animation-delay:2.1s">
+          <button class="btn btn-primary" data-act="go" data-arg="/avatar">Empezar</button>
+          <button class="btn btn-ghost" data-act="skipAvatar"><span>Explorar sin crear perfil</span></button>
+        </div>
+        <p class="micro rise" style="opacity:.45;letter-spacing:.16em;text-transform:uppercase;font-size:9px;margin-top:8px;animation-delay:2.3s">Prototipo académico · Productos ilustrativos</p>`,
+        {seed:3, lines:11, cls:'full'})}
+      <style>.panel.full{flex:1;min-height:100%;border-radius:0}.panel.full .inner{padding:40px max(var(--s4), env(safe-area-inset-right, 0px)) 36px max(var(--s4), env(safe-area-inset-left, 0px));align-items:center;text-align:center}.panel.full::after{background:linear-gradient(180deg,rgba(17,17,17,.2),rgba(17,17,17,0) 30%,rgba(17,17,17,.75) 100%)}</style>
+    </div>`;
+  },
+  avatar(){
+    const st = STORE.state; const g = st.avatar.gender;
+    const sample = {mujer:'demo_06', hombre:'demo_20'};
+    return `<div class="screen notabs" style="gap:var(--s3)">
+      ${C.topbar({back:st.onboarded, noProfile:true, title:'Tu perfil'})}
+      <div class="rise"><h1 class="h1">¿Para quién es el look?</h1><p class="ital sec" style="font-size:17px">Te mostramos prendas y combinaciones según tu elección.</p></div>
+      <div class="grid2 rise d1">
+        ${['mujer','hombre'].map(x=>{ const on=g===x; const l=DATA.demoLooks.find(d=>d.id===sample[x]);
+          return `<button class="gtile${on?' on':''}" data-act="avGender" data-arg="${x}" aria-pressed="${on}"><span class="board-wrap">${BOARD.render(l.items,{label:''})}</span><span class="glabel">${x==='mujer'?'Mujer':'Hombre'}${on?ICONS.svg('check',{size:14}):''}</span></button>`; }).join('')}
+      </div>
+      <div class="field rise d2"><label class="lbl" for="avname">Nombre o apodo</label><input id="avname" class="input" maxlength="16" placeholder="Máximo 16 caracteres" value="${esc(st.avatar.name||'')}" data-input="name" autocomplete="nickname"></div>
+      <div class="push" style="min-height:8px"></div>
+      <button class="btn btn-primary" data-act="avatarNext" ${g?'':'disabled'}>${st.onboarded?'Guardar':'Siguiente'}</button></div>`;
+  },
+  quiz(n){
+    const st = STORE.state; n = Math.min(5, Math.max(1, parseInt(n)||1));
+    const q = DATA.quiz[n-1]; const tmp = st.quizTmp||[];
+    return `<div class="screen notabs">
+      <div class="topbar"><button class="icon-btn" data-act="quizBack" data-arg="${n}" aria-label="Volver">${ICONS.svg('atras',{size:22})}</button><span class="up sec">Quiz de estilo · ${n} de 5</span><span style="width:48px"></span></div>
+      <div class="segs" aria-hidden="true">${[1,2,3,4,5].map(i=>`<i class="${i<=n?'on':''}"></i>`).join('')}</div>
+      <h1 class="h1 rise" style="margin-top:var(--s2)">${q.q}</h1>
+      <div class="stack rise d1">${q.opts.map((o,i)=>`<button class="opt${tmp[n-1]===i?' on':''}" data-act="quizAnswer" data-arg="${n}:${i}">${o.t}${ICONS.svg('der',{size:18})}</button>`).join('')}</div></div>`;
+  },
+  formula(){
+    const st = STORE.state; const q = st.quiz;
+    if(!q) return SCREENS.quiz(1);
+    const prof = DATA.profiles[q.profile];
+    recLook();
+    const ev = LOGIC.evaluate(q.recommended);
+    const names = DATA.zones.map(z=>q.recommended[z.id]).filter(Boolean).map(id=>byId[id].short).join(', ');
+    return `<div class="screen notabs">
+      ${C.topbar({noProfile:true})}
+      <div class="rise"><div class="eyebrow">Tu fórmula</div><h1 class="hero" style="font-size:38px;margin-top:10px">${prof.title}</h1></div>
+      <div class="fbar rise d1"><div class="lab"><span>Elegancia ${q.elegance} %</span><span>Urbano ${100-q.elegance} %</span></div><div class="bar" role="img" aria-label="Elegancia ${q.elegance} por ciento, Urbano ${100-q.elegance} por ciento"><i style="width:${q.elegance}%"></i></div><div class="lab sub"><span>+</span><span>= Tendencia</span></div></div>
+      <div class="rise d2">${C.stage(q.recommended)}</div>
+      <p class="rise d3" style="font-size:14px"><span class="ital" style="font-size:19px;display:block;margin-bottom:4px">${prof.line}</span><span class="sec">Te sugerimos ${names.toLowerCase()} para ${occLabel(q.occasion).toLowerCase()}: llega a ${ev.elegance} % de Elegancia${ev.trend?' y está en Tendencia':''}.</span></p>
+      <div class="push"></div>
+      <button class="btn btn-primary" data-act="armarRecomendado">Armar mi look</button>
+      <button class="btn btn-ghost" data-act="go" data-arg="/descubre"><span>Ver inicio</span></button></div>`;
+  },
+  descubre(){
+    const st = STORE.state; const q = st.quiz;
+    const name = st.avatar.name ? `, ${esc(st.avatar.name)}` : '';
+    const day = Math.floor(Date.now()/864e5);
+    const headline = DATA.campaign[day%DATA.campaign.length];
+    const draft = st.draft.items; const base = LOGIC.evaluate(draft);
+    const cands = ['b3','d2','z8','z13','d3','b6'].map(id=>byId[id]).filter(p=>p.gender==='u'||p.gender===LOGIC.gender());
+    let sug = cands[day%cands.length], best = Infinity;
+    for(const p of cands){ const t = Object.assign({},draft,{[p.zone]:p.id}); const d = LOGIC.distance(t); if(d<best){best=d;sug=p;} }
+    const after = LOGIC.evaluate(Object.assign({},draft,{[sug.zone]:sug.id}));
+    const reto = LOGIC.retoProgress();
+    const cats = [['bolso','crossbody','Bolsos',5],['calzado','tenis','Tenis',6],['superior','camiseta','Prendas',7],['detalle','cinturon','Accesorios',8],['olfato','frasco','Fragancias',9]];
+    return `<div class="screen">
+      ${C.topbar()}
+      <div class="rise"><h1 class="h1">Hola${name}</h1><p class="ital sec" style="font-size:18px;margin-top:2px">${q?DATA.profiles[q.profile].title+' · Elegancia '+q.elegance+' %':'Descubre tu fórmula con el quiz de estilo'}</p></div>
+      ${q?'':`<a class="btn btn-secondary" href="#/quiz/1">Hacer el quiz de estilo</a>`}
+      <div class="bleed rise d1">${ART.panel(`<span class="up" style="opacity:.7">Pieza de la semana</span><div class="h1" style="font-size:28px;margin-top:6px;max-width:90%">${headline}</div><div class="row between" style="margin-top:10px"><span class="micro" style="letter-spacing:.2em;text-transform:uppercase;opacity:.7">Fly Up · Campaña</span>${ICONS.vuelo(84)}</div>`,{seed:day%7+1,height:240,image:'campaign',cls:'nocorner'})}</div>
+      ${q?`<div class="rise d2"><div class="eyebrow">Tu look</div>
+        <div class="card" style="margin-top:14px;display:flex;gap:14px;align-items:stretch">
+          <button class="board-wrap tap" data-act="armarRecomendado" style="height:186px;flex:0 0 140px" aria-label="Armar mi look recomendado">${BOARD.render(recLook()||{},{label:''})}</button>
+          <div class="grow" style="display:flex;flex-direction:column;gap:8px;min-width:0"><span class="up sec">Según tu fórmula</span><div class="serif" style="font-size:20px;letter-spacing:.04em;line-height:1.1">${DATA.profiles[q.profile].title}</div><span class="small sec">Para ${occLabel(q.occasion).toLowerCase()} · Elegancia ${LOGIC.evaluate(recLook()||{}).elegance} %</span>${C.mini(LOGIC.evaluate(recLook()||{}))}<div class="push"></div><button class="btn btn-secondary" style="min-height:38px;font-size:10px;letter-spacing:.16em;white-space:nowrap;padding:0 10px" data-act="armarRecomendado">Armar este look</button></div></div></div>`:''}
+      <div class="card rise d2"><div class="eyebrow">¿Un look al azar?</div><p class="ital sec" style="font-size:16px;margin-top:8px">Elige la ocasión y la ruleta arma uno en Tendencia.</p>
+        <div class="chips" style="margin-top:12px">${DATA.occasions.map(o=>`<button class="chip" data-act="ruletaOcc" data-arg="${o.id}">${o.label}</button>`).join('')}</div></div>
+      <div class="rise d3"><div class="eyebrow">Categorías</div><div class="chips scroll" style="margin-top:14px;gap:12px">
+        ${cats.map(c=>`<button class="tile" data-act="category" data-arg="${c[0]}" style="flex:0 0 132px">${ART.panel(`<span class="ic">${ICONS.svg(c[1],{size:22})}</span>`,{seed:c[3],height:96})}<span class="cap"><span>${c[2]}</span>${ICONS.svg('der',{size:12})}</span></button>`).join('')}</div></div>
+      <div class="card rise d4"><div class="eyebrow">Un elemento cambia todo el look</div>
+        <div class="row" style="margin-top:14px;gap:14px"><span style="width:60px;height:60px;display:flex;align-items:center;justify-content:center;border:1px solid var(--linea);flex:none;background:#fff">${BOARD.thumb(sug,48)||ICONS.product(sug,36)}</span><div class="grow"><b style="font-weight:500">${esc(sug.name)}</b><div class="small sec">${base.n?`Elegancia ${base.elegance} % → ${after.elegance} %`:`Aporta Elegancia ${sug.e} · Urbano ${100-sug.e}`}${after.trend&&!base.trend?' · llega a Tendencia':''}</div></div></div>
+        <button class="btn btn-secondary mt" data-act="addPiece" data-arg="${sug.id}">Sumar a mi look</button></div>
+      <a class="card tap" href="#/vive"><div class="row between"><span class="eyebrow" style="flex:1">Reto del mes</span><span class="tag" style="margin-left:12px">${reto}/3</span></div><div class="ital" style="font-size:19px;margin-top:10px">Crea 3 looks para 3 momentos diferentes</div><div class="progress mt2"><i style="width:${reto/3*100}%"></i></div></a>
+      <style>.panel.nocorner{border-radius:0}</style>
+    </div>`;
+  },
+  arma(){
+    const st = STORE.state, d = st.draft;
+    const occ = d.occasion;
+    return `<div class="screen" id="arma" style="gap:var(--s3)">
+      ${C.topbar()}
+      <div class="arma-head"><div class="eqline" aria-live="polite">${LOGIC.shortEq(d.items).replace('= TU LOOK','= <em>tu look</em>').replace('ELIGE PIEZAS','Elige piezas')}</div>
+      ${C.meter(d.items)}</div>
+      <div class="chips scroll" role="group" aria-label="Ocasión">${DATA.occasions.map(o=>`<button class="chip${occ===o.id?' on':''}" data-act="setOcc" data-arg="${o.id}" aria-pressed="${occ===o.id}">${o.label}</button>`).join('')}</div>
+      ${C.stage(d.items, 'stage-arma', {placeholders:true, changed:LOGIC.changedZones(d.items)})}
+      <div>${DATA.zones.map(z=>C.zoneRow(z,occ)).join('')}${C.fragRow()}</div>
+      <div class="btn-row"><button class="btn btn-secondary" data-act="ruleta">${ICONS.svg('ruleta',{size:18})}Ruleta</button><button class="btn btn-secondary" data-act="limpiar">Limpiar</button></div>
+      <button class="btn btn-primary" data-act="guardar">Guardar mi look</button>
+      ${d.editing?`<p class="micro sec center">Editando «${esc(d.name)}»</p>`:''}
+    </div>`;
+  },
+  guardado(id){
+    const look = findLook(id); if(!look) return SCREENS.armario();
+    const ev = LOGIC.evaluate(look.items);
+    return `<div class="screen center">
+      ${C.topbar()}
+      ${ev.trend?`<div class="avatar-wrap rise">${ICONS.vuelo(190)}</div><h1 class="hero rise d1" style="font-size:36px">Tu estilo toma vuelo</h1><p class="ital sec rise d2" style="font-size:18px">«${esc(look.name)}» está en Tendencia.<br><span class="up" style="font-size:10px;color:var(--grafito)">Elegancia ${ev.elegance} % + Urbano ${ev.urban} %</span></p>`
+        :`<h1 class="h1 rise" style="margin-top:var(--s2)">Look guardado</h1><p class="rise d1" style="font-size:14px"><span class="ital" style="font-size:18px">«${esc(look.name)}»</span><br><span class="sec">Elegancia ${ev.elegance} % + Urbano ${ev.urban} %</span><br><b style="font-weight:500">${ev.msg}</b></p>`}
+      <div class="rise d2">${C.stage(look.items,'sm')}</div>
+      <div class="push"></div>
+      <button class="btn btn-primary" data-act="go" data-arg="/compartir/${look.id}">${ICONS.svg('compartir',{size:18})}Compartir</button>
+      <div class="btn-row"><a class="btn btn-secondary" href="#/armario">Ver mi armario</a><button class="btn btn-secondary" data-act="armarOtro">Armar otro</button></div></div>`;
+  },
+  comparte(){
+    const st = STORE.state; const f = st.filter||{occ:null,trend:false};
+    let looks = [...DATA.demoLooks.filter(l=>l.g===LOGIC.gender()), ...st.looks.filter(l=>l.published).map(l=>Object.assign({},l,{author:st.avatar.name||'Tú'}))];
+    if(f.occ) looks = looks.filter(l=>l.occasion===f.occ);
+    if(f.trend) looks = looks.filter(l=>LOGIC.evaluate(l.items).trend);
+    return `<div class="screen">
+      ${C.topbar()}
+      <div class="row between"><div><h1 class="h1">Comunidad</h1><p class="ital sec" style="font-size:17px">Looks que se comparten</p></div><a class="icon-btn bordered" href="#/armario" aria-label="Mi armario">${ICONS.svg('morral',{size:20})}</a></div>
+      <div class="chips scroll" role="group" aria-label="Filtros"><button class="chip${!f.occ?' on':''}" data-act="filterOcc" data-arg="">Todas</button>${DATA.occasions.map(o=>`<button class="chip${f.occ===o.id?' on':''}" data-act="filterOcc" data-arg="${o.id}">${o.label}</button>`).join('')}<button class="chip${f.trend?' on':''}" data-act="filterTrend" aria-pressed="${f.trend}">Solo Tendencia</button></div>
+      ${looks.length?`<div class="grid2">${looks.map(l=>C.lookCard(l)).join('')}</div>`:`<p class="sec center mt4 ital" style="font-size:18px">No hay looks con ese filtro.</p>`}
+      <p class="up sec center" style="opacity:.7">Looks de demostración · usuarios «demo»</p></div>`;
+  },
+  armario(){
+    const st = STORE.state; const looks = st.looks.slice().reverse();
+    return `<div class="screen">
+      ${C.topbar({back:true})}
+      <div><h1 class="h1">Mi armario</h1><p class="ital sec" style="font-size:17px">${looks.length?`${looks.length} ${looks.length===1?'look guardado':'looks guardados'}`:'Tus looks guardados'}</p></div>
+      ${looks.length?looks.map(l=>{ const ev=LOGIC.evaluate(l.items); return `<div class="card"><div class="row" style="align-items:flex-start;gap:14px">
+        <button class="board-wrap tap" data-act="openLook" data-arg="${l.id}" style="height:150px;flex:0 0 112px" aria-label="Ver ${esc(l.name)}">${BOARD.render(l.items,{label:''})}</button>
+        <div class="grow stack"><b class="serif" style="font-size:19px;font-weight:500;letter-spacing:.03em">${esc(l.name)}</b><span class="up sec" style="font-weight:400">${fmtDate(l.createdAt)} · ${occLabel(l.occasion)}</span><span class="tag${ev.trend?' solid':''}" style="align-self:flex-start">${ev.trend?'Tendencia':ev.status==='armando'?'Armando':ev.status==='urbano'?'Más urbano':'Más elegancia'}</span>${l.published?'<span class="micro sec">Publicado en Comunidad</span>':''}</div></div>
+        <div class="row mt2" style="justify-content:space-between">
+          <button class="icon-btn" data-act="editLook" data-arg="${l.id}" aria-label="Editar ${esc(l.name)}">${ICONS.svg('editar',{size:20})}</button>
+          <button class="icon-btn" data-act="publishLook" data-arg="${l.id}" aria-label="${l.published?'Quitar de Comunidad':'Publicar en Comunidad'}" aria-pressed="${!!l.published}">${ICONS.svg('igual',{size:20,fill:l.published?'currentColor':'none'})}</button>
+          <a class="icon-btn" href="#/compartir/${l.id}" aria-label="Compartir ${esc(l.name)}">${ICONS.svg('compartir',{size:20})}</a>
+          <button class="icon-btn" data-act="deleteLook" data-arg="${l.id}" aria-label="Borrar ${esc(l.name)}">${ICONS.svg('borrar',{size:20})}</button></div></div>`; }).join('')
+      :`<div class="card center mt4" style="padding:var(--s5) var(--s3)"><p class="ital" style="font-size:20px">Aún no tienes looks.</p><p class="sec small">Arma el primero en 2 minutos.</p><a class="btn btn-primary mt" href="#/arma">Armar mi look</a></div>`}</div>`;
+  },
+  compartir(id){
+    const look = findLook(id); if(!look) return SCREENS.armario();
+    return `<div class="screen">
+      ${C.topbar({back:true})}
+      <div><h1 class="h1">Tarjeta</h1><p class="ital sec" style="font-size:17px">Formato historia · 1080 × 1920</p></div>
+      <div class="card" style="padding:6px"><img id="cardimg" alt="Tarjeta para compartir: ${esc(look.name)}" style="width:100%;aspect-ratio:9/16;display:block;background:var(--hueso)"></div>
+      <button class="btn btn-primary" id="sharebtn" data-act="share" data-arg="${look.id}" disabled>${ICONS.svg('compartir',{size:18})}<span>Compartir</span></button>
+      <p class="up sec center" style="opacity:.7">#TuEstiloTomaVuelo</p></div>`;
+  },
+  vive(){
+    const st = STORE.state; const lv = LOGIC.level(st.points); const reto = LOGIC.retoProgress();
+    return `<div class="screen">
+      ${C.topbar()}
+      ${C.subnav('vive')}
+      <div class="bleed rise">${ART.panel(`<span class="up" style="opacity:.7">Tus puntos</span><div class="row between" style="align-items:flex-end;margin-top:6px"><div class="num">${st.points}</div><div class="h2" style="padding-bottom:8px">${lv.lv.id}</div></div><div class="progress" style="margin-top:14px"><i style="width:${lv.progress*100}%"></i></div><p class="micro" style="opacity:.75;margin-top:8px;letter-spacing:.14em;text-transform:uppercase;font-size:9px">${lv.next?`${lv.next.min-st.points} puntos para ${lv.next.id}`:'Nivel máximo alcanzado'}</p>`,{seed:4,height:210,image:'vive',cls:'nocorner'})}</div>
+      <div class="rise d1"><div class="eyebrow">Insignias</div><div class="grid3" style="margin-top:14px">${DATA.badges.map(b=>{const on=st.badges.includes(b.id);return `<div class="badge${on?'':' off'}" aria-label="${b.name}${on?', ganada':', pendiente: '+b.cond}"><span class="ic">${ICONS.svg(b.icon,{size:18})}</span><b>${b.name}</b><span>${on?'Ganada':b.cond}</span></div>`;}).join('')}</div></div>
+      <div class="card rise d2"><div class="row between"><span class="eyebrow" style="flex:1">Reto del mes</span><span class="tag${st.flags.retoDone?' solid':''}" style="margin-left:12px">${st.flags.retoDone?'Completo':reto+'/3'}</span></div><div class="ital" style="font-size:19px;margin-top:10px">Crea 3 looks para 3 momentos diferentes</div><div class="progress mt2"><i style="width:${reto/3*100}%"></i></div><p class="small sec mt2">+150 puntos al completarlo. Momentos: ${[...new Set(st.looks.map(l=>occLabel(l.occasion)))].filter(Boolean).join(', ')||'ninguno todavía'}.</p><a class="btn btn-secondary mt" href="#/arma">Armar un look</a></div>
+      <div class="rise d3"><div class="eyebrow">Beneficios</div><div style="margin-top:6px">${DATA.benefits.map(b=>{const ok=st.points>=DATA.levels.find(l=>l.id===b.level).min;return `<div class="list-item"><span class="${ok?'':'sec'}">${ICONS.svg(ok?'check':'candado',{size:20})}</span><div class="grow"><span class="ttl">${b.name}</span><div class="micro sec" style="letter-spacing:.14em;text-transform:uppercase;font-size:9px">Nivel ${b.level}</div></div><span class="tag">Ilustrativo</span></div>`;}).join('')}</div></div>
+      <style>.panel.nocorner{border-radius:0}</style></div>`;
+  },
+  olfato(){
+    const st = STORE.state; const regs = st.olfactory; const sel = st.compareSel||[];
+    const regByFrag = id => regs.filter(r=>r.fragranceId===id);
+    return `<div class="screen">
+      ${C.topbar()}
+      ${C.subnav('olfato')}
+      <div class="rise"><h1 class="h1">Explora tu esencia</h1><p class="ital sec" style="font-size:18px">El detalle final de tu Total Look</p></div>
+      <div class="steps rise d1" aria-label="Pasos en tienda"><div class="step"><b>1</b>Elige</div><div class="step"><b>2</b>Rocía</div><div class="step"><b>3</b>Espera</div><div class="step"><b>4</b>Registra</div></div>
+      <div class="rise d2"><div class="eyebrow">Fragancias Vélez</div><div style="margin-top:6px">${DATA.fragrances.map(f=>{const r=regByFrag(f.id);return `<div class="list-item"><span class="sec">${ICONS.svg('frasco',{size:20})}</span><div class="grow"><span class="ttl serif" style="font-size:18px;letter-spacing:.04em">${f.name}</span><div class="micro sec" style="letter-spacing:.12em;text-transform:uppercase;font-size:9px">${DATA.fragTypes[f.type]}${f.audience?' · '+f.audience:''}${r.length?` · tira ${r[r.length-1].strip} · intensidad ${r[r.length-1].intensity}/5`:''}</div></div><button class="chip sm" data-act="registrar" data-arg="${f.id}">${r.length?'Otra prueba':'Registrar'}</button><button class="icon-btn" data-act="fragToLook" data-arg="${f.id}" aria-label="Agregar ${f.name} a mi look">${ICONS.svg('mas',{size:18})}</button></div>`;}).join('')}</div></div>
+      ${regs.length?`<div><div class="row between"><span class="eyebrow" style="flex:1">Mis registros</span><span class="micro sec" style="margin-left:12px">Elige 2 o 3</span></div><div style="margin-top:6px">${regs.slice().reverse().map((r,i)=>{const idx=regs.length-1-i;const f=fragById[r.fragranceId];const on=sel.includes(idx);return `<button class="list-item" style="width:100%;text-align:left" data-act="compareSel" data-arg="${idx}" aria-pressed="${on}"><span class="chip sw${on?' on':''}" style="height:26px;width:26px;border-color:var(--grafito-40)">${on?ICONS.svg('check',{size:14}):''}</span><div class="grow"><span class="ttl">${f.name}</span><div class="micro sec">Tira ${r.strip} · intensidad ${r.intensity}/5 · ${r.liked==='si'?'me gustó':r.liked==='talvez'?'tal vez':'no'} · ${r.feelings.join(', ')||'sin sensaciones'} · ${fmtDate(r.date)}</div></div></button>`;}).join('')}</div>
+        <button class="btn btn-secondary mt" data-act="compare" ${sel.length>=2?'':'disabled'}>${ICONS.svg('comparar',{size:18})}Comparar (${sel.length})</button></div>`:''}
+      <p class="micro sec center ital" style="font-size:14px">Estas son tus impresiones, no una descripción oficial.</p></div>`;
+  },
+  tienda(){
+    const st = STORE.state; const visited = st.lastQrVisit===today();
+    return `<div class="screen">
+      ${C.topbar()}
+      ${C.subnav('tienda')}
+      <div class="bleed rise">${ART.panel(`<span class="up" style="opacity:.7">Tienda piloto</span><div class="h1" style="font-size:26px;margin-top:6px">Vélez Centro Chía</div><div class="row" style="gap:6px;opacity:.75;margin-top:6px">${ICONS.svg('pin',{size:14})}<span class="micro" style="letter-spacing:.14em;text-transform:uppercase;font-size:9px">Mapa esquemático · sin dirección</span></div>`,{seed:6,height:180,image:'tienda',cls:'nocorner'})}</div>
+      <div class="card rise d1">
+        <svg class="mapsvg" viewBox="0 0 320 180" role="img" aria-label="Mapa esquemático de la tienda: Fly Up, Perfumería, Marroquinería y Caja" fill="none" stroke="#111" stroke-width="1" stroke-linejoin="round">
+          <rect x="4" y="4" width="312" height="172" fill="#fff"/>
+          <rect x="20" y="20" width="150" height="80" fill="#111"/><text x="95" y="65" fill="#F4F1EC" font-family="Cormorant Garamond, Georgia, serif" font-size="17" letter-spacing="3" text-anchor="middle" stroke="none">FLY UP</text>
+          <rect x="186" y="20" width="114" height="80" fill="#F4F1EC"/><text x="243" y="65" fill="#111" font-family="Cormorant Garamond, Georgia, serif" font-size="15" letter-spacing="2" text-anchor="middle" stroke="none">PERFUMERÍA</text>
+          <rect x="20" y="116" width="200" height="44" fill="#F4F1EC"/><text x="120" y="143" fill="#111" font-family="Cormorant Garamond, Georgia, serif" font-size="15" letter-spacing="2" text-anchor="middle" stroke="none">MARROQUINERÍA</text>
+          <rect x="236" y="116" width="64" height="44" fill="#F4F1EC"/><text x="268" y="143" fill="#111" font-family="Cormorant Garamond, Georgia, serif" font-size="15" letter-spacing="2" text-anchor="middle" stroke="none">CAJA</text>
+          <path d="M160 176v-16" stroke-dasharray="3 3"/><text x="160" y="171" font-size="7" letter-spacing="1.5" fill="#3A3F48" stroke="none" text-anchor="middle" font-family="Jost, sans-serif">ENTRADA</text></svg>
+        <p class="micro sec mt2" style="letter-spacing:.1em;text-transform:uppercase;font-size:9px">Zonas · trabajo de campo del equipo</p></div>
+      <button class="btn btn-primary rise d2" data-act="qr">${ICONS.svg('qr',{size:18})}${visited?'Visita de hoy registrada':'Escanear QR de visita'}</button>
+      <button class="btn btn-secondary rise d2" data-act="llevar">${ICONS.svg('tienda',{size:18})}Llevar mi look a la tienda</button>
+      <a class="btn btn-ghost rise d3" href="https://www.velez.com.co/flyup" target="_blank" rel="noopener"><span>Web oficial de Fly Up</span> ${ICONS.svg('externo',{size:14})}</a>
+      <style>.panel.nocorner{border-radius:0}</style></div>`;
+  },
+  perfil(){
+    const st = STORE.state; const q = st.quiz;
+    return `<div class="screen">
+      ${C.topbar({back:true,noProfile:true,title:'Perfil'})}
+      <div class="row rise" style="gap:16px">${C.mono(72)}<div class="grow"><div class="h2">${esc(st.avatar.name)||'Sin nombre'}</div><span class="ital sec" style="font-size:16px">${q?DATA.profiles[q.profile].title+' · Elegancia '+q.elegance+' %':'Sin fórmula todavía'}</span></div></div>
+      <div class="rise d1">
+        <a class="list-item" href="#/avatar">${ICONS.svg('editar',{size:20})}<span class="grow ttl">Editar perfil</span>${ICONS.svg('der',{size:18})}</a>
+        <a class="list-item" href="#/quiz/1" data-act="repeatQuiz">${ICONS.svg('destello',{size:20})}<span class="grow ttl">${q?'Repetir el quiz':'Hacer el quiz de estilo'}</span>${ICONS.svg('der',{size:18})}</a>
+        ${q?`<a class="list-item" href="#/formula">${ICONS.svg('vuelo',{size:20})}<span class="grow ttl">Ver mi fórmula personal</span>${ICONS.svg('der',{size:18})}</a>`:''}
+        <button class="list-item" style="width:100%;text-align:left" data-act="acerca">${ICONS.svg('info',{size:20})}<span class="grow ttl">Acerca de</span>${ICONS.svg('der',{size:18})}</button>
+      </div>
+      <p class="micro sec rise d2" style="letter-spacing:.1em;text-transform:uppercase;font-size:9px">${STORE.memoryOnly?'En este modo tu progreso no se guarda.':'Tu progreso se guarda solo en este navegador.'}</p>
+      <div class="push"></div>
+      <button class="btn btn-secondary" data-act="reset">${ICONS.svg('reiniciar',{size:18})}Reiniciar demo</button></div>`;
+  }
+};
+
+/* =====================================================================
+   HOJAS (P6 ficha, guardar, comunidad, olfato, tienda, acerca de)
+   ===================================================================== */
+const SHEETS = {
+  ficha(p){
+    const combos = LOGIC.combinesWith(p);
+    UI.sheet(`<div class="prod-hero">${BOARD.thumb(p,120)||ICONS.product(p,96)}</div>
+      <div><h2 class="h2">${esc(p.name)}</h2><div class="chips mt2"><span class="tag">${LINES[p.line]}</span><span class="tag">${zoneLabel(p.zone)}</span><span class="tag"><span style="width:9px;height:9px;border-radius:50%;background:${p.color.hex};border:1px solid rgba(0,0,0,.25);margin-right:6px;display:inline-block"></span>${p.color.name}</span><span class="tag cognac">Producto ilustrativo</span></div></div>
+      <div class="fbar"><div class="lab"><span>Aporta Elegancia ${p.e}</span><span>Urbano ${100-p.e}</span></div><div class="bar"><i style="width:${p.e}%"></i></div></div>
+      <div><span class="up sec">Combina con</span><div class="grid3 mt2">${combos.map(q=>`<button class="combo" data-act="openFicha" data-arg="${q.id}">${BOARD.thumb(q,40)||ICONS.product(q,32)}<span>${esc(q.short)}</span><span class="micro sec">${LINES[q.line]}</span></button>`).join('')}</div></div>
+      <button class="btn btn-primary" data-act="poner" data-arg="${p.id}">Poner en mi look</button>
+      <div class="btn-row"><a class="btn btn-ghost" href="#/tienda" data-act="closeSheetLink">Ver en tienda</a><button class="btn btn-ghost" data-act="closeSheet">Cerrar</button></div>`,{label:'Ficha de producto'});
+  },
+  guardar(){
+    const d = STORE.state.draft;
+    const sug = d.occasion ? `Look de ${occLabel(d.occasion).toLowerCase()}` : `Look ${STORE.state.seq}`;
+    UI.sheet(`<h2 class="h2">${d.editing?'Actualizar look':'Guardar mi look'}</h2>
+      <div><label class="lbl" for="lookname">Nombre (opcional)</label><input id="lookname" class="input" maxlength="28" placeholder="${esc(sug)}" value="${esc(d.name||'')}"></div>
+      <button class="btn btn-primary" data-act="saveLook">Guardar</button>
+      <button class="btn btn-ghost" data-act="closeSheet">Cancelar</button>`,{label:'Guardar look',focus:true});
+  },
+  look(look){
+    const st = STORE.state; const ev = LOGIC.evaluate(look.items); const likes = st.likes[look.id]; const count=(look.likes||0)+(likes?1:0);
+    const pieces = DATA.zones.map(z=>look.items[z.id]).filter(Boolean).map(id=>byId[id]);
+    UI.sheet(`<div class="row between"><div><h2 class="h2">${esc(look.name)}</h2><span class="small sec">${look.author?esc(look.author)+' · ':''}${occLabel(look.occasion)}</span></div>${look.id.startsWith('demo_')||look.published?`<button class="like${likes?' on':''}" data-act="like" data-arg="${look.id}" aria-label="Me gusta, ${count}" aria-pressed="${!!likes}">${ICONS.svg('corazon',{size:20})}${count}</button>`:''}</div>
+      ${C.stage(look.items)}
+      ${C.meter(look.items)}
+      <div class="pieces">${pieces.map(p=>`<div><span>${esc(p.name)}</span><span class="sec">${LINES[p.line]} · e ${p.e}</span></div>`).join('')}${look.fragrance?`<div><span>${fragById[look.fragrance].name}</span><span class="sec">Fragancia</span></div>`:''}</div>
+      <button class="btn btn-primary" data-act="tryLook" data-arg="${look.id}">Probar este look</button>
+      <button class="btn btn-ghost" data-act="closeSheet">Cerrar</button>`,{label:'Look'});
+  },
+  registrar(){
+    const f = STORE.state.olfForm; const fr = fragById[f.fragranceId];
+    const chip = (on,act,arg,txt)=>`<button class="chip${on?' on':''}" data-act="${act}" data-arg="${arg}" aria-pressed="${on}">${txt}</button>`;
+    UI.sheet(`<div><span class="up sec">Registrar prueba</span><h2 class="h2">${fr.name} · ${DATA.fragTypes[fr.type]}</h2></div>
+      <div><label class="lbl" for="strip">Número de la tira</label><input id="strip" class="input" type="number" inputmode="numeric" min="1" max="99" value="${f.strip||''}" placeholder="Ej. 3"></div>
+      <div><label class="lbl">Intensidad</label><div class="chips">${[1,2,3,4,5].map(i=>chip(f.intensity===i,'olfInt',i,i)).join('')}</div></div>
+      <div><label class="lbl">¿Te gustó?</label><div class="chips">${[['si','Sí'],['talvez','Tal vez'],['no','No']].map(o=>chip(f.liked===o[0],'olfLiked',o[0],o[1])).join('')}</div></div>
+      <div><label class="lbl">Sensaciones (hasta 3)</label><div class="chips">${DATA.feelings.map(s=>chip(f.feelings.includes(s),'olfFeel',s,s)).join('')}</div></div>
+      <button class="btn btn-primary" data-act="saveOlf">Guardar registro</button>
+      <p class="micro sec center">Estas son tus impresiones, no una descripción oficial.</p>`,{label:'Registrar fragancia'});
+  },
+  compare(){
+    const st = STORE.state; const regs = (st.compareSel||[]).map(i=>st.olfactory[i]).filter(Boolean);
+    UI.sheet(`<h2 class="h2">Comparar</h2>
+      <div class="compare" style="grid-template-columns:repeat(${regs.length},1fr)">${regs.map(r=>{const f=fragById[r.fragranceId];return `<div class="col"><b>${f.name}</b><span class="micro sec">${DATA.fragTypes[f.type]} · tira ${r.strip}</span><span class="micro sec mt2">Intensidad</span><div class="scale" aria-label="Intensidad ${r.intensity} de 5">${[1,2,3,4,5].map(i=>`<i class="${i<=r.intensity?'on':''}"></i>`).join('')}</div><span class="micro sec mt2">¿Te gustó?</span><b style="font-size:16px;font-family:var(--font-text);font-weight:600">${r.liked==='si'?'Sí':r.liked==='talvez'?'Tal vez':'No'}</b><span class="micro sec mt2">Sensaciones</span><span>${r.feelings.join(', ')||'—'}</span></div>`;}).join('')}</div>
+      <p class="micro sec center">Tus impresiones, lado a lado.</p>
+      <button class="btn btn-ghost" data-act="closeSheet">Cerrar</button>`,{label:'Comparar fragancias'});
+  },
+  qr(){
+    UI.sheet(`<div class="center stack"><div class="avatar-wrap">${ICONS.svg('qr',{size:120})}</div><h2 class="h2">QR de visita</h2><p class="small sec">Simulación: en la tienda, el QR está junto a la exhibición Fly Up. Suma 80 puntos una vez por día.</p></div>
+      <button class="btn btn-primary" data-act="qrConfirm">Confirmar visita</button>
+      <button class="btn btn-ghost" data-act="closeSheet">Cancelar</button>`,{label:'QR de visita'});
+  },
+  llevar(){
+    const st = STORE.state; const looks = st.looks.slice().reverse();
+    const draftN = LOGIC.evaluate(st.draft.items).n;
+    UI.sheet(`<h2 class="h2">¿Qué look llevas?</h2>
+      <div>${draftN?`<button class="list-item" style="width:100%;text-align:left" data-act="bigLook" data-arg="draft">${ICONS.svg('mas')}<span class="grow">Look que estoy armando (${draftN} piezas)</span>${ICONS.svg('der')}</button>`:''}
+      ${looks.map(l=>`<button class="list-item" style="width:100%;text-align:left" data-act="bigLook" data-arg="${l.id}">${ICONS.svg('morral')}<span class="grow">${esc(l.name)} <span class="micro sec">· ${occLabel(l.occasion)}</span></span>${ICONS.svg('der')}</button>`).join('')}</div>
+      ${!looks.length&&!draftN?`<p class="sec center">Aún no tienes looks. <a class="link" href="#/arma" data-act="closeSheetLink">Arma el primero</a>.</p>`:''}
+      <button class="btn btn-ghost" data-act="closeSheet">Cancelar</button>`,{label:'Llevar mi look'});
+  },
+  bigLook(look){
+    const pieces = DATA.zones.map(z=>look.items[z.id]).filter(Boolean).map(id=>byId[id]);
+    UI.sheet(`<div class="big-look"><span class="up sec">Para el asesor</span><div class="eqline">${LOGIC.shortEq(look.items)}</div>${C.stage(look.items)}${C.meter(look.items)}
+      <div class="pieces">${pieces.map(p=>`<div><span>${esc(p.name)}</span><span class="sec">${p.color.name}</span></div>`).join('')}${look.fragrance?`<div><span>${fragById[look.fragrance].name}</span><span class="sec">Fragancia</span></div>`:''}</div></div>
+      <button class="btn btn-secondary" data-act="closeSheet">Cerrar</button>`,{label:'Mi look en la tienda'});
+  },
+  acerca(){
+    UI.sheet(`<h2 class="h2">Acerca de</h2>
+      <p class="small">VÉLEZ UP es un prototipo académico de <b>Gestión del Diseño 2 · Taller 5</b>: la app de estilismo digital de Fly Up bajo el concepto <b>Elegancia + Urbano = Tendencia</b>.</p>
+      <p class="small sec">Los productos son ilustrativos y no tienen precio; las fragancias muestran solo nombre y tipo, y las sensaciones las registra cada persona. No hay servidor ni cuentas: todo se guarda en este navegador.</p>
+      <p class="small sec">Tipografía: Bebas Neue para titulares y <b>Jost</b> (Google Fonts) como sustituto visual de Glacial Indifference.</p>
+      <p class="small sec">No es una app comercial ni oficial, ni está conectada al inventario real de Vélez. Los nombres Vélez y Fly Up se usan solo como referencia académica, sin afiliación con la marca.</p>
+      <button class="btn btn-secondary" data-act="closeSheet">Cerrar</button>`,{label:'Acerca de'});
+  }
+};
+
+/* =====================================================================
+   TARJETA PARA COMPARTIR (canvas 1080 × 1920)
+   ===================================================================== */
+const CARD = {
+  blob:null, forId:null,
+  async make(look){
+    try{ await document.fonts.ready; }catch(e){}
+    const c = document.createElement('canvas'); c.width=1080; c.height=1920; const x = c.getContext('2d');
+    x.fillStyle='#F4F1EC'; x.fillRect(0,0,1080,1920);
+    x.fillStyle='#111111'; x.font='500 64px "Cormorant Garamond", Georgia, serif'; x.textBaseline='alphabetic'; x.letterSpacing='18px'; x.fillText('VÉLEZ',80,150); const wmW=x.measureText('VÉLEZ').width; x.letterSpacing='6px'; x.font='500 22px Jost, system-ui, sans-serif'; x.fillStyle='#3A3F48'; x.fillText('UP',80+wmW+22,150); x.letterSpacing='0px';
+    x.font='500 22px Jost, system-ui, sans-serif'; x.fillStyle='#3A3F48'; x.textAlign='right'; x.letterSpacing='4px'; x.fillText('PROTOTIPO · PRODUCTOS ILUSTRATIVOS',1000,146); x.textAlign='left'; x.letterSpacing='0px';
+    x.strokeStyle='#111111'; x.lineWidth=2; x.beginPath(); x.moveTo(80,190); x.lineTo(1000,190); x.stroke();
+    // tablero del look
+    x.fillStyle='#EBE7E0'; x.fillRect(80,220,920,1080);
+    const svg = BOARD.render(look.items, {width:810,height:1080});
+    await new Promise(res=>{ const img=new Image(); const url=URL.createObjectURL(new Blob([svg],{type:'image/svg+xml;charset=utf-8'})); img.onload=()=>{ x.drawImage(img,135,220,810,1080); URL.revokeObjectURL(url); res(); }; img.onerror=()=>res(); img.src=url; });
+    // ecuación
+    const ev = LOGIC.evaluate(look.items);
+    x.fillStyle='#111111'; x.textAlign='center'; x.font='500 52px "Cormorant Garamond", Georgia, serif'; x.letterSpacing='6px';
+    const words = LOGIC.shortEq(look.items).split(' '); let line='', y=1380; const lines=[];
+    for(const w of words){ const t=(line?line+' ':'')+w; if(x.measureText(t).width>920&&line){ lines.push(line); line=w; } else line=t; } if(line) lines.push(line);
+    lines.slice(0,3).forEach((l,i)=>x.fillText(l,540,y+i*62));
+    y += lines.length*62 + 16;
+    // medidor
+    x.font='500 30px "Cormorant Garamond", Georgia, serif'; x.letterSpacing='5px'; x.fillText(`ELEGANCIA ${ev.elegance} % + URBANO ${ev.urban} % = ${ev.trend?'TENDENCIA':'EN CAMINO'}`,540,y+40);
+    x.fillStyle='rgba(58,63,72,.4)'; x.fillRect(80,y+66,920,6); x.fillStyle='#111111'; x.fillRect(80,y+66,920*ev.elegance/100,6);
+    // tagline
+    x.fillStyle='#111111'; x.font='500 66px "Cormorant Garamond", Georgia, serif'; x.letterSpacing='8px'; x.fillText('TU ESTILO TOMA VUELO',540,1760);
+    x.font='400 28px Jost, system-ui, sans-serif'; x.fillStyle='#3A3F48'; x.letterSpacing='4px'; x.fillText('#TuEstiloTomaVuelo',540,1822); x.letterSpacing='0px';
+    x.strokeStyle='#111111'; x.lineWidth=3; x.lineCap='round'; x.beginPath(); x.moveTo(504,1700); x.bezierCurveTo(528,1678,560,1668,596,1664); x.bezierCurveTo(580,1670,570,1679,567,1690); x.stroke();
+    this.forId = look.id;
+    const img = document.getElementById('cardimg'); if(img){ img.src = c.toDataURL('image/png'); }
+    this.blob = await new Promise(res=>c.toBlob(res,'image/png'));
+    const btn = document.getElementById('sharebtn');
+    if(btn){ btn.disabled=false; const canShare = !!(navigator.canShare && this.blob && navigator.canShare({files:[new File([this.blob],'look.png',{type:'image/png'})]})); const embedded = (()=>{ try{ return window.self!==window.top; }catch(e){ return true; } })(); let mode = (canShare && !embedded) ? 'share' : (embedded ? 'save' : 'download');
+      if(embedded && !this.dl && window.claude && window.claude.use){ try{ this.dl = await window.claude.use('downloads'); }catch(e){ this.dl = null; } }
+      if(embedded && this.dl) mode = 'claude';
+      btn.querySelector('span').textContent = mode==='share'?'Compartir':'Guardar imagen'; btn.dataset.mode = mode; }
+  },
+  share(){
+    if(!this.blob) return;
+    const file = new File([this.blob],'velez-up-look.png',{type:'image/png'});
+    const btn = document.getElementById('sharebtn');
+    const award = () => { const st=STORE.state; if(!st.flags.shared){ st.flags.shared=true; STORE.save(); POINTS.add(DATA.points.share,'primer look compartido'); } };
+    if(btn && btn.dataset.mode==='share'){
+      navigator.share({files:[file],title:'Mi look VÉLEZ UP',text:'Tu estilo toma vuelo · #TuEstiloTomaVuelo'}).then(award).catch(()=>{});
+    } else if(btn && btn.dataset.mode==='claude' && this.dl){
+      this.dl.save({filename:'velez-up-look.png', data:this.blob}).then(()=>{ UI.toast('Imagen guardada'); award(); }).catch(e=>{ const c=e&&e.code; if(c==='declined') return; if(c==='rate_limited'){ UI.toast('Espera un momento e inténtalo de nuevo'); return; } btn.dataset.mode='save'; UI.toast('Mantén presionada la imagen para guardarla'); });
+    } else if(btn && btn.dataset.mode==='save'){
+      UI.toast('Mantén presionada la imagen para guardarla'); setTimeout(award, 2700);
+    } else {
+      const a=document.createElement('a'); a.href=URL.createObjectURL(this.blob); a.download='velez-up-look.png'; document.body.appendChild(a); a.click(); a.remove(); award();
+    }
+  }
+};
+
+/* =====================================================================
+   ACCIONES
+   ===================================================================== */
+const ACTIONS = {
+  go(a){ ROUTER.go(a); },
+  back(){ ROUTER.back(); },
+  closeSheet(){ UI.closeSheet(); },
+  closeSheetLink(){ UI.closeSheet(); },
+  confirmYes(){ UI.confirmAnswer(true); },
+  confirmNo(){ UI.confirmAnswer(false); },
+  skipAvatar(){ const st=STORE.state; st.onboarded=true; STORE.save(); ROUTER.go('/descubre'); },
+  avGender(a){ const st=STORE.state; if(st.avatar.gender!==a){ st.draft.items={}; st.draft.editing=null; if(st.quiz) delete st.quiz.recommended; } st.avatar.gender=a; STORE.save(); render(); },
+  avatarNext(){ const st=STORE.state; if(!st.avatar.gender){ UI.toast('Elige Mujer u Hombre'); return; } STORE.save(); if(st.onboarded){ UI.toast('Perfil guardado'); ROUTER.go('/perfil'); } else { st.quizTmp=[]; STORE.save(); ROUTER.go('/quiz/1'); } },
+  quizBack(a){ const n=+a; if(n>1) ROUTER.go('/quiz/'+(n-1)); else ROUTER.back(); },
+  quizAnswer(a){
+    const [n,i] = a.split(':').map(Number); const st=STORE.state;
+    st.quizTmp = st.quizTmp||[]; st.quizTmp[n-1]=i; STORE.save();
+    const el = document.querySelector(`[data-arg="${a}"]`); if(el) el.classList.add('on');
+    setTimeout(()=>{
+      if(n<5){ ROUTER.go('/quiz/'+(n+1)); return; }
+      const res = LOGIC.quizResult(st.quizTmp); st.quiz = res; st.onboarded = true; st.quizTmp=[];
+      if(!st.draft.occasion) st.draft.occasion = res.occasion;
+      STORE.save();
+      ROUTER.go('/formula');
+      if(!st.flags.quizDone){ st.flags.quizDone=true; STORE.save(); setTimeout(()=>{ POINTS.add(DATA.points.quiz,'fórmula descubierta'); POINTS.badge('formula'); },400); }
+    }, 220);
+  },
+  repeatQuiz(){ STORE.state.quizTmp=[]; STORE.save(); },
+  armarRecomendado(){ const q=STORE.state.quiz; if(!q){ ROUTER.go('/quiz/1'); return; } loadDraft({items:recLook(),occasion:q.occasion}); ROUTER.go('/arma'); },
+  category(a){ if(a==='olfato'){ ROUTER.go('/olfato'); return; } STORE.state.focusZone=a; ROUTER.go('/arma'); },
+  addPiece(a){ const p=byId[a]; STORE.state.draft.items[p.zone]=p.id; STORE.save(); UI.toast(`${p.short} en tu look`); ROUTER.go('/arma'); },
+  tryLook(a){ const l=findLook(a); if(!l) return; UI.closeSheet(); loadDraft(l); ROUTER.go('/arma'); },
+  openLook(a){ const l=findLook(a); if(l) SHEETS.look(l); },
+  like(a){ const st=STORE.state; st.likes[a]=!st.likes[a]; STORE.save(); if(UI.isOpen()){ const l=findLook(a); if(l) SHEETS.look(l); } render(); },
+  filterOcc(a){ const st=STORE.state; st.filter=Object.assign({occ:null,trend:false},st.filter,{occ:a||null}); render(); },
+  filterTrend(){ const st=STORE.state; st.filter=Object.assign({occ:null,trend:false},st.filter); st.filter.trend=!st.filter.trend; render(); },
+  setOcc(a){ const d=STORE.state.draft; d.occasion = d.occasion===a?null:a; STORE.save(); render(); },
+  zonePrev(a){ cycleZone(a,-1); }, zoneNext(a){ cycleZone(a,1); },
+  fragPrev(){ cycleFrag(-1); }, fragNext(){ cycleFrag(1); },
+  openFicha(a){ const p=byId[a]; if(p) SHEETS.ficha(p); },
+  poner(a){ const p=byId[a]; const st=STORE.state; st.draft.items[p.zone]=p.id; STORE.save(); UI.closeSheet(); UI.toast(`${p.short} puesto en tu look`); if(ROUTER.parse().parts[0]!=='arma') ROUTER.go('/arma'); else render(); },
+  ruleta(){ runRuleta(STORE.state.draft.occasion); },
+  ruletaOcc(a){ const st=STORE.state; st.draft.occasion=a; st.draft.editing=null; st.draft.name=''; STORE.save(); if(ROUTER.parse().parts[0]!=='arma'){ ROUTER.go('/arma'); } runRuleta(a); },
+  limpiar(){ const st=STORE.state; st.draft.items={}; st.draft.fragrance=null; st.draft.editing=null; st.draft.name=''; STORE.save(); render(); },
+  guardar(){ const ev=LOGIC.evaluate(STORE.state.draft.items); if(!ev.n){ UI.toast('Elige al menos una pieza'); return; } SHEETS.guardar(); },
+  saveLook(){
+    const st=STORE.state, d=st.draft; const input=document.getElementById('lookname');
+    const ev=LOGIC.evaluate(d.items);
+    const name=(input&&input.value.trim()) || (d.occasion?`Look de ${occLabel(d.occasion).toLowerCase()}`:`Look ${st.seq}`);
+    let look;
+    if(d.editing && st.looks.some(l=>l.id===d.editing)){
+      look = st.looks.find(l=>l.id===d.editing);
+      Object.assign(look,{name,occasion:d.occasion,items:Object.assign({},d.items),fragrance:d.fragrance,elegance:ev.elegance,trend:ev.trend});
+      STORE.save(); UI.closeSheet(); UI.toast('Look actualizado');
+    } else {
+      look={id:'lk_'+(st.seq++),name,occasion:d.occasion,items:Object.assign({},d.items),fragrance:d.fragrance,elegance:ev.elegance,trend:ev.trend,published:false,createdAt:new Date().toISOString()};
+      st.looks.push(look); STORE.save(); UI.closeSheet();
+      const first=!st.flags.firstLook;
+      if(first){ st.flags.firstLook=true; STORE.save(); }
+      POINTS.add(first?DATA.points.firstLook:DATA.points.saveLook, first?'primer Total Look':'look guardado');
+      if(first) POINTS.badge('primer-look');
+      if(ev.trend){ setTimeout(()=>{ POINTS.add(DATA.points.trendLook,'look en Tendencia'); POINTS.badge('tendencia'); },1200); }
+      POINTS.checkReto();
+    }
+    st.draft={items:{},occasion:d.occasion,fragrance:null,name:'',editing:null}; STORE.save();
+    ROUTER.go('/guardado/'+look.id);
+  },
+  armarOtro(){ const st=STORE.state; st.draft={items:{},occasion:st.draft.occasion,fragrance:null,name:'',editing:null}; STORE.save(); ROUTER.go('/arma'); },
+  editLook(a){ const l=findLook(a); if(!l) return; loadDraft(l,l.id); ROUTER.go('/arma'); },
+  publishLook(a){
+    const st=STORE.state; const l=st.looks.find(x=>x.id===a); if(!l) return;
+    l.published=!l.published; STORE.save(); render();
+    if(l.published){ POINTS.add(DATA.points.publish,'publicado en Comunidad'); if(!st.flags.firstPublish){ st.flags.firstPublish=true; STORE.save(); POINTS.badge('comunidad'); } }
+    else UI.toast('Look retirado de Comunidad');
+  },
+  async deleteLook(a){
+    const st=STORE.state; const l=st.looks.find(x=>x.id===a); if(!l) return;
+    const ok = await UI.confirm({title:'¿Borrar este look?',text:`«${esc(l.name)}» se elimina de tu armario. Los puntos ganados se conservan.`,ok:'Borrar',danger:true});
+    if(ok){ st.looks=st.looks.filter(x=>x.id!==a); STORE.save(); UI.toast('Look borrado'); render(); }
+  },
+  share(){ CARD.share(); },
+  registrar(a){ STORE.state.olfForm={fragranceId:a,strip:'',intensity:0,liked:'',feelings:[]}; SHEETS.registrar(); },
+  olfInt(a){ keepStrip(); STORE.state.olfForm.intensity=+a; SHEETS.registrar(); },
+  olfLiked(a){ keepStrip(); STORE.state.olfForm.liked=a; SHEETS.registrar(); },
+  olfFeel(a){ keepStrip(); const f=STORE.state.olfForm; if(f.feelings.includes(a)) f.feelings=f.feelings.filter(x=>x!==a); else if(f.feelings.length<3) f.feelings.push(a); else { UI.toast('Máximo 3 sensaciones'); return; } SHEETS.registrar(); },
+  saveOlf(){
+    keepStrip(); const st=STORE.state, f=st.olfForm;
+    if(!f.strip){ UI.toast('Escribe el número de la tira'); return; }
+    if(!f.intensity){ UI.toast('Elige la intensidad'); return; }
+    if(!f.liked){ UI.toast('¿Te gustó? Elige una opción'); return; }
+    st.olfactory.push({fragranceId:f.fragranceId,strip:+f.strip,intensity:f.intensity,liked:f.liked,feelings:f.feelings.slice(),date:today()});
+    st.olfForm=null; UI.closeSheet();
+    if(st.flags.fragCount<5){ st.flags.fragCount++; STORE.save(); POINTS.add(DATA.points.fragrance,'fragancia registrada'); } else { STORE.save(); UI.toast('Registro guardado'); }
+    if(new Set(st.olfactory.map(r=>r.fragranceId)).size>=3) POINTS.badge('olfativo');
+    render();
+  },
+  compareSel(a){ const st=STORE.state; let s=st.compareSel||[]; const i=+a; if(s.includes(i)) s=s.filter(x=>x!==i); else if(s.length<3) s.push(i); else { UI.toast('Compara hasta 3 fragancias'); return; } st.compareSel=s; render(); },
+  compare(){ SHEETS.compare(); },
+  fragToLook(a){ const st=STORE.state; st.draft.fragrance=a; STORE.save(); UI.toast(`${fragById[a].name} es el detalle final de tu look`); ROUTER.go('/arma'); },
+  qr(){ if(STORE.state.lastQrVisit===today()){ UI.toast('Ya registraste tu visita de hoy'); return; } SHEETS.qr(); },
+  qrConfirm(){ const st=STORE.state; UI.closeSheet(); if(st.lastQrVisit===today()){ UI.toast('Ya registraste tu visita de hoy'); return; } st.lastQrVisit=today(); STORE.save(); POINTS.add(DATA.points.qr,'visita a la tienda'); POINTS.badge('tienda'); render(); },
+  llevar(){ SHEETS.llevar(); },
+  bigLook(a){ const st=STORE.state; const l = a==='draft' ? {items:st.draft.items,fragrance:st.draft.fragrance} : findLook(a); if(l) SHEETS.bigLook(l); },
+  acerca(){ SHEETS.acerca(); },
+  async reset(){
+    const ok = await UI.confirm({title:'¿Reiniciar la demo?',text:'Se borra tu avatar, tu fórmula, tus looks, registros y puntos de este navegador.',ok:'Reiniciar',danger:true});
+    if(ok){ STORE.reset(); UI.toast('Demo reiniciada'); ROUTER.go('/bienvenida'); }
+  }
+};
+function runRuleta(occasion){
+  const veil=document.getElementById('veil'); const st=STORE.state;
+  veil.innerHTML=`<div class="art">${ART.topo(Math.floor(Math.random()*9)+1,10)}</div><div class="txt"><div class="ital">Armando tu look…</div><span class="up">${occasion?occLabel(occasion):'Elegancia + Urbano'}</span><div class="line"></div></div>`;
+  veil.classList.add('show'); veil.setAttribute('aria-hidden','false');
+  setTimeout(()=>{ const items=LOGIC.roulette(occasion); if(items){ st.draft.items=items; STORE.save(); } render(); const sc=document.querySelector('.screen'); if(sc) sc.scrollTop=0; }, 450);
+  setTimeout(()=>{ veil.classList.remove('show'); veil.setAttribute('aria-hidden','true'); }, 1250);
+}
+function keepStrip(){ const i=document.getElementById('strip'); if(i && STORE.state.olfForm) STORE.state.olfForm.strip=i.value; }
+function cycleZone(zone, dir){
+  const st=STORE.state, d=st.draft;
+  const all = LOGIC.pool().filter(p=>p.zone===zone);
+  const m = d.occasion ? all.filter(p=>p.occasions.includes(d.occasion)) : all;
+  const rest = all.filter(p=>!m.includes(p));
+  const order = [null, ...m.map(p=>p.id), ...rest.map(p=>p.id)];
+  const cur = order.indexOf(d.items[zone]||null);
+  const next = order[(cur+dir+order.length)%order.length];
+  if(next) d.items[zone]=next; else delete d.items[zone];
+  STORE.save(); render();
+  const row=document.querySelector(`.zone-row[data-zone="${zone}"]`); if(row){ row.classList.add(dir>0?'flash':'flashR'); }
+}
+function cycleFrag(dir){
+  const d=STORE.state.draft; const order=[null,...DATA.fragrances.map(f=>f.id)];
+  const cur=order.indexOf(d.fragrance||null); d.fragrance=order[(cur+dir+order.length)%order.length]; STORE.save(); render();
+}
+
+/* =====================================================================
+   RENDER + eventos + arranque
+   ===================================================================== */
+let lastPath = null;
+function render(){
+  const st = STORE.state; const r = ROUTER.parse();
+  if(!r.parts.length){ ROUTER.replace(st.onboarded?'/descubre':'/bienvenida'); return; }
+  const [name, arg] = r.parts;
+  if(name==='arma' && r.query.look){ const l=findLook(r.query.look); if(l){ if(!st.onboarded){ st.onboarded=true; } loadDraft(l); } ROUTER.replace('/arma'); return; }
+  const view = document.getElementById('view');
+  const old = view.querySelector('.screen'); const keep = lastPath===r.path ? (old?old.scrollTop:0) : 0;
+  const tabFor = {descubre:'descubre',arma:'arma',guardado:'arma',comparte:'comparte',armario:'comparte',compartir:'comparte',vive:'vive',olfato:'vive',tienda:'vive',perfil:null};
+  let html;
+  switch(name){
+    case 'bienvenida': html=SCREENS.bienvenida(); break;
+    case 'avatar': html=SCREENS.avatar(); break;
+    case 'quiz': html=SCREENS.quiz(arg); break;
+    case 'formula': html=SCREENS.formula(); break;
+    case 'descubre': html=SCREENS.descubre(); break;
+    case 'arma': html=SCREENS.arma(); break;
+    case 'guardado': html=SCREENS.guardado(arg); break;
+    case 'comparte': html=SCREENS.comparte(); break;
+    case 'armario': html=SCREENS.armario(); break;
+    case 'compartir': html=SCREENS.compartir(arg); break;
+    case 'vive': html=SCREENS.vive(); break;
+    case 'olfato': html=SCREENS.olfato(); break;
+    case 'tienda': html=SCREENS.tienda(); break;
+    case 'perfil': html=SCREENS.perfil(); break;
+    default: ROUTER.replace(st.onboarded?'/descubre':'/bienvenida'); return;
+  }
+  view.innerHTML = html;
+  const tabbar = document.getElementById('tabbar');
+  const entry = ['bienvenida','avatar','quiz','formula'].includes(name);
+  if(entry){ tabbar.hidden=true; tabbar.innerHTML=''; } else { tabbar.hidden=false; tabbar.innerHTML=C.tabbar(tabFor[name]||null); }
+  const scr = view.querySelector('.screen'); if(scr) scr.scrollTop = keep;
+  if(name==='compartir'){ const l=findLook(arg); if(l) CARD.make(l); }
+  if(name==='arma' && st.focusZone){ const row=document.querySelector(`.zone-row[data-zone="${st.focusZone}"]`); st.focusZone=null; if(row) setTimeout(()=>row.scrollIntoView({block:'center',behavior:'smooth'}),100); }
+  lastPath = r.path;
+}
+document.addEventListener('click', e => {
+  const el = e.target.closest('[data-act]'); if(!el) return;
+  const act = el.dataset.act; if(!ACTIONS[act]) return;
+  if(el.tagName!=='A') e.preventDefault();
+  ACTIONS[act](el.dataset.arg);
+});
+document.addEventListener('input', e => {
+  const el = e.target.closest('[data-input]'); if(!el) return;
+  if(el.dataset.input==='name'){ STORE.state.avatar.name = el.value.slice(0,16); STORE.save(); }
+});
+document.addEventListener('keydown', e => { if(e.key==='Escape' && UI.isOpen()) UI.closeSheet(); });
+window.addEventListener('hashchange', () => { UI.closeSheet(); render(); });
+STORE.load();
+if(STORE.memoryOnly) document.getElementById('banner').classList.add('show');
+render();
+</script>
+</body>
+</html>
