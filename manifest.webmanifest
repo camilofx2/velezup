@@ -1,13 +1,13 @@
 {
-  "name": "Vélez Up Beta",
+  "name": "Vélez Up",
   "short_name": "Vélez Up",
-  "description": "Prototipo universitario de estilismo digital. No es una app oficial de Vélez.",
+  "description": "Prototipo universitario de estilismo digital: crea tu avatar y arma looks. No es una app oficial de Vélez.",
   "lang": "es",
   "start_url": "./",
   "scope": "./",
   "display": "standalone",
-  "background_color": "#111111",
-  "theme_color": "#111111",
+  "background_color": "#FFFBF8",
+  "theme_color": "#FFFBF8",
   "icons": [
     {"src": "icons/icon-192.png", "sizes": "192x192", "type": "image/png"},
     {"src": "icons/icon-512.png", "sizes": "512x512", "type": "image/png"},
