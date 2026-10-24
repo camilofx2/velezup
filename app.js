@@ -136,11 +136,11 @@ const BASIC = {
 const STYLES = [
   {id:'urbano',label:'Urbano',line:'Cómodo, con flow de ciudad.',c:'c-orange'},
   {id:'mixto',label:'Mixto',line:'Mitad calle, mitad clásico.',c:'c-peri'},
-  {id:'elegante',label:'Elegante',line:'Piezas de cuero y siluetas limpias.',c:'c-lime'}
+  {id:'elegante',label:'Elegante',line:'Piezas de cuero y siluetas limpias.',c:'c-ink'}
 ];
 const WHERE = [
-  {id:'casa',label:'Casa',c:'#FFE07A'},{id:'estudio',label:'Estudio / trabajo',c:'#DCE0FF'},{id:'salida',label:'Salida',c:'#FFD9C9'},
-  {id:'evento',label:'Evento',c:'#D8EE6A'},{id:'cita',label:'Cita',c:'#F7B6C9'},{id:'viaje',label:'Viaje',c:'#C9E4D5'},{id:'deporte',label:'Plan activo',c:'#EBE4DD'}
+  {id:'casa',label:'Casa',c:'#E7E4DC'},{id:'estudio',label:'Estudio / trabajo',c:'#E3E5F1'},{id:'salida',label:'Salida',c:'#F3DCDF'},
+  {id:'evento',label:'Evento',c:'#D3D6EA'},{id:'cita',label:'Cita',c:'#EBC9CE'},{id:'viaje',label:'Viaje',c:'#DCD9D0'},{id:'deporte',label:'Plan activo',c:'#FFFFFF'}
 ];
 const whereOf = id => WHERE.find(w => w.id === id) || WHERE[2];
 const FRAGS = ['Ámbar','Índigo','Jade','Beauty','Entropía','Bora','Garden','Ambrosia','Bosco','Acqua','Vera'];
@@ -159,7 +159,7 @@ const BADGES = {
 };
 const PTS = {welcome:50, save:20, trend:30, own:10, share:40, publish:20, aroma:30, reto:150, qr:60};
 const RETO = {title:'3 looks · 3 lugares', month:'Octubre', need:['casa','salida','evento'], text:'Guarda un look para la casa, uno para salir y uno para un evento.'};
-const PALETTE = ['#8E9AFE','#FFD9C9','#D8EE6A','#EBE4DD','#F7B6C9','#FFE07A','#C9E4D5','#DCE0FF'];
+const PALETTE = ['#E3E5F1','#F3DCDF','#E7E4DC','#FFFFFF','#D3D6EA','#EBC9CE','#DCD9D0','#EFEDE7'];
 const HAIR = [null,'#2B2323','#5A3A2A','#B8833E','#E3BE6A','#A6452E','#9A9A9A','#8E9AFE','#E98AB0'];
 const ZONES = [
   {z:'hat',label:'Cabeza'},{z:'glasses',label:'Gafas'},{z:'top',label:'Superior'},{z:'outer',label:'Abrigo'},
@@ -211,6 +211,8 @@ function hairColor(c, main, target) {
 /* ---------------------------------------------------------------------
    AVATAR · compone el SVG desde los kits (ropa ya calzada en Python)
    --------------------------------------------------------------------- */
+/* trazos de trayectoria y vuelo (azul movimiento #1A2055, rojo elegante #9C0720) */
+const FLIGHT = `<svg class="flight" viewBox="0 0 400 520" preserveAspectRatio="none" aria-hidden="true"><path d="M-10 430 C 70 380, 40 250, 120 190 S 300 120, 330 40" fill="none" stroke="#1A2055" stroke-width="2.4" stroke-dasharray="2 9" stroke-linecap="round"/><path d="M410 470 C 330 440, 360 330, 290 280 S 150 220, 170 120" fill="none" stroke="#9C0720" stroke-width="2.4" stroke-linecap="round"/><path d="M161 131 L170 118 L178 133" fill="none" stroke="#9C0720" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/><circle cx="330" cy="40" r="5" fill="#1A2055"/></svg>`;
 const ORDER = ['shoes','bottom','dress','top','belt','outer','bag','head','glasses','hat'];
 const ORDER_TUCK = ['shoes','top','bottom','dress','belt','outer','bag','head','glasses','hat']; // con cinturón la prenda superior va por dentro
 let UID = 0;
@@ -244,7 +246,14 @@ function beltSVG(k, it) {
   return `<rect x="${x0}" y="${y - h / 2}" width="${x1 - x0}" height="${h}" rx="1.2" fill="${c}"/><rect x="${x0}" y="${y + h / 2 - 1}" width="${x1 - x0}" height="1" fill="${dark}"/>` +
     `<rect x="${cx - 3.4}" y="${y - h / 2 - .9}" width="6.8" height="${h + 1.8}" rx="1.3" fill="none" stroke="#D9B45A" stroke-width="1.2"/><rect x="${cx - .5}" y="${y - 1}" width="1" height="2" fill="#D9B45A"/>`;
 }
-/* look = {g, head, skin, hair, items:{zone:id}} ; opt: {view:[x,y,w,h], cls, w, h, only:item} */
+/* proporciones del cuerpo: la ropa vive en el mismo grupo que el cuerpo, así que se adapta sola */
+const FIT_W = [.86, 1.16], FIT_H = [.93, 1.06];
+const LIPS = [null, '#C2566B', '#9C0720', '#E58BA0', '#B5654A', '#7A2E3B'];
+function fitOf(look) { const f = look.fit || {}; return {sx:clamp(+f.w || 1, FIT_W[0], FIT_W[1]), sy:clamp(+f.h || 1, FIT_H[0], FIT_H[1])}; }
+function headDy(k, sy) { return (k.neck - k.base) * (sy - 1); }
+/* marco común para todos los avatares completos (deja espacio a contextura y estatura) */
+function fullView(g) { const k = K[g]; const ex = k.vb[2] * .1, top = k.base * .07; return [-ex, -top, k.vb[2] + 2 * ex, k.vb[3] + top]; }
+/* look = {g, head, skin, hair, fit, expr, lips, items:{zone:id}} ; opt: {view:[x,y,w,h], cls, w, h, only:item} */
 function avatarSVG(look, opt = {}) {
   const g = look.g || 'f', k = K[g]; const u = 'a' + (++UID) + '_';
   const sk = k.skins[look.skin || 0] || k.skins[0]; const head = k.heads[look.head || 0] || k.heads[0];
@@ -253,30 +262,53 @@ function avatarSVG(look, opt = {}) {
   if (zs.has('top') || zs.has('dress') || zs.has('outer')) hide.add('b');
   if (zs.has('bottom') || zs.has('dress')) hide.add('u');
   if (zs.has('shoes')) hide.add('f');
-  const base = f => f === 'S' ? sk[0] : f === 's' ? sk[1] : f[0] === 'H' ? hairColor(f.slice(1), head.hair, look.hair) : f;
-  let body = '';
+  const hairTgt = look.hair || head.hair;
+  const brow = hairTgt ? (() => { const h = toHsl(hairTgt); return toHex(h.h, h.s, clamp(h.l - .06, .05, .6)); })() : null;
+  const base = f => f === 'S' ? sk[0] : f === 's' ? sk[1] : f[0] === 'H' ? hairColor(f.slice(1), head.hair, look.hair)
+    : f[0] === 'W' ? (brow || f.slice(1)) : f[0] === 'L' ? (look.lips || f.slice(1)) : f;
+  const {sx, sy} = opt.only ? {sx:1, sy:1} : fitOf(look);
+  const ex = look.expr != null && look.expr >= 0 ? k.exprs[look.expr] : null;
+  let bodyG = '', headG = '';
   if (!opt.only) {
-    for (const e of k.body) { if (e.length > 3 && hide.has(e[3])) continue; body += `<path d="${e[1]}" fill="${base(e[0])}"/>`; }
+    for (const e of k.body) { if (e.length > 3 && hide.has(e[3])) continue; bodyG += `<path d="${e[1]}" fill="${base(e[0])}"/>`; }
   }
   const order = zs.has('belt') && zs.has('bottom') ? ORDER_TUCK : ORDER;
+  let inHead = false;
   for (const z of order) {
-    if (z === 'head') { if (!opt.only) body += pathsOf(head.p, base, u + 'h', null); continue; }
+    if (z === 'head') {
+      inHead = true; if (opt.only) continue;
+      head.p.forEach((e, i) => {
+        if (ex && i === head.fi) headG += pathsOf(ex.p, base, u + 'x', null);
+        const fl = e[3] || '';
+        if (ex && fl.includes('e')) return;
+        if (zs.has('hat') && fl.includes('t')) return;
+        headG += `<path d="${e[1]}" fill="${base(e[0])}"/>`;
+      });
+      if (ex && head.fi >= head.p.length) headG += pathsOf(ex.p, base, u + 'x', null);
+      continue;
+    }
+    let part = '';
     for (const x of items) {
       if (x.z !== z) continue;
       if (opt.only && x.it.id !== opt.only) continue;
-      if (x.key === 'belt') { body += beltSVG(k, x.it); continue; }
+      if (x.key === 'belt') { part += beltSVG(k, x.it); continue; }
       const d = k.items[x.key]; const main = d.main; const tint = x.it.tint;
       const fill = f => { const c = base(f); return tint && c[0] === '#' ? tintColor(c, main, tint) : c; };
-      body += pathsOf(d.p, fill, u + x.key + '_', d.k);
+      part += pathsOf(d.p, fill, u + x.key + '_', d.k);
     }
+    /* la mano vuelve a dibujarse sobre el asa del bolso: lo sostiene */
+    if (z === 'bag' && zs.has('bag') && !opt.only) for (const e of k.body) if (e[3] === 'r') part += `<path d="${e[1]}" fill="${base(e[0])}"/>`;
+    if (inHead) headG += part; else bodyG += part;
   }
-  const vb = opt.view || k.vb;
+  const bt = sx !== 1 || sy !== 1 ? ` transform="translate(${k.tcx} ${k.base}) scale(${sx.toFixed(3)} ${sy.toFixed(3)}) translate(${-k.tcx} ${-k.base})"` : '';
+  const ht = sy !== 1 ? ` transform="translate(0 ${headDy(k, sy).toFixed(2)})"` : '';
+  const vb = opt.view || fullView(g);
   const size = opt.w ? ` width="${opt.w}" height="${opt.h}"` : '';
-  return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="${vb.map(v => +(+v).toFixed(1)).join(' ')}"${size} class="${opt.cls || ''}" preserveAspectRatio="xMidYMax meet" aria-hidden="true">${body}</svg>`;
+  return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="${vb.map(v => +(+v).toFixed(1)).join(' ')}"${size} class="${opt.cls || ''}" preserveAspectRatio="xMidYMax meet" aria-hidden="true"><g${bt}>${bodyG}</g><g${ht}>${headG}</g></svg>`;
 }
 /* recorte de la cabeza para la burbuja de perfil (el avatar es el logo) */
-function faceView(g) { const f = K[g].face; const s = f[3] * 2.05; return [f[0] + f[2] / 2 - s / 2, f[1] - s * .3, s, s]; }
-function bubbleSVG(look) { return avatarSVG(look, {view: faceView(look.g)}).replace('xMidYMax', 'xMidYMid'); }
+function faceView(g, look) { const k = K[g], f = k.face; const s = f[3] * 2.05; const dy = look ? headDy(k, fitOf(look).sy) : 0; return [f[0] + f[2] / 2 - s / 2, f[1] - s * .3 + dy, s, s]; }
+function bubbleSVG(look) { return avatarSVG(look, {view: faceView(look.g, look)}).replace('xMidYMax', 'xMidYMid'); }
 /* miniatura de una prenda */
 function thumbSVG(id, g) {
   const it = CAT[id]; g = g || myG(); const key = assetKey(it, g);
@@ -293,7 +325,7 @@ function thumbSVG(id, g) {
    LÓGICA DE LOOKS
    --------------------------------------------------------------------- */
 const myG = () => (S.profile && S.profile.g) || 'f';
-const meLook = items => ({g:myG(), head:S.profile?.head || 0, skin:S.profile?.skin || 0, hair:S.profile?.hair || null, items: items || S.look});
+const meLook = items => ({g:myG(), head:S.profile?.head || 0, skin:S.profile?.skin || 0, hair:S.profile?.hair || null, fit:S.profile?.fit || null, expr:S.profile?.expr ?? null, lips:S.profile?.lips || null, items: items || S.look});
 const owned = id => S.closet.includes(id);
 function zoneOf(id) { const it = CAT[id]; return it ? (it.z === 'dress' ? 'top' : it.z) : null; }
 function setPiece(items, id) {
@@ -350,13 +382,15 @@ function checkReto() { if (!S.flags.reto && retoProgress() >= RETO.need.length) 
 const CAT_IDX = Object.fromEntries(CAT_LIST.map((r, i) => [r[0], i]));
 function encodeLook(l) {
   const it = Object.values(l.items || {}).map(id => CAT_IDX[id]).filter(i => i >= 0).map(i => i.toString(36)).join('.');
-  return [l.g, l.head || 0, l.skin || 0, Math.max(0, HAIR.indexOf(l.hair || null)), it, Math.max(0, WHERE.findIndex(w => w.id === l.where)), encodeURIComponent(l.name || ''), encodeURIComponent(l.author || '')].join('~');
+  return [l.g, l.head || 0, l.skin || 0, Math.max(0, HAIR.indexOf(l.hair || null)), it, Math.max(0, WHERE.findIndex(w => w.id === l.where)), encodeURIComponent(l.name || ''), encodeURIComponent(l.author || ''),
+    Math.round(fitOf(l).sx * 100), Math.round(fitOf(l).sy * 100), l.expr ?? -1, Math.max(0, LIPS.indexOf(l.lips || null))].join('~');
 }
 function decodeLook(code) {
   try {
-    const p = code.split('~').map((x, i) => i >= 6 ? decodeURIComponent(x) : x); if (p.length < 5) return null;
+    const p = code.split('~').map((x, i) => i === 6 || i === 7 ? decodeURIComponent(x) : x); if (p.length < 5) return null;
     const items = {}; p[4].split('.').filter(Boolean).map(x => CAT_LIST[parseInt(x, 36)]).filter(Boolean).forEach(r => setPiece(items, r[0]));
-    return {g:p[0] === 'm' ? 'm' : 'f', head:clamp(+p[1] || 0, 0, 4), skin:clamp(+p[2] || 0, 0, 5), hair:HAIR[+p[3]] || null, items, where:(WHERE[+p[5]] || WHERE[2]).id, name:p[6] || 'Look', author:p[7] || ''};
+    return {g:p[0] === 'm' ? 'm' : 'f', head:clamp(+p[1] || 0, 0, 4), skin:clamp(+p[2] || 0, 0, 5), hair:HAIR[+p[3]] || null, items, where:(WHERE[+p[5]] || WHERE[2]).id, name:p[6] || 'Look', author:p[7] || '',
+      fit:{w:(+p[8] || 100) / 100, h:(+p[9] || 100) / 100}, expr:p[10] != null && +p[10] >= 0 ? +p[10] : null, lips:LIPS[+p[11]] || null};
   } catch (e) { return null; }
 }
 const lookURL = l => location.href.split('#')[0] + '#/look/' + encodeLook(l);
@@ -371,7 +405,8 @@ const COMMUNITY = (() => {
   for (let i = 0; i < 14; i++) {
     const g = i % 2 ? 'm' : 'f'; const pool = poolFor(g, 'all');
     const items = {}; const raw = randomLook(g, pool, r, true); Object.values(raw).forEach(id => setPiece(items, id));
-    out.push({id:'demo' + i, g, head:Math.floor(r() * 5), skin:Math.floor(r() * 5), hair:r() < .3 ? HAIR[1 + Math.floor(r() * 8)] : null, items,
+    out.push({id:'demo' + i, g, head:Math.floor(r() * 5), skin:Math.floor(r() * 6), hair:r() < .3 ? HAIR[1 + Math.floor(r() * 8)] : null, items,
+      fit:{w:.9 + r() * .2, h:.95 + r() * .1}, expr:r() < .7 ? Math.floor(r() * 4) : null, lips:g === 'f' && r() < .4 ? LIPS[1 + Math.floor(r() * 5)] : null,
       name:DEMO_NAMES[i], where:WHERE[Math.floor(r() * WHERE.length)].id, author:DEMO_USERS[i], likes:12 + Math.floor(r() * 60), bg:PALETTE[i % PALETTE.length]});
   }
   return out;
@@ -399,7 +434,7 @@ function updateTop() {
   top.innerHTML = `<a class="me" href="#/perfil" aria-label="Mi perfil"><span class="bubble">${bubbleSVG(meLook())}</span><span class="hi"><b>Hola, ${esc(S.profile.name)}</b><span>Vélez Up · ${lv.id}</span></span></a>
     <a class="pts" href="#/vive" aria-label="${S.points} puntos"><i>${ic('star').replace('stroke="currentColor"', 'stroke="#fff"')}</i>${S.points}</a>`;
 }
-const TABS = [['inicio','home','Inicio'],['crear','hanger','Crear'],['descubre','compass','Descubre'],['comunidad','users','Comunidad'],['vive','spark','Vive']];
+const TABS = [['inicio','home','Inicio'],['crear','hanger','Arma'],['descubre','compass','Descubre'],['comunidad','users','Comparte'],['vive','spark','Vive']];
 function updateTabs(route) {
   const tb = $('#tabbar'); const show = !!S.profile && !['bienvenida','registro'].includes(route);
   tb.classList.toggle('hide', !show); if (!show) return;
@@ -423,21 +458,21 @@ V.bienvenida = () => {
     <div class="collage">
       <div class="tile c-peri" style="left:0;top:20px;width:52%;height:330px;transform:rotate(-4deg)">${avatarSVG(a)}</div>
       <div class="tile c-orange" style="right:0;top:0;width:50%;height:300px;transform:rotate(5deg)">${avatarSVG(b)}</div>
-      <div class="tile c-lime" style="left:26%;top:150px;width:48%;height:280px;transform:rotate(1deg)">${avatarSVG(c)}</div>
+      <div class="tile c-paper" style="left:26%;top:150px;width:48%;height:280px;transform:rotate(1deg)">${avatarSVG(c)}</div>
       <span class="sticker" style="left:6px;top:4px">¡Hola!</span>
-      <span class="sticker" style="right:10px;bottom:30px;background:var(--peri);transform:rotate(7deg)">92% tendencia</span>
+      <span class="sticker" style="right:10px;bottom:30px;background:var(--red);color:#fff;border-color:var(--red);transform:rotate(7deg)">92% tendencia</span>
     </div>
     <h1>Tu estilo <em>toma vuelo</em></h1>
-    <p class="sub" style="margin:12px 0 22px">Crea tu avatar, vístelo con las prendas Vélez y Fly Up que ya tienes y arma looks para cada momento.</p>
+    <p class="sub" style="margin:12px 0 22px"><b>Arma tu look. Llévalo más lejos.</b> Crea tu avatar, vístelo con las prendas Vélez y Fly Up que ya tienes y descubre qué tan lejos puede llegar tu estilo.</p>
     <a class="btn go block" href="#/registro/1">Crear mi perfil<span class="ar">${ic('arrow')}</span></a>
     <p class="disclaimer">Proyecto universitario · Gestión del Diseño 2. No es una app oficial de Vélez.</p>
   </section>`};
 };
 
 /* ---- registro: 1 nombre+género · 2 avatar · 3 estilo ---- */
-function regLook() { return {g:REG.g || 'f', head:REG.head, skin:REG.skin, hair:REG.hair, items:REG.style ? Object.fromEntries((BASIC[REG.g || 'f'][REG.style]).map(id => [zoneOf(id), id])) : {top:REG.g === 'm' ? 'camisa-marfil' : 'sueter-trenzado', bottom:REG.g === 'm' ? 'pantalon-oliva' : 'jean-mom', shoes:REG.g === 'm' ? 'derby-cuero' : 'tenis-lona'}}; }
+function regLook() { return {g:REG.g || 'f', head:REG.head, skin:REG.skin, hair:REG.hair, fit:REG.fit || null, expr:REG.expr ?? null, lips:REG.lips || null, items:REG.style ? Object.fromEntries((BASIC[REG.g || 'f'][REG.style]).map(id => [zoneOf(id), id])) : {top:REG.g === 'm' ? 'camisa-marfil' : 'sueter-trenzado', bottom:REG.g === 'm' ? 'pantalon-oliva' : 'jean-mom', shoes:REG.g === 'm' ? 'derby-cuero' : 'tenis-lona'}}; }
 V.registro = step => {
-  if (!REG) REG = S.profile ? {...S.profile} : {name:'', g:null, head:0, skin:0, hair:null, style:null};
+  if (!REG) REG = S.profile ? {...S.profile} : {name:'', g:null, head:0, skin:0, hair:null, style:null, fit:{w:1, h:1}, expr:null, lips:null};
   step = +step || 1; if (step > 1 && (!REG.name.trim() || !REG.g)) step = 1;
   const steps = `<div class="steps">${[1,2,3].map(i => `<i class="${i <= step ? 'on' : ''}"></i>`).join('')}</div>`;
   const back = step > 1 ? `<a class="icon-btn" href="#/registro/${step - 1}" aria-label="Atrás">${ic('back')}</a>` : `<a class="icon-btn" href="#/bienvenida" aria-label="Atrás">${ic('back')}</a>`;
@@ -468,14 +503,23 @@ V.registro = step => {
   return {full:true, html:`<section class="reg fadein"><div class="row between">${back}<span class="brand">Paso ${step} de 3</span><span style="width:40px"></span></div>${steps}${body}<div class="foot">${foot}</div></section>`};
 };
 function avEditor(look, ctx) {
-  const k = K[look.g];
-  const heads = k.heads.map((h, i) => `<button class="${look.head === i ? 'on' : ''}" data-act="avHead" data-arg="${ctx}:${i}" aria-label="Peinado ${i + 1}">${bubbleSVG({...look, head:i, items:{}})}</button>`).join('');
+  const k = K[look.g]; const fit = look.fit || {w:1, h:1};
+  const heads = k.heads.map((h, i) => `<button class="${look.head === i ? 'on' : ''}" data-act="avHead" data-arg="${ctx}:${i}" aria-label="Peinado ${i + 1}">${bubbleSVG({...look, fit:null, head:i, items:{}})}</button>`).join('');
   const skins = k.skins.map((s, i) => `<button class="sw ${look.skin === i ? 'on' : ''}" style="background:${s[0]}" data-act="avSkin" data-arg="${ctx}:${i}" aria-label="Tono de piel ${i + 1}"></button>`).join('');
   const hair = HAIR.map((c, i) => `<button class="sw ${c ? '' : 'nat'} ${(look.hair || null) === c ? 'on' : ''}" style="${c ? 'background:' + c : ''}" data-act="avHair" data-arg="${ctx}:${i}" aria-label="${c ? 'Color de pelo ' + i : 'Color natural'}"></button>`).join('');
-  return `<div class="preview c-peri">${avatarSVG(look)}<span class="sticker" style="left:12px;top:12px;background:var(--lime)">${esc((ctx === 'reg' ? REG.name : S.profile?.name) || 'Tú')}</span></div>
+  const exprs = [{n:'Natural'}, ...k.exprs].map((e, i) => { const v = i - 1; const on = (look.expr ?? -1) === v;
+    return `<button class="${on ? 'on' : ''}" data-act="avExpr" data-arg="${ctx}:${v}" aria-label="Expresión ${esc(e.n)}">${bubbleSVG({...look, fit:null, expr:v, items:{}})}<span>${esc(e.n)}</span></button>`; }).join('');
+  const lips = LIPS.map((c, i) => `<button class="sw ${c ? '' : 'nat lipnat'} ${(look.lips || null) === c ? 'on' : ''}" style="${c ? 'background:' + c : ''}" data-act="avLips" data-arg="${ctx}:${i}" aria-label="${c ? 'Labios ' + i : 'Labios naturales'}"></button>`).join('');
+  const lblW = fit.w < .93 ? 'Delgada' : fit.w < 1.04 ? 'Media' : fit.w < 1.11 ? 'Atlética' : 'Robusta';
+  const lblH = fit.h < .97 ? 'Baja' : fit.h < 1.02 ? 'Media' : 'Alta';
+  return `<div class="preview c-peri" id="avPrev">${avatarSVG(look)}<span class="sticker" style="left:12px;top:12px">${esc((ctx === 'reg' ? REG.name : S.profile?.name) || 'Tú')}</span></div>
     <div><p class="opt-h">Tono de piel</p><div class="swatches">${skins}</div></div>
     <div><p class="opt-h">Peinado</p><div class="heads">${heads}</div></div>
-    <div><p class="opt-h">Color de pelo</p><div class="swatches">${hair}</div></div>`;
+    <div><p class="opt-h">Color de pelo</p><div class="swatches">${hair}</div></div>
+    <div><p class="opt-h">Expresión</p><div class="heads exprs">${exprs}</div></div>
+    <div class="slider"><p class="opt-h">Contextura <span id="lblW">${lblW}</span></p><input type="range" min="86" max="116" step="1" value="${Math.round(fit.w * 100)}" data-range="${ctx}:w" aria-label="Contextura"><div class="ends"><span>Delgada</span><span>Robusta</span></div></div>
+    <div class="slider"><p class="opt-h">Estatura <span id="lblH">${lblH}</span></p><input type="range" min="93" max="106" step="1" value="${Math.round(fit.h * 100)}" data-range="${ctx}:h" aria-label="Estatura"><div class="ends"><span>Baja</span><span>Alta</span></div></div>
+    <div><p class="opt-h">Labios</p><div class="swatches">${lips}</div></div>`;
 }
 
 /* ---- inicio ---- */
@@ -484,14 +528,14 @@ V.inicio = () => {
   const com = communityLooks().slice(0, 8);
   return {html:`<section class="fadein">
     <div class="hero c-peri">
-      <div class="txt"><span class="eyebrow">Tu look de hoy</span><h2 class="h2">${p >= 85 ? 'Estás en tendencia' : 'Dale tu toque'}</h2>
+      <div class="txt"><span class="eyebrow">Mi look de hoy</span><h2 class="h2">${p >= 85 ? 'Estás en tendencia' : 'Dale tu toque'}</h2>
         <div><span class="meter-lbl">Tendencia</span>${meter(p, true)}</div></div>
       <div class="av">${avatarSVG(meLook())}</div>
       <div class="bot stack"><a class="btn sm" href="#/crear">${ic('edit')}Editar look</a><button class="btn sm ghost" data-act="randomHome">${ic('dice')}Al azar</button></div>
     </div>
     <div class="minis sec" style="margin-top:14px">
       <a class="mini c-orange" href="#/descubre"><span class="ic" style="color:var(--ink)">${ic('plus')}</span><span><b>Agrega tus prendas Vélez</b><span style="font-size:13px">${S.closet.length} en tu armario</span></span></a>
-      <a class="mini c-lime" href="#/descubre?reto"><span class="ic">${ic('star')}</span><span><b>Reto del mes</b><span style="font-size:13px">${RETO.title}</span><span class="dots">${RETO.need.map((_, i) => `<i class="${i < reto ? 'on' : ''}"></i>`).join('')}</span></span></a>
+      <a class="mini c-peri" href="#/descubre?reto"><span class="ic">${ic('star')}</span><span><b>Reto del mes</b><span style="font-size:13px">${RETO.title}</span><span class="dots">${RETO.need.map((_, i) => `<i class="${i < reto ? 'on' : ''}"></i>`).join('')}</span></span></a>
       <a class="mini wide c-sand" href="#/armario"><span class="ic">${ic('closet')}</span><span style="flex:1"><b>Mi armario</b><span style="font-size:13px">${S.looks.length} looks guardados · ${S.closet.length} prendas</span></span>${ic('right')}</a>
     </div>
     <div class="sec"><div class="sec-h"><h2 class="h2">De la comunidad</h2><a href="#/comunidad">Ver todo</a></div>
@@ -509,17 +553,18 @@ function lookCard(l, opts = {}) {
 
 /* ---- creador ---- */
 let CR = {last:null};
-function zoneRows(g) {
-  const k = K[g], f = k.face, b = k.belt, H = k.vb[3];
-  return {hat:f[1] - 12, glasses:f[1] + f[3] * .42, top:b[2] - (g === 'm' ? 62 : 52), outer:b[2] - (g === 'm' ? 30 : 26), belt:b[2], bag:b[2] + (g === 'm' ? 42 : 34), bottom:b[2] + H * .22, shoes:H - 12};
+function zoneRows(g, look) {
+  const k = K[g], f = k.face, b = k.belt, H = k.vb[3]; const {sy} = fitOf(look || {}); const hd = headDy(k, sy);
+  const by = y => k.base + (y - k.base) * sy;
+  return {hat:f[1] - 12 + hd, glasses:f[1] + f[3] * .42 + hd, top:by(b[2] - (g === 'm' ? 62 : 52)), outer:by(b[2] - (g === 'm' ? 30 : 26)), belt:by(b[2]), bag:by(b[2] + (g === 'm' ? 42 : 34)), bottom:by(b[2] + H * .22), shoes:by(H - 12)};
 }
 V.crear = () => {
   const g = myG(), k = K[g], p = score(S.look);
   const stageH = Math.round(clamp(innerHeight - 372, 380, 540));
-  const sc = (stageH - 34) / k.vb[3]; const figW = k.vb[2] * sc;
-  const rows = zoneRows(g);
+  const fv = fullView(g); const sc = (stageH - 34) / fv[3]; const figW = fv[2] * sc;
+  const rows = zoneRows(g, meLook());
   const zr = ZONES.map(Z => {
-    const id = S.look[Z.z]; const y = 22 + rows[Z.z] * sc;
+    const id = S.look[Z.z]; const y = 22 + (rows[Z.z] - fv[1]) * sc;
     return `<div class="zrow ${S.zone === Z.z ? 'sel' : ''} ${id ? '' : 'off'}" style="top:${y.toFixed(0)}px">
       <div class="side"><button class="zbtn" data-act="cycle" data-arg="${Z.z}:-1" aria-label="${Z.label} anterior">${ic('left')}</button><span class="zlbl">${Z.label}</span></div>
       <div class="side r"><button class="zbtn" data-act="cycle" data-arg="${Z.z}:1" aria-label="${Z.label} siguiente">${ic('right')}</button></div></div>`;
@@ -531,6 +576,7 @@ V.crear = () => {
     <div class="cr-top"><div style="flex:1;min-width:0"><span class="meter-lbl">Tendencia · ${scoreLabel(p)}</span>${meter(p, true)}</div></div>
     <div class="stage" style="height:${stageH}px">
       <div class="src-toggle" role="tablist" aria-label="Prendas"><button class="${S.src === 'mine' ? 'on' : ''}" data-act="src" data-arg="mine" role="tab" aria-selected="${S.src === 'mine'}">Mi armario</button><button class="${S.src === 'all' ? 'on' : ''}" data-act="src" data-arg="all" role="tab" aria-selected="${S.src === 'all'}">Todo el catálogo</button></div>
+      ${FLIGHT}
       <div class="floor"></div>
       <div class="fig ${CR.pop ? 'pop' : ''}" id="fig" style="width:${figW.toFixed(0)}px;height:${(stageH - 34).toFixed(0)}px;margin-top:22px">${avatarSVG(meLook())}</div>
       ${zr}
@@ -598,9 +644,9 @@ let CM = {f:'all'};
 V.comunidad = () => {
   const list = communityLooks().filter(l => CM.f === 'all' || l.where === CM.f);
   return {html:`<section class="fadein">
-    <div class="sec-h" style="margin:4px 0 12px"><div><h1 class="h1">Comunidad</h1><p class="sub" style="margin:4px 0 0">Looks reales de la gente Vélez Up. Inspírate y pruébatelos.</p></div></div>
+    <div class="sec-h" style="margin:4px 0 12px"><div><h1 class="h1">Comparte</h1><p class="sub" style="margin:4px 0 0">Los looks de la comunidad: así la tendencia se difunde. Inspírate y pruébatelos.</p></div></div>
     <div class="chips"><button class="chip ${CM.f === 'all' ? 'on' : ''}" data-act="cmf" data-arg="all">Todos</button>${WHERE.map(w => `<button class="chip ${CM.f === w.id ? 'on' : ''}" data-act="cmf" data-arg="${w.id}"><span class="dot" style="background:${w.c}"></span>${w.label}</button>`).join('')}</div>
-    <div class="banner c-lime row" style="margin:14px 0;gap:12px;padding:14px 16px"><span style="flex:1"><b class="h3">¿Y tu look?</b><br><span style="font-size:13px">Publica uno de tus looks desde tu armario.</span></span><a class="btn sm" href="#/armario">Publicar</a></div>
+    <div class="banner c-sand row" style="margin:14px 0;gap:12px;padding:14px 16px"><span style="flex:1"><b class="h3">¿Y tu look?</b><br><span style="font-size:13px">Publica uno de tus looks desde tu armario.</span></span><a class="btn sm" href="#/armario">Publicar</a></div>
     <div class="feed">${list.map(l => lookCard(l)).join('') || `<div class="empty" style="grid-column:1/-1">Aún no hay looks para este momento.</div>`}</div>
   </section>`};
 };
@@ -612,8 +658,8 @@ V.vive = () => {
   const looks = S.looks.slice(0, 4);
   return {html:`<section class="fadein">
     <div class="sec-h" style="margin:4px 0 12px"><div><h1 class="h1">Vive</h1><p class="sub" style="margin:4px 0 0">Tus puntos, tus aromas y tu look en la tienda.</p></div></div>
-    <div class="card c-ink level"><div class="ring"><svg viewBox="0 0 84 84"><circle cx="42" cy="42" r="${R}" fill="none" stroke="rgba(255,255,255,.18)" stroke-width="9"/><circle cx="42" cy="42" r="${R}" fill="none" stroke="#D8EE6A" stroke-width="9" stroke-linecap="round" stroke-dasharray="${C}" stroke-dashoffset="${C * (1 - pct)}"/></svg><b>${S.points}</b></div>
-      <div><span class="eyebrow" style="color:var(--lime)">Nivel ${L.id}</span><h2 class="h2" style="margin:4px 0">${N ? `${N.min - S.points} pts para ${N.id}` : 'Nivel máximo'}</h2><a class="link" style="color:#fff;font-size:14px" href="#/descubre" data-act="toRewards">Canjear recompensas</a></div></div>
+    <div class="card c-ink level"><div class="ring"><svg viewBox="0 0 84 84"><circle cx="42" cy="42" r="${R}" fill="none" stroke="rgba(255,255,255,.18)" stroke-width="9"/><circle cx="42" cy="42" r="${R}" fill="none" stroke="#9C0720" stroke-width="9" stroke-linecap="round" stroke-dasharray="${C}" stroke-dashoffset="${C * (1 - pct)}"/></svg><b>${S.points}</b></div>
+      <div><span class="eyebrow" style="color:#F3DCDF">Nivel ${L.id}</span><h2 class="h2" style="margin:4px 0">${N ? `${N.min - S.points} pts para ${N.id}` : 'Nivel máximo'}</h2><a class="link" style="color:#fff;font-size:14px" href="#/descubre" data-act="toRewards">Canjear recompensas</a></div></div>
     <div class="card c-peri sec" style="margin-top:14px"><div class="row between"><span class="eyebrow">Olfato</span><span class="tag">${ic('drop').replace('<svg', '<svg width="14" height="14"')}${n} aromas</span></div>
       <h2 class="h2" style="margin:8px 0 4px">Tus aromas suman premios</h2><p style="margin:0;font-size:14px">Registra cada fragancia Vélez que compres en la tienda. Con 5 aromas reclamas una prenda.</p>
       <div class="mile">${OLFATO.map(m => `<div class="${n >= m.n ? 'on' : ''}"><b>${m.n}</b>${m.label}</div>`).join('')}</div>
@@ -646,7 +692,7 @@ V.perfil = () => {
   const p = S.profile; const st = STYLES.find(s => s.id === p.style);
   return {html:`<section class="fadein">
     <div class="row" style="margin:4px 0 14px;gap:12px"><a class="icon-btn" href="#/inicio" aria-label="Volver">${ic('back')}</a><h1 class="h1">Mi perfil</h1></div>
-    <div class="card c-lime row" style="gap:16px"><span class="bubble lg">${bubbleSVG(meLook())}</span><div style="min-width:0"><h2 class="h2">${esc(p.name)}</h2><p style="margin:4px 0 8px">${p.g === 'f' ? 'Avatar mujer' : 'Avatar hombre'} · Estilo ${st ? st.label.toLowerCase() : ''}</p><span class="tag">Nivel ${level(S.points).L.id} · ${S.points} pts</span></div></div>
+    <div class="card c-peri row" style="gap:16px"><span class="bubble lg">${bubbleSVG(meLook())}</span><div style="min-width:0"><h2 class="h2">${esc(p.name)}</h2><p style="margin:4px 0 8px">${p.g === 'f' ? 'Avatar mujer' : 'Avatar hombre'} · Estilo ${st ? st.label.toLowerCase() : ''}</p><span class="tag">Nivel ${level(S.points).L.id} · ${S.points} pts</span></div></div>
     <p class="tiny mute" style="margin:8px 4px 0">Tu avatar es tu logo: aparece en tu perfil, tus looks y la comunidad.</p>
     <div class="sec"><div class="sec-h"><h2 class="h2">Mi avatar</h2></div><div class="avedit">${avEditor(meLook(), 'me')}</div></div>
     <div class="sec"><div class="sec-h"><h2 class="h2">Mis datos</h2></div>
@@ -687,7 +733,7 @@ function productSheet(id) {
 }
 function saveSheet() {
   const n = S.looks.length + 1; const p = score(S.look);
-  openSheet(`${shHead('Guardar look', 'Ponle nombre y dinos para dónde es.')}
+  openSheet(`${shHead('Guardar mi look', 'Ponle nombre y dinos para dónde es.')}
     <label class="field"><span>Nombre del look</span><input class="input" id="lkName" maxlength="28" value="Mi look ${n}"></label>
     <div class="field"><span>¿Para dónde es? *</span><div class="chips wrap" id="lkWhere">${WHERE.map(w => `<button class="chip" data-act="pickWhere" data-arg="${w.id}"><span class="dot" style="background:${w.c}"></span>${w.label}</button>`).join('')}</div><div class="err" id="errWhere"></div></div>
     <div class="row between" style="margin-top:12px"><span class="meter-lbl">${scoreLabel(p)}</span><span class="fun" style="font-weight:700;font-size:22px">${p}%</span></div>
@@ -703,14 +749,14 @@ function shareGrid(l) {
   const url = lookURL(l); const txt = `Mira mi look "${l.name}" en Vélez Up (${score(l.items)}% tendencia)`;
   const e = encodeURIComponent;
   return `<div class="share-grid">
-    <button data-act="shareNative" data-arg="${l.id}"><i class="c-lime">${ic('share')}</i>Compartir</button>
+    <button data-act="shareNative" data-arg="${l.id}"><i class="c-lime" style="border-color:var(--red)">${ic('share')}</i>Compartir</button>
     <a href="https://wa.me/?text=${e(txt + ' ' + url)}" target="_blank" rel="noopener" data-act="shared"><i style="background:#C9F2D5">${ic('wa')}</i>WhatsApp</a>
     <a href="https://www.facebook.com/sharer/sharer.php?u=${e(url)}" target="_blank" rel="noopener" data-act="shared"><i style="background:#DCE0FF">${ic('fb')}</i>Facebook</a>
     <a href="https://twitter.com/intent/tweet?text=${e(txt)}&url=${e(url)}" target="_blank" rel="noopener" data-act="shared"><i style="background:var(--sand)">${ic('xl')}</i>X</a>
     <button data-act="download" data-arg="${l.id}"><i style="background:var(--pink)">${ic('down')}</i>Imagen</button>
-    <button data-act="copyLink" data-arg="${l.id}"><i style="background:var(--yellow)">${ic('link')}</i>Enlace</button>
+    <button data-act="copyLink" data-arg="${l.id}"><i style="background:var(--sand)">${ic('link')}</i>Enlace</button>
     <button data-act="qr" data-arg="${l.id}"><i style="background:var(--orange2)">${ic('qr')}</i>Código QR</button>
-    <button data-act="download" data-arg="${l.id}" aria-label="Descargar para Instagram"><i style="background:linear-gradient(135deg,#FFE07A,#E9653B,#8E9AFE)">${ic('camera')}</i>Instagram</button></div>`;
+    <button data-act="download" data-arg="${l.id}" aria-label="Descargar para Instagram"><i style="background:linear-gradient(135deg,#F5F4F0,#9C0720,#1A2055);color:#fff">${ic('camera')}</i>Instagram</button></div>`;
 }
 function lookSheet(id) {
   const mine = S.looks.find(l => l.id === id); const l = mine || communityLooks().find(x => x.id === id); if (!l) return;
@@ -720,7 +766,7 @@ function lookSheet(id) {
     <div class="list sec" style="margin-top:14px">${ids.map((pid, i) => `<button class="it" style="width:100%;text-align:left" data-act="product" data-arg="${pid}"><span class="ic" style="background:${PALETTE[i % PALETTE.length]}">${thumbSVG(pid)}</span><span class="c"><b>${esc(CAT[pid].name)}</b><span>${LINES[CAT[pid].line]}${owned(pid) ? ' · La tienes' : ''}</span></span>${ic('right').replace('<svg', '<svg width="18" height="18"')}</button>`).join('')}</div>
     ${mine ? `<div class="sec" style="margin-top:16px"><p class="opt-h">Compartir</p>${shareGrid(l)}</div>
       <div class="row" style="margin-top:16px;gap:8px"><button class="btn block" data-act="editLook" data-arg="${l.id}">${ic('edit')}Editar</button><button class="btn block ${l.published ? 'ghost' : 'lime'}" data-act="publish" data-arg="${l.id}">${ic('users')}${l.published ? 'Quitar de comunidad' : 'Publicar'}</button></div>
-      <button class="btn block ghost" style="margin-top:8px;color:var(--orange);border-color:var(--orange)" data-act="delLook" data-arg="${l.id}">${ic('trash')}Eliminar look</button>` :
+      <button class="btn block ghost" style="margin-top:8px;color:var(--red);border-color:var(--red)" data-act="delLook" data-arg="${l.id}">${ic('trash')}Eliminar look</button>` :
     `<button class="btn go block" style="margin-top:16px" data-act="tryCommunity" data-arg="${l.id}">Probármelo<span class="ar">${ic('hanger')}</span></button>`}`);
 }
 function qrSheet(id) {
@@ -760,28 +806,30 @@ async function scanSheet() {
 async function lookPNG(l) {
   try { await document.fonts.ready; } catch (e) {}
   const W = 1080, H = 1350, k = K[l.g]; const c = document.createElement('canvas'); c.width = W; c.height = H; const x = c.getContext('2d');
-  x.fillStyle = '#FFFBF8'; x.fillRect(0, 0, W, H);
+  x.fillStyle = '#F5F4F0'; x.fillRect(0, 0, W, H);
   x.strokeStyle = 'rgba(29,27,34,.06)'; x.lineWidth = 2; for (let i = 0; i < W; i += 54) { x.beginPath(); x.moveTo(i, 0); x.lineTo(i, H); x.stroke(); } for (let i = 0; i < H; i += 54) { x.beginPath(); x.moveTo(0, i); x.lineTo(W, i); x.stroke(); }
   const rr = (X, Y, w, h, r) => { x.beginPath(); x.roundRect ? x.roundRect(X, Y, w, h, r) : x.rect(X, Y, w, h); };
-  x.fillStyle = whereOf(l.where).c; rr(60, 150, 960, 1000, 60); x.fill(); x.lineWidth = 5; x.strokeStyle = '#1D1B22'; x.stroke();
-  const fh = 960, fw = fh * k.vb[2] / k.vb[3];
+  x.fillStyle = whereOf(l.where).c; rr(60, 150, 960, 1000, 60); x.fill(); x.lineWidth = 5; x.strokeStyle = '#252525'; x.stroke();
+  const fv = fullView(l.g); const fh = 980, fw = fh * fv[2] / fv[3];
   const svg = avatarSVG(l, {w:Math.round(fw), h:fh});
   const img = new Image(); const url = URL.createObjectURL(new Blob([svg], {type:'image/svg+xml'}));
   await new Promise((res, rej) => { img.onload = res; img.onerror = rej; img.src = url; });
-  x.drawImage(img, 1020 - fw - 40, 175, fw, fh); URL.revokeObjectURL(url);
-  x.fillStyle = '#1D1B22'; x.font = '800 40px "Bricolage Grotesque", sans-serif'; x.fillText('VÉLEZ UP', 60, 100);
-  x.font = '800 64px "Bricolage Grotesque", sans-serif';
+  x.save(); x.lineWidth = 6; x.lineCap = 'round'; x.strokeStyle = '#1A2055'; x.setLineDash([3, 22]); x.beginPath(); x.moveTo(500, 1120); x.bezierCurveTo(640, 980, 520, 520, 880, 300); x.stroke();
+  x.setLineDash([]); x.strokeStyle = '#9C0720'; x.beginPath(); x.moveTo(1010, 1080); x.bezierCurveTo(930, 900, 1000, 560, 900, 420); x.stroke(); x.restore();
+  x.drawImage(img, 1020 - fw - 30, 165, fw, fh); URL.revokeObjectURL(url);
+  x.fillStyle = '#252525'; x.font = '48px "Bebas Neue", sans-serif'; x.fillText('VÉLEZ UP', 60, 104); x.fillStyle = '#9C0720'; x.fillRect(60, 116, 70, 6); x.fillStyle = '#252525';
+  x.font = '92px "Bebas Neue", sans-serif';
   const words = (l.name || 'Mi look').split(' '); let line = '', yy = 270; const maxW = 1020 - fw - 140;
-  for (const w of words) { const t = line ? line + ' ' + w : w; if (x.measureText(t).width > maxW && line) { x.fillText(line, 110, yy); yy += 70; line = w; } else line = t; }
+  for (const w of words) { const t = line ? line + ' ' + w : w; if (x.measureText(t).width > maxW && line) { x.fillText(line, 110, yy); yy += 84; line = w; } else line = t; }
   x.fillText(line, 110, yy);
-  x.font = '700 30px "Bricolage Grotesque", sans-serif'; const wl = whereOf(l.where).label;
+  x.font = '700 30px "Glacial Indifference", sans-serif'; const wl = whereOf(l.where).label;
   x.fillStyle = '#FFFFFF'; rr(110, yy + 34, x.measureText(wl).width + 56, 56, 28); x.fill(); x.stroke();
-  x.fillStyle = '#1D1B22'; x.fillText(wl, 138, yy + 72);
-  x.fillStyle = '#D8EE6A'; rr(110, 930, 300, 120, 60); x.fill(); x.stroke(); x.fillStyle = '#1D1B22';
+  x.fillStyle = '#252525'; x.fillText(wl, 138, yy + 72);
+  x.fillStyle = '#9C0720'; rr(110, 930, 300, 120, 60); x.fill(); x.fillStyle = '#FFFFFF';
   x.font = '700 76px Fredoka, sans-serif'; x.fillText(score(l.items) + '%', 150, 1017);
-  x.font = '700 32px "Bricolage Grotesque", sans-serif'; x.fillText('de tendencia', 120, 1100);
-  x.font = '600 26px "Bricolage Grotesque", sans-serif'; x.fillStyle = '#4A4650'; x.fillText('@' + (S.profile?.name || 'velezup') + ' · Tu estilo toma vuelo', 60, 1240);
-  x.font = '500 22px "Bricolage Grotesque", sans-serif'; x.fillStyle = '#8D8792'; x.fillText('Proyecto universitario · no es app oficial de Vélez', 60, 1290);
+  x.fillStyle = '#252525'; x.font = '700 32px "Glacial Indifference", sans-serif'; x.fillText('de tendencia', 120, 1100);
+  x.font = '700 26px "Glacial Indifference", sans-serif'; x.fillStyle = '#4B4A48'; x.fillText('@' + (S.profile?.name || 'velezup') + ' · Tu estilo toma vuelo', 60, 1240);
+  x.font = '400 22px "Glacial Indifference", sans-serif'; x.fillStyle = '#8A8884'; x.fillText('Proyecto universitario · no es app oficial de Vélez', 60, 1290);
   return new Promise(res => c.toBlob(res, 'image/png'));
 }
 async function downloadLook(l) {
@@ -808,7 +856,7 @@ const A = {
   regStyle: s => { REG.style = s; render(); },
   regDone: () => {
     const isNew = !S.profile;
-    S.profile = {name:REG.name.trim(), g:REG.g, head:REG.head || 0, skin:REG.skin || 0, hair:REG.hair || null, style:REG.style, since:Date.now()};
+    S.profile = {name:REG.name.trim(), g:REG.g, head:REG.head || 0, skin:REG.skin || 0, hair:REG.hair || null, fit:REG.fit || {w:1, h:1}, expr:REG.expr ?? null, lips:REG.lips || null, style:REG.style, since:Date.now()};
     const basic = BASIC[REG.g][REG.style]; basic.forEach(id => { if (!S.closet.includes(id)) S.closet.push(id); });
     S.look = {}; basic.forEach(id => setPiece(S.look, id)); REG = null; save();
     go('/inicio'); if (isNew) setTimeout(() => addPts(PTS.welcome, (S.profile.g === 'm' ? '¡Bienvenido' : '¡Bienvenida') + ' a Vélez Up!'), 400);
@@ -816,6 +864,8 @@ const A = {
   avHead: a => { const [ctx, i] = a.split(':'); avSet(ctx, 'head', +i); },
   avSkin: a => { const [ctx, i] = a.split(':'); avSet(ctx, 'skin', +i); },
   avHair: a => { const [ctx, i] = a.split(':'); avSet(ctx, 'hair', HAIR[+i]); },
+  avExpr: a => { const [ctx, i] = a.split(':'); avSet(ctx, 'expr', +i < 0 ? null : +i); },
+  avLips: a => { const [ctx, i] = a.split(':'); avSet(ctx, 'lips', LIPS[+i]); },
   meStyle: s => { S.profile.style = s; save(); render(); },
   meG: g => { if (S.profile.g === g) return; S.profile.g = g; S.profile.head = 0; const items = {}; Object.values(S.look).forEach(id => { if (assetKey(CAT[id], g)) setPiece(items, id); }); S.look = items; save(); render(); toast('Avatar actualizado'); },
   // creador
@@ -837,7 +887,7 @@ const A = {
   doSave: () => {
     if (!A._where) { $('#errWhere').textContent = 'Elige para dónde es el look.'; return; }
     const name = ($('#lkName').value || '').trim() || 'Mi look';
-    const l = {id:'lk' + Date.now().toString(36), name, where:A._where, items:{...S.look}, g:myG(), head:S.profile.head, skin:S.profile.skin, hair:S.profile.hair, date:Date.now(), published:false, likes:0};
+    const l = {id:'lk' + Date.now().toString(36), name, where:A._where, items:{...S.look}, g:myG(), head:S.profile.head, skin:S.profile.skin, hair:S.profile.hair, fit:S.profile.fit || null, expr:S.profile.expr ?? null, lips:S.profile.lips || null, date:Date.now(), published:false, likes:0};
     S.looks.unshift(l); A._where = null; save();
     addPts(PTS.save + (score(l.items) >= 85 ? PTS.trend : 0), score(l.items) >= 85 ? 'Look en tendencia guardado' : 'Look guardado');
     badge('primer-look'); if (score(l.items) >= 85) badge('tendencia'); checkReto();
@@ -863,7 +913,7 @@ const A = {
     const r = REWARDS.find(x => x.id === id); if (!r || S.claimed.includes(id)) return;
     if (S.points < r.cost) return toast(`Te faltan ${r.cost - S.points} puntos`);
     S.points -= r.cost; S.claimed.push(id); if (!owned(r.item)) S.closet.push(r.item); save(); updateTop(); render(true);
-    openSheet(`${shHead('¡Recompensa reclamada!')}<div class="okcard c-lime"><div class="av" style="height:140px;align-items:center">${thumbSVG(r.item)}</div><div><b class="h3">${esc(r.label)}</b><p class="tiny" style="margin:8px 0">Muestra este código en la tienda para recogerla:</p><span class="tag ink fun" style="font-size:16px;height:32px">VUP-${id.slice(2, 6).toUpperCase()}-${(S.points % 997).toString().padStart(3, '0')}</span></div></div>
+    openSheet(`${shHead('¡Recompensa reclamada!')}<div class="okcard c-sand"><div class="av" style="height:140px;align-items:center">${thumbSVG(r.item)}</div><div><b class="h3">${esc(r.label)}</b><p class="tiny" style="margin:8px 0">Muestra este código en la tienda para recogerla:</p><span class="tag ink fun" style="font-size:16px;height:32px">VUP-${id.slice(2, 6).toUpperCase()}-${(S.points % 997).toString().padStart(3, '0')}</span></div></div>
       <p class="tiny mute" style="margin-top:10px">Ya está en tu armario para usarla en tus looks.</p>`);
   },
   retoInfo: (a, el, ev) => { ev.preventDefault(); openSheet(`${shHead('Reto de ' + RETO.month, RETO.title)}<p class="sub">${RETO.text}</p>
@@ -952,6 +1002,16 @@ document.addEventListener('click', e => {
   if (el.tagName === 'BUTTON' || el.getAttribute('role') === 'button') e.preventDefault();
   fn(el.dataset.arg, el, e);
 });
+document.addEventListener('input', e => {
+  const r = e.target.closest('[data-range]'); if (!r) return;
+  const [ctx, key] = r.dataset.range.split(':'); const obj = ctx === 'reg' ? REG : S.profile;
+  obj.fit = {...(obj.fit || {w:1, h:1}), [key]:+r.value / 100};
+  const look = ctx === 'reg' ? regLook() : meLook(); const pv = $('#avPrev'); if (pv) pv.querySelector('svg').outerHTML = avatarSVG(look);
+  const f = obj.fit; const lw = $('#lblW'), lh = $('#lblH');
+  if (lw) lw.textContent = f.w < .93 ? 'Delgada' : f.w < 1.04 ? 'Media' : f.w < 1.11 ? 'Atlética' : 'Robusta';
+  if (lh) lh.textContent = f.h < .97 ? 'Baja' : f.h < 1.02 ? 'Media' : 'Alta';
+});
+document.addEventListener('change', e => { const r = e.target.closest('[data-range]'); if (!r) return; if (r.dataset.range.startsWith('me')) { save(); updateTop(); } });
 $('#veil').addEventListener('click', closeSheet);
 document.addEventListener('keydown', e => { if (e.key === 'Escape') closeSheet(); });
 addEventListener('hashchange', () => { closeSheet(); render(); });
