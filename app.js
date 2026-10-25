@@ -134,9 +134,9 @@ const BASIC = {
   m:{urbano:['polo-azul','jean-oscuro','bota-cordones','tote-navy'], mixto:['camisa-marfil','pantalon-oliva','derby-cuero'], elegante:['camisa-blanca','pantalon-gris','botin-negro','abrigo-camel']}
 };
 const STYLES = [
-  {id:'urbano',label:'Urbano',line:'Cómodo, con flow de ciudad.',c:'c-orange'},
+  {id:'urbano',label:'Urbano',line:'Cómodo, con flow de ciudad.',c:'c-ink'},
   {id:'mixto',label:'Mixto',line:'Mitad calle, mitad clásico.',c:'c-peri'},
-  {id:'elegante',label:'Elegante',line:'Piezas de cuero y siluetas limpias.',c:'c-ink'}
+  {id:'elegante',label:'Elegante',line:'Piezas de cuero y siluetas limpias.',c:'c-paper'}
 ];
 const WHERE = [
   {id:'casa',label:'Casa',c:'#E7E4DC'},{id:'estudio',label:'Estudio / trabajo',c:'#E3E5F1'},{id:'salida',label:'Salida',c:'#F3DCDF'},
@@ -325,7 +325,7 @@ function thumbSVG(id, g) {
    LÓGICA DE LOOKS
    --------------------------------------------------------------------- */
 const myG = () => (S.profile && S.profile.g) || 'f';
-const meLook = items => ({g:myG(), head:S.profile?.head || 0, skin:S.profile?.skin || 0, hair:S.profile?.hair || null, fit:S.profile?.fit || null, expr:S.profile?.expr ?? null, lips:S.profile?.lips || null, items: items || S.look});
+const meLook = items => { const it = items || S.look; const ex = S.profile?.expr; return {g:myG(), head:S.profile?.head || 0, skin:S.profile?.skin || 0, hair:S.profile?.hair || null, fit:S.profile?.fit || null, expr:ex == null ? moodExpr(score(it)) : ex, lips:S.profile?.lips || null, items:it}; };
 const owned = id => S.closet.includes(id);
 function zoneOf(id) { const it = CAT[id]; return it ? (it.z === 'dress' ? 'top' : it.z) : null; }
 function setPiece(items, id) {
@@ -336,20 +336,34 @@ function setPiece(items, id) {
   return items;
 }
 /* porcentaje de tendencia: completo + balance elegancia/urbano + mezcla de líneas */
-function score(items) {
+/* tendencia = look completo + detalles + balance elegancia/urbano + cuero Vélez + Fly Up (cada parte se explica) */
+function scoreParts(items) {
   const ps = Object.values(items || {}).map(id => CAT[id]).filter(Boolean);
-  if (!ps.length) return 0;
-  const has = z => ps.some(p => p.z === z);
-  const dress = has('dress');
-  let pts = 0;
-  pts += (has('top') || dress) ? 15 : 0; pts += (has('bottom') || dress) ? 15 : 0; pts += has('shoes') ? 15 : 0;
-  pts += Math.min(15, ps.filter(p => ['outer','bag','belt','hat','glasses'].includes(p.z)).length * 6);
-  const avg = ps.reduce((a, p) => a + p.e, 0) / ps.length;
-  pts += 25 * (1 - Math.min(1, Math.abs(avg - 52) / 42));
-  pts += ps.some(p => p.line === 'cuero') ? 8 : 0;
-  pts += ps.some(p => p.line === 'flyup') ? 7 : 0;
-  return Math.round(clamp(pts, 0, 100));
+  const has = z => ps.some(p => p.z === z); const dress = has('dress');
+  const core = {superior:has('top') || dress, inferior:has('bottom') || dress, calzado:has('shoes')};
+  const miss = Object.keys(core).filter(k => !core[k]);
+  const det = ps.filter(p => ['outer','bag','belt','hat','glasses'].includes(p.z)).length;
+  const avg = ps.length ? ps.reduce((a, p) => a + p.e, 0) / ps.length : 0;
+  const near = Math.abs(avg - 52);
+  const cuero = ps.some(p => p.line === 'cuero'), fly = ps.some(p => p.line === 'flyup');
+  return [
+    {label:'Look completo', got:(3 - miss.length) * 15, max:45, ok:!miss.length,
+      tip:miss.length ? `Te falta ${miss.join(', ')}.` : 'Tienes superior, inferior y calzado.', zone:miss.length ? {superior:'top', inferior:'bottom', calzado:'shoes'}[miss[0]] : null},
+    {label:'Detalles', got:Math.min(15, det * 6), max:15, ok:det >= 3,
+      tip:det >= 3 ? 'Tus detalles completan el total look.' : 'Un bolso, un cinturón, unas gafas o un abrigo suman puntos.', zone:det >= 3 ? null : 'bag'},
+    {label:'Elegancia + urbano', got:ps.length ? 25 * (1 - Math.min(1, near / 42)) : 0, max:25, ok:ps.length > 0 && near < 10,
+      tip:!ps.length ? 'Empieza con una prenda.' : near < 10 ? 'Tu look está balanceado.' : avg < 52 ? 'Está muy urbano: suma una pieza elegante, como cuero o un abrigo.' : 'Está muy formal: suma una pieza urbana Fly Up.',
+      zone:!ps.length || near < 10 ? null : avg < 52 ? 'outer' : 'shoes'},
+    {label:'Una pieza de cuero Vélez', got:cuero ? 8 : 0, max:8, ok:cuero, tip:cuero ? 'Ya llevas cuero Vélez.' : 'Un cinturón, unos botines o un bolso de cuero.', zone:cuero ? null : 'belt'},
+    {label:'Una pieza Fly Up', got:fly ? 7 : 0, max:7, ok:fly, tip:fly ? 'Ya llevas Fly Up.' : 'Unos tenis, un buzo o un morral Fly Up.', zone:fly ? null : 'shoes'}
+  ];
 }
+function score(items) {
+  if (!Object.values(items || {}).some(id => CAT[id])) return 0;
+  return Math.round(clamp(scoreParts(items).reduce((a, p) => a + p.got, 0), 0, 100));
+}
+/* el avatar reacciona: seria, sonrisa, alegre, risa (índices de las expresiones del kit) */
+const moodExpr = p => p >= 85 ? 2 : p >= 65 ? 1 : p >= 40 ? 0 : 5;
 const scoreLabel = p => p >= 85 ? '¡En tendencia!' : p >= 65 ? 'Casi en tendencia' : p >= 40 ? 'Vas muy bien' : p > 0 ? 'Suma piezas' : 'Empieza a vestirte';
 function rng(seed) { let s = seed % 2147483647; if (s <= 0) s += 2147483646; return () => (s = s * 16807 % 2147483647) / 2147483647; }
 function poolFor(g, src) {
@@ -457,7 +471,7 @@ V.bienvenida = () => {
     <div class="row between"><span class="brand">Vélez Up</span><span class="tag lime">v3</span></div>
     <div class="collage">
       <div class="tile c-peri" style="left:0;top:20px;width:52%;height:330px;transform:rotate(-4deg)">${avatarSVG(a)}</div>
-      <div class="tile c-orange" style="right:0;top:0;width:50%;height:300px;transform:rotate(5deg)">${avatarSVG(b)}</div>
+      <div class="tile c-ink" style="right:0;top:0;width:50%;height:300px;transform:rotate(5deg)">${avatarSVG(b)}</div>
       <div class="tile c-paper" style="left:26%;top:150px;width:48%;height:280px;transform:rotate(1deg)">${avatarSVG(c)}</div>
       <span class="sticker" style="left:6px;top:4px">¡Hola!</span>
       <span class="sticker" style="right:10px;bottom:30px;background:var(--red);color:#fff;border-color:var(--red);transform:rotate(7deg)">92% tendencia</span>
@@ -470,7 +484,8 @@ V.bienvenida = () => {
 };
 
 /* ---- registro: 1 nombre+género · 2 avatar · 3 estilo ---- */
-function regLook() { return {g:REG.g || 'f', head:REG.head, skin:REG.skin, hair:REG.hair, fit:REG.fit || null, expr:REG.expr ?? null, lips:REG.lips || null, items:REG.style ? Object.fromEntries((BASIC[REG.g || 'f'][REG.style]).map(id => [zoneOf(id), id])) : {top:REG.g === 'm' ? 'camisa-marfil' : 'sueter-trenzado', bottom:REG.g === 'm' ? 'pantalon-oliva' : 'jean-mom', shoes:REG.g === 'm' ? 'derby-cuero' : 'tenis-lona'}}; }
+function regLook() { const items = REG.style ? Object.fromEntries((BASIC[REG.g || 'f'][REG.style]).map(id => [zoneOf(id), id])) : {top:REG.g === 'm' ? 'camisa-marfil' : 'sueter-trenzado', bottom:REG.g === 'm' ? 'pantalon-oliva' : 'jean-mom', shoes:REG.g === 'm' ? 'derby-cuero' : 'tenis-lona'};
+  return {g:REG.g || 'f', head:REG.head, skin:REG.skin, hair:REG.hair, fit:REG.fit || null, expr:REG.expr ?? moodExpr(score(items)), lips:REG.lips || null, items}; }
 V.registro = step => {
   if (!REG) REG = S.profile ? {...S.profile} : {name:'', g:null, head:0, skin:0, hair:null, style:null, fit:{w:1, h:1}, expr:null, lips:null};
   step = +step || 1; if (step > 1 && (!REG.name.trim() || !REG.g)) step = 1;
@@ -485,7 +500,7 @@ V.registro = step => {
       <div class="err" id="errName"></div>
       <div class="field"><span>Tu avatar es *</span>
         <div class="gpick"><button class="c-peri ${REG.g === 'f' ? 'on' : ''}" data-act="regG" data-arg="f" aria-pressed="${REG.g === 'f'}"><b>Mujer</b>${avatarSVG(fl)}</button>
-        <button class="c-orange ${REG.g === 'm' ? 'on' : ''}" data-act="regG" data-arg="m" aria-pressed="${REG.g === 'm'}"><b style="color:#fff">Hombre</b>${avatarSVG(ml)}</button></div>
+        <button class="c-ink ${REG.g === 'm' ? 'on' : ''}" data-act="regG" data-arg="m" aria-pressed="${REG.g === 'm'}"><b style="color:#fff">Hombre</b>${avatarSVG(ml)}</button></div>
         <p class="tiny mute" style="margin:8px 2px 0">Luego puedes ponerle cualquier prenda del catálogo, sea de la línea que sea.</p></div>
       <div class="err" id="errG"></div>`;
     foot = `<button class="btn go block" data-act="regNext" data-arg="1">Seguir<span class="ar">${ic('arrow')}</span></button>`;
@@ -507,8 +522,9 @@ function avEditor(look, ctx) {
   const heads = k.heads.map((h, i) => `<button class="${look.head === i ? 'on' : ''}" data-act="avHead" data-arg="${ctx}:${i}" aria-label="Peinado ${i + 1}">${bubbleSVG({...look, fit:null, head:i, items:{}})}</button>`).join('');
   const skins = k.skins.map((s, i) => `<button class="sw ${look.skin === i ? 'on' : ''}" style="background:${s[0]}" data-act="avSkin" data-arg="${ctx}:${i}" aria-label="Tono de piel ${i + 1}"></button>`).join('');
   const hair = HAIR.map((c, i) => `<button class="sw ${c ? '' : 'nat'} ${(look.hair || null) === c ? 'on' : ''}" style="${c ? 'background:' + c : ''}" data-act="avHair" data-arg="${ctx}:${i}" aria-label="${c ? 'Color de pelo ' + i : 'Color natural'}"></button>`).join('');
-  const exprs = [{n:'Natural'}, ...k.exprs].map((e, i) => { const v = i - 1; const on = (look.expr ?? -1) === v;
-    return `<button class="${on ? 'on' : ''}" data-act="avExpr" data-arg="${ctx}:${v}" aria-label="Expresión ${esc(e.n)}">${bubbleSVG({...look, fit:null, expr:v, items:{}})}<span>${esc(e.n)}</span></button>`; }).join('');
+  const raw = (ctx === 'reg' ? REG.expr : S.profile?.expr) ?? -1;
+  const exprs = [{n:'Según tu look'}, ...k.exprs].map((e, i) => { const v = i - 1; const on = raw === v;
+    return `<button class="${on ? 'on' : ''}" data-act="avExpr" data-arg="${ctx}:${v}" aria-label="Expresión ${esc(e.n)}">${bubbleSVG({...look, fit:null, expr:v < 0 ? moodExpr(score(look.items)) : v, items:{}})}<span>${esc(e.n)}</span></button>`; }).join('');
   const lips = LIPS.map((c, i) => `<button class="sw ${c ? '' : 'nat lipnat'} ${(look.lips || null) === c ? 'on' : ''}" style="${c ? 'background:' + c : ''}" data-act="avLips" data-arg="${ctx}:${i}" aria-label="${c ? 'Labios ' + i : 'Labios naturales'}"></button>`).join('');
   const lblW = fit.w < .93 ? 'Delgada' : fit.w < 1.04 ? 'Media' : fit.w < 1.11 ? 'Atlética' : 'Robusta';
   const lblH = fit.h < .97 ? 'Baja' : fit.h < 1.02 ? 'Media' : 'Alta';
@@ -527,14 +543,14 @@ V.inicio = () => {
   const p = score(S.look); const reto = retoProgress();
   const com = communityLooks().slice(0, 8);
   return {html:`<section class="fadein">
-    <div class="hero c-peri">
+    <div class="hero c-ink">
       <div class="txt"><span class="eyebrow">Mi look de hoy</span><h2 class="h2">${p >= 85 ? 'Estás en tendencia' : 'Dale tu toque'}</h2>
         <div><span class="meter-lbl">Tendencia</span>${meter(p, true)}</div></div>
       <div class="av">${avatarSVG(meLook())}</div>
       <div class="bot stack"><a class="btn sm" href="#/crear">${ic('edit')}Editar look</a><button class="btn sm ghost" data-act="randomHome">${ic('dice')}Al azar</button></div>
     </div>
     <div class="minis sec" style="margin-top:14px">
-      <a class="mini c-orange" href="#/descubre"><span class="ic" style="color:var(--ink)">${ic('plus')}</span><span><b>Agrega tus prendas Vélez</b><span style="font-size:13px">${S.closet.length} en tu armario</span></span></a>
+      <a class="mini c-paper line" href="#/descubre"><span class="ic" style="color:var(--ink)">${ic('plus')}</span><span><b>Agrega tus prendas Vélez</b><span style="font-size:13px">${S.closet.length} en tu armario</span></span></a>
       <a class="mini c-peri" href="#/descubre?reto"><span class="ic">${ic('star')}</span><span><b>Reto del mes</b><span style="font-size:13px">${RETO.title}</span><span class="dots">${RETO.need.map((_, i) => `<i class="${i < reto ? 'on' : ''}"></i>`).join('')}</span></span></a>
       <a class="mini wide c-sand" href="#/armario"><span class="ic">${ic('closet')}</span><span style="flex:1"><b>Mi armario</b><span style="font-size:13px">${S.looks.length} looks guardados · ${S.closet.length} prendas</span></span>${ic('right')}</a>
     </div>
@@ -558,30 +574,37 @@ function zoneRows(g, look) {
   const by = y => k.base + (y - k.base) * sy;
   return {hat:f[1] - 12 + hd, glasses:f[1] + f[3] * .42 + hd, top:by(b[2] - (g === 'm' ? 62 : 52)), outer:by(b[2] - (g === 'm' ? 30 : 26)), belt:by(b[2]), bag:by(b[2] + (g === 'm' ? 42 : 34)), bottom:by(b[2] + H * .22), shoes:by(H - 12)};
 }
+function zoneList(z) { return poolFor(myG(), S.src).filter(id => zoneOf(id) === z); }
 V.crear = () => {
-  const g = myG(), k = K[g], p = score(S.look);
-  const stageH = Math.round(clamp(innerHeight - 372, 380, 540));
-  const fv = fullView(g); const sc = (stageH - 34) / fv[3]; const figW = fv[2] * sc;
-  const rows = zoneRows(g, meLook());
-  const zr = ZONES.map(Z => {
-    const id = S.look[Z.z]; const y = 22 + (rows[Z.z] - fv[1]) * sc;
-    return `<div class="zrow ${S.zone === Z.z ? 'sel' : ''} ${id ? '' : 'off'}" style="top:${y.toFixed(0)}px">
-      <div class="side"><button class="zbtn" data-act="cycle" data-arg="${Z.z}:-1" aria-label="${Z.label} anterior">${ic('left')}</button><span class="zlbl">${Z.label}</span></div>
-      <div class="side r"><button class="zbtn" data-act="cycle" data-arg="${Z.z}:1" aria-label="${Z.label} siguiente">${ic('right')}</button></div></div>`;
-  }).join('');
-  const lastId = CR.last && S.look[CR.last]; const lit = lastId && CAT[lastId];
-  const pill = lit ? `<button class="piece-pill" data-act="product" data-arg="${lit.id}"><b>${esc(lit.name)}</b>${owned(lit.id) ? `<span class="tag lime">La tienes</span>` : `<span class="tag">No la tienes</span>`}</button>` :
-    `<div class="piece-pill"><b>Cambia cada zona con las flechas</b></div>`;
+  const g = myG(), p = score(S.look); const z = S.zone || 'top'; const Z = ZONES.find(x => x.z === z) || ZONES[2];
+  const stageH = Math.round(clamp(innerHeight - 470, 320, 520));
+  const fv = fullView(g); const sc = (stageH - 26) / fv[3]; const figW = fv[2] * sc;
+  const rows = zoneRows(g, meLook()); const ay = clamp(18 + (rows[z] - fv[1]) * sc, 40, stageH - 30);
+  const cur = S.look[z] || null; const curIt = cur && CAT[cur];
+  const list = zoneList(z);
+  const chips = ZONES.map(x => `<button class="zchip ${x.z === z ? 'on' : ''} ${S.look[x.z] ? 'has' : ''}" data-act="zone" data-arg="${x.z}" aria-pressed="${x.z === z}">${x.label}</button>`).join('');
+  const opts = list.length ? [`<button class="opt none ${cur ? '' : 'on'}" data-act="pick" data-arg="${z}:" aria-label="Sin ${Z.label.toLowerCase()}">${ic('x')}<span>Nada</span></button>`,
+    ...list.map(id => `<button class="opt ${id === cur ? 'on' : ''}" data-act="pick" data-arg="${z}:${id}" aria-label="${esc(CAT[id].name)}">${thumbSVG(id)}${owned(id) ? '' : '<i class="dot" title="No la tienes"></i>'}</button>`)].join('')
+    : `<div class="opt-empty">No tienes prendas de ${Z.label.toLowerCase()}. <button class="link" data-act="src" data-arg="all">Ver todo el catálogo</button></div>`;
   return {html:`<section class="creator fadein">
-    <div class="cr-top"><div style="flex:1;min-width:0"><span class="meter-lbl">Tendencia · ${scoreLabel(p)}</span>${meter(p, true)}</div></div>
+    <button class="cr-top" data-act="scoreInfo" aria-label="Ver qué sube tu tendencia"><div style="flex:1;min-width:0;text-align:left"><span class="meter-lbl">Tendencia · ${scoreLabel(p)} <u>¿Qué la sube?</u></span>${meter(p, true)}</div></button>
     <div class="stage" style="height:${stageH}px">
-      <div class="src-toggle" role="tablist" aria-label="Prendas"><button class="${S.src === 'mine' ? 'on' : ''}" data-act="src" data-arg="mine" role="tab" aria-selected="${S.src === 'mine'}">Mi armario</button><button class="${S.src === 'all' ? 'on' : ''}" data-act="src" data-arg="all" role="tab" aria-selected="${S.src === 'all'}">Todo el catálogo</button></div>
       ${FLIGHT}
       <div class="floor"></div>
-      <div class="fig ${CR.pop ? 'pop' : ''}" id="fig" style="width:${figW.toFixed(0)}px;height:${(stageH - 34).toFixed(0)}px;margin-top:22px">${avatarSVG(meLook())}</div>
-      ${zr}
+      <div class="fig ${CR.pop ? 'pop' : ''}" id="fig" data-act="pickZoneAt" style="width:${figW.toFixed(0)}px;height:${(stageH - 26).toFixed(0)}px;margin-top:18px" title="Toca una zona del avatar">${avatarSVG(meLook())}</div>
+      <div class="bigarrows" style="top:${ay.toFixed(0)}px">
+        <button class="barrow" data-act="cycle" data-arg="${z}:-1" aria-label="${Z.label}: anterior">${ic('left')}</button>
+        <span class="zname">${Z.label}</span>
+        <span style="flex:1"></span>
+        <button class="barrow" data-act="cycle" data-arg="${z}:1" aria-label="${Z.label}: siguiente">${ic('right')}</button>
+      </div>
     </div>
-    <div class="pill-row">${pill}</div>
+    <div class="zchips" role="tablist" aria-label="Zonas del look">${chips}</div>
+    <div class="car">
+      <div class="car-h"><button class="car-name" ${curIt ? `data-act="product" data-arg="${curIt.id}"` : ''}><b>${curIt ? esc(curIt.name) : 'Sin ' + Z.label.toLowerCase()}</b>${curIt ? (owned(curIt.id) ? '<span class="tag lime">La tienes</span>' : '<span class="tag">No la tienes</span>') : ''}</button>
+        <div class="src-toggle" role="tablist" aria-label="Prendas"><button class="${S.src === 'mine' ? 'on' : ''}" data-act="src" data-arg="mine" role="tab" aria-selected="${S.src === 'mine'}">Mi armario</button><button class="${S.src === 'all' ? 'on' : ''}" data-act="src" data-arg="all" role="tab" aria-selected="${S.src === 'all'}">Todo</button></div></div>
+      <div class="opts" id="opts">${opts}</div>
+    </div>
     <div class="cr-actions">
       <button class="act" data-act="roulette" id="rouBtn">${ic('dice')}Ruleta</button>
       <button class="act" data-act="clean">${ic('eraser')}Limpiar</button>
@@ -590,13 +613,30 @@ V.crear = () => {
     </div>
   </section>`};
 };
+/* cambia una zona y celebra cuando el look entra en tendencia */
+function applyChange(fn) {
+  const p0 = score(S.look); fn(); const p1 = score(S.look);
+  CR.pop = true; save(); render(true); CR.pop = false;
+  const o = $('#opts .opt.on'); if (o) o.scrollIntoView({block:'nearest', inline:'center'});
+  if (p0 < 85 && p1 >= 85) toast('¡En tendencia! Un elemento cambia todo el look', p1 + '%');
+}
 function cycle(zone, dir) {
-  const g = myG(); let list = poolFor(g, S.src).filter(id => zoneOf(id) === zone);
-  if (!list.length) { toast(S.src === 'mine' ? 'No tienes prendas de esta zona: agrégalas en Descubre o mira todo el catálogo' : 'No hay prendas para esta zona'); S.zone = zone; return render(); }
-  const opts = [null, ...list]; const cur = S.look[zone] || null; let i = opts.indexOf(cur); if (i < 0) i = 0;
-  const nx = opts[(i + dir + opts.length) % opts.length];
-  if (nx) setPiece(S.look, nx); else delete S.look[zone];
-  S.zone = zone; CR.last = zone; CR.pop = true; save(); render(); CR.pop = false;
+  const list = zoneList(zone);
+  if (!list.length) { S.zone = zone; toast(S.src === 'mine' ? 'No tienes prendas de esta zona: mira todo el catálogo' : 'No hay prendas para esta zona'); return render(true); }
+  applyChange(() => {
+    const opts = [null, ...list]; const cur = S.look[zone] || null; let i = opts.indexOf(cur); if (i < 0) i = 0;
+    const nx = opts[(i + dir + opts.length) % opts.length];
+    if (nx) setPiece(S.look, nx); else delete S.look[zone];
+    S.zone = zone; CR.last = zone;
+  });
+}
+function scoreSheet() {
+  const parts = scoreParts(S.look); const p = score(S.look);
+  openSheet(`${shHead('Tu tendencia', scoreLabel(p))}
+    <div class="score-big"><span class="fun">${p}<small>%</small></span><p>Un elemento cambia todo el look. Así se suma tu porcentaje:</p></div>
+    <div class="parts">${parts.map(x => `<div class="part ${x.ok ? 'ok' : ''}"><div class="row between"><b>${x.label}</b><span class="fun">${Math.round(x.got)}/${x.max}</span></div>
+      <div class="pbar"><i style="width:${Math.round(x.got / x.max * 100)}%"></i></div><p>${x.tip}</p>
+      ${x.zone ? `<button class="btn sm ghost" data-act="goZone" data-arg="${x.zone}">${ic('hanger')}Ir a ${ZONES.find(Z => Z.z === x.zone).label.toLowerCase()}</button>` : ''}</div>`).join('')}</div>`);
 }
 
 /* ---- descubre (catálogo) ---- */
@@ -612,7 +652,7 @@ V.descubre = arg => {
   const rw = REWARDS.filter(r => !r.g || r.g === g);
   return {html:`<section class="fadein">
     <div class="sec-h" style="margin:4px 0 12px"><div><h1 class="h1">Descubre</h1><p class="sub" style="margin:4px 0 0">El catálogo de la tienda. Marca lo que ya tienes.</p></div></div>
-    <a class="banner c-orange" id="reto" href="#/descubre" data-act="retoInfo" style="min-height:178px">
+    <a class="banner c-ink" id="reto" href="#/descubre" data-act="retoInfo" style="min-height:178px">
       <span class="eyebrow">Reto de ${RETO.month}</span><h2 class="h2" style="margin:6px 0;max-width:58%">${RETO.title}</h2>
       <p style="margin:0;max-width:56%;font-size:13.5px">${RETO.text}</p>
       <span class="dots" style="margin-top:10px">${RETO.need.map((w, i) => `<i class="${i < reto ? 'on' : ''}"></i>`).join('')}<span class="tag" style="margin-left:6px;color:var(--ink)">+${PTS.reto} pts</span></span>
@@ -629,7 +669,7 @@ V.descubre = arg => {
 };
 function prodCard(it, i) {
   const on = owned(it.id);
-  return `<div class="prod"><button class="th" style="background:${PALETTE[i % PALETTE.length]}" data-act="product" data-arg="${it.id}" aria-label="${esc(it.name)}">${lineTag(it)}${thumbSVG(it.id)}</button>
+  return `<div class="prod"><button class="th" style="background:${PALETTE[i % PALETTE.length]}" data-act="product" data-arg="${it.id}" aria-label="${esc(it.name)}">${lineTag(it)}${tryThumb(it.id)}</button>
     <div class="inf"><b>${esc(it.name)}</b><button class="own ${on ? 'on' : ''}" data-act="own" data-arg="${it.id}" aria-pressed="${on}">${on ? ic('check') + 'La tengo' : ic('plus') + 'La tengo'}</button></div></div>`;
 }
 function rewardRow(r, i) {
@@ -660,12 +700,12 @@ V.vive = () => {
     <div class="sec-h" style="margin:4px 0 12px"><div><h1 class="h1">Vive</h1><p class="sub" style="margin:4px 0 0">Tus puntos, tus aromas y tu look en la tienda.</p></div></div>
     <div class="card c-ink level"><div class="ring"><svg viewBox="0 0 84 84"><circle cx="42" cy="42" r="${R}" fill="none" stroke="rgba(255,255,255,.18)" stroke-width="9"/><circle cx="42" cy="42" r="${R}" fill="none" stroke="#9C0720" stroke-width="9" stroke-linecap="round" stroke-dasharray="${C}" stroke-dashoffset="${C * (1 - pct)}"/></svg><b>${S.points}</b></div>
       <div><span class="eyebrow" style="color:#F3DCDF">Nivel ${L.id}</span><h2 class="h2" style="margin:4px 0">${N ? `${N.min - S.points} pts para ${N.id}` : 'Nivel máximo'}</h2><a class="link" style="color:#fff;font-size:14px" href="#/descubre" data-act="toRewards">Canjear recompensas</a></div></div>
-    <div class="card c-peri sec" style="margin-top:14px"><div class="row between"><span class="eyebrow">Olfato</span><span class="tag">${ic('drop').replace('<svg', '<svg width="14" height="14"')}${n} aromas</span></div>
+    <div class="card c-peri sec" style="margin-top:14px"><div class="row between"><span class="eyebrow">Olfato</span><span class="tag">${ic('drop').replace('<svg', '<svg width="14" height="14"')}${n} ${n === 1 ? 'aroma' : 'aromas'}</span></div>
       <h2 class="h2" style="margin:8px 0 4px">Tus aromas suman premios</h2><p style="margin:0;font-size:14px">Registra cada fragancia Vélez que compres en la tienda. Con 5 aromas reclamas una prenda.</p>
       <div class="mile">${OLFATO.map(m => `<div class="${n >= m.n ? 'on' : ''}"><b>${m.n}</b>${m.label}</div>`).join('')}</div>
       <div class="row" style="margin-top:14px;gap:8px"><button class="btn sm" data-act="aroma">${ic('plus')}Registrar aroma</button>${n >= 5 && !S.flags.olfatoPrenda ? `<button class="btn sm lime" data-act="olfatoPrenda">${ic('gift')}Reclamar prenda</button>` : ''}</div>
       ${S.frag.length ? `<p class="tiny" style="margin:10px 0 0">Últimos: ${S.frag.slice(-4).reverse().map(f => esc(f.name)).join(' · ')}</p>` : ''}</div>
-    <div class="card c-orange sec" style="margin-top:14px"><span class="eyebrow">En la tienda</span><h2 class="h2" style="margin:8px 0 4px">Escanea el código de tu look</h2>
+    <div class="card c-paper line sec" style="margin-top:14px"><span class="eyebrow">En la tienda</span><h2 class="h2" style="margin:8px 0 4px">Escanea el código de tu look</h2>
       <p style="margin:0;font-size:14px">Cada look guardado tiene un código QR. Al escanearlo ves qué prendas necesitas para armarlo, cuáles ya tienes y cuáles te faltan.</p>
       <div class="row" style="margin-top:14px;gap:8px"><button class="btn sm" data-act="scan">${ic('camera')}Escanear QR</button><a class="btn sm ghost" href="#/armario">Mis looks</a></div></div>
     ${looks.length ? `<div class="sec"><div class="sec-h"><h2 class="h2">Códigos de tus looks</h2></div><div class="list">${looks.map(l => `<button class="it" style="width:100%;text-align:left" data-act="qr" data-arg="${l.id}"><span class="ic" style="background:${whereOf(l.where).c}">${bubbleSVG(l)}</span><span class="c"><b>${esc(l.name)}</b><span>${whereOf(l.where).label} · ${Object.keys(l.items).length} prendas</span></span>${ic('qr').replace('<svg', '<svg width="22" height="22"')}</button>`).join('')}</div></div>` : ''}
@@ -725,11 +765,36 @@ V.look = code => {
    HOJAS
    --------------------------------------------------------------------- */
 function productSheet(id) {
-  const it = CAT[id]; const g = myG(); const on = owned(id);
-  const tryL = setPiece({...S.look}, id);
+  const it = CAT[id]; const g = myG(); const on = owned(id); const z0 = zoneOf(id);
+  const base = {...S.look}; if (['top','dress'].includes(it.z)) delete base.outer;
+  const tryL = setPiece(base, id); const p = score(tryL), p0 = score(S.look);
+  const worn = new Set(Object.values(tryL));
+  let pool = poolFor(g, 'mine').filter(x => zoneOf(x) !== z0 && !worn.has(x));
+  if (pool.length < 3) pool = pool.concat(poolFor(g, 'all').filter(x => zoneOf(x) !== z0 && !worn.has(x) && (CAT[x].g === g || CAT[x].g === 'u') && !pool.includes(x)));
+  const seen = new Set(); const combo = pool.map(x => ({x, s:score(setPiece({...tryL}, x))})).sort((a, b) => b.s - a.s || owned(b.x) - owned(a.x))
+    .filter(c => { const zz = zoneOf(c.x); if (seen.has(zz)) return false; seen.add(zz); return true; }).slice(0, 3);
+  const withIt = communityLooks().filter(l => Object.values(l.items).includes(id)).slice(0, 6);
+  const d = p - p0;
   openSheet(`${shHead(esc(it.name), LINES[it.line] + (it.g !== 'u' && it.g !== g ? ' · línea ' + (it.g === 'f' ? 'mujer' : 'hombre') : ''))}
-    <div class="okcard c-sand"><div class="av">${avatarSVG(meLook(tryL))}</div><div><div class="qrbox" style="border-radius:20px;padding:6px;background:${PALETTE[2]}"><div style="width:120px;height:120px">${thumbSVG(id)}</div></div><p class="tiny" style="margin:10px 0 0">Así se te ve con tu look actual: ${score(tryL)}% de tendencia.</p></div></div>
-    <div class="row" style="margin-top:14px;gap:8px"><button class="btn block ${on ? 'ghost' : 'lime'}" data-act="own" data-arg="${id}">${on ? ic('check') + 'La tengo' : ic('plus') + 'La tengo'}</button><button class="btn block" data-act="tryOn" data-arg="${id}">${ic('hanger')}Pruébatela</button></div>`);
+    <div class="okcard c-sand"><div class="av">${avatarSVG(meLook(tryL))}</div><div class="stack">
+      <span class="eyebrow">Pruébala con lo que tienes</span>
+      <span class="fun" style="font-size:34px;line-height:1">${p}<small style="font-size:18px">%</small></span>
+      <span class="tiny">${d > 0 ? `Sube tu tendencia ${d} puntos` : d < 0 ? `Baja tu tendencia ${-d} puntos` : 'Mantiene tu tendencia'} con tu look de hoy.</span>
+      <div class="mini-th">${thumbSVG(id)}</div></div></div>
+    <div class="row" style="margin-top:12px;gap:8px"><button class="btn block ${on ? 'ghost' : 'lime'}" data-act="own" data-arg="${id}">${on ? ic('check') + 'La tengo' : ic('plus') + 'La tengo'}</button><button class="btn block" data-act="tryOn" data-arg="${id}">${ic('hanger')}Pruébatela</button></div>
+    ${combo.length ? `<div class="sec" style="margin-top:20px"><p class="opt-h">Combínala con</p><div class="combo">${combo.map(c => `<button class="combo-it" data-act="tryCombo" data-arg="${id}|${c.x}"><span class="th">${thumbSVG(c.x)}</span><b>${esc(CAT[c.x].name)}</b><span class="tiny">${owned(c.x) ? 'La tienes' : LINES[CAT[c.x].line]} · ${c.s}%</span></button>`).join('')}</div></div>` : ''}
+    <div class="sec" style="margin-top:20px"><p class="opt-h">Looks con esta prenda</p>${withIt.length ? `<div class="hscroll">${withIt.map(l => lookCard(l, {like:false})).join('')}</div>` : `<p class="tiny mute">Aún nadie la ha usado en la comunidad. Arma un look con ella y publícalo.</p>`}</div>`);
+}
+/* miniatura de catálogo: la prenda puesta en tu avatar (nunca aislada) */
+function tryThumb(id) {
+  const it = CAT[id], g = myG(), key = assetKey(it, g); if (!key) return '';
+  const k = K[g]; let b;
+  if (key === 'belt') { const [x0, x1, y] = k.belt; b = [x0, y - 3, x1 - x0, 6]; } else b = k.items[key].bb;
+  let s = Math.max(b[2], b[3]) * 1.22; s = Math.max(s, ['glasses','hat'].includes(it.z) ? 62 : ['belt'].includes(it.z) ? 70 : 40);
+  let cy = b[1] + b[3] / 2; if (it.z === 'hat') cy += s * .2; if (it.z === 'glasses') cy += s * .1;
+  const base = {...S.look}; if (it.z !== 'outer') delete base.outer; if (it.z !== 'bag') delete base.bag;
+  const look = {...meLook(setPiece(base, id)), fit:null};
+  return avatarSVG(look, {view:[b[0] + b[2] / 2 - s / 2, cy - s / 2, s, s]}).replace('xMidYMax', 'xMidYMid');
 }
 function saveSheet() {
   const n = S.looks.length + 1; const p = score(S.look);
@@ -741,7 +806,7 @@ function saveSheet() {
 }
 function savedSheet(l) {
   openSheet(`${shHead('¡Look guardado!', 'Ya está en tu armario.')}
-    <div class="okcard" style="background:${whereOf(l.where).c}"><div class="av">${avatarSVG(l)}</div><div><span class="tag">${whereOf(l.where).label}</span><h3 class="h3" style="margin:8px 0">${esc(l.name)}</h3>${meter(score(l.items))}</div></div>
+    <div class="okcard" style="background:${whereOf(l.where).c}"><div class="av">${avatarSVG({...l, expr:2})}</div><div><span class="tag">${whereOf(l.where).label}</span><h3 class="h3" style="margin:8px 0">${esc(l.name)}</h3>${meter(score(l.items))}</div></div>
     <div class="sec" style="margin-top:18px"><p class="opt-h">Compartir</p>${shareGrid(l)}</div>
     <div class="row" style="margin-top:18px;gap:8px"><a class="btn block ghost" href="#/armario" data-act="close">${ic('closet')}Ver en mi armario</a><button class="btn block" data-act="another">${ic('plus')}Crear otro</button></div>`);
 }
@@ -870,6 +935,17 @@ const A = {
   meG: g => { if (S.profile.g === g) return; S.profile.g = g; S.profile.head = 0; const items = {}; Object.values(S.look).forEach(id => { if (assetKey(CAT[id], g)) setPiece(items, id); }); S.look = items; save(); render(); toast('Avatar actualizado'); },
   // creador
   cycle: a => { const [z, d] = a.split(':'); cycle(z, +d); },
+  zone: z => { S.zone = z; save(); render(true); const o = $('#opts .opt.on'); if (o) o.scrollIntoView({block:'nearest', inline:'center'}); },
+  pick: a => { const [z, id] = a.split(':'); applyChange(() => { if (id) setPiece(S.look, id); else delete S.look[z]; S.zone = z; CR.last = z; }); },
+  pickZoneAt: (a, el, ev) => {
+    const g = myG(), fv = fullView(g), r = el.getBoundingClientRect(); const y = fv[1] + (ev.clientY - r.top) / (r.height / fv[3]);
+    const rows = zoneRows(g, meLook()); let best = 'top', d = 1e9;
+    for (const Z of ZONES) { const dd = Math.abs(rows[Z.z] - y); if (dd < d) { d = dd; best = Z.z; } }
+    A.zone(best);
+  },
+  scoreInfo: () => scoreSheet(),
+  goZone: z => { closeSheet(); S.zone = z; if (!zoneList(z).length) S.src = 'all'; save(); if (parse().r === 'crear') render(true); else go('/crear'); },
+  tryCombo: a => { const [id, x] = a.split('|'); setPiece(S.look, id); if (x) setPiece(S.look, x); S.zone = zoneOf(id); if (!owned(id) || (x && !owned(x))) S.src = 'all'; save(); closeSheet(); go('/crear'); },
   src: s => { S.src = s; save(); render(); },
   roulette: () => {
     const g = myG(); let pool = poolFor(g, S.src); if (pool.length < 3) { pool = poolFor(g, 'all'); if (S.src === 'mine') toast('Tu armario es pequeño: usamos todo el catálogo'); }
@@ -877,7 +953,7 @@ const A = {
     let t = 0; const fig = $('#fig');
     const tick = () => { const items = {}; Object.values(randomLook(g, pool, Math.random, S.src === 'all')).forEach(id => setPiece(items, id));
       if (fig) fig.innerHTML = avatarSVG(meLook(items));
-      if (++t < 9) setTimeout(tick, 70 + t * 14); else { S.look = items; CR.last = null; CR.pop = true; save(); render(); CR.pop = false; } };
+      if (++t < 9) setTimeout(tick, 70 + t * 14); else { applyChange(() => { S.look = items; CR.last = null; }); } };
     tick();
   },
   clean: () => { const b = BASIC[myG()][S.profile.style] || []; S.look = {}; b.forEach(id => setPiece(S.look, id)); CR.last = null; save(); render(); toast('Volviste a tu look básico'); },
