@@ -64,7 +64,7 @@ const CAT_LIST = [
   // abrigos
   ['abrigo-hueso','Abrigo largo hueso','outer','f_abrigo_largo','velez',86,'f'],
   ['abrigo-camel-f','Abrigo largo camel','outer','f_abrigo_largo','velez',84,'f','#C99B6D'],
-  ['chaqueta-cuero','Chaqueta de cuero negra','outer','f_chaqueta_cuero','cuero',72,'f'],
+  ['chaqueta-cuero','Chaqueta de cuero negra','outer','f_chaqueta_cuero','cuero',72,'f','#27242A'],
   ['chaqueta-cuero-cognac','Chaqueta de cuero cognac','outer','f_chaqueta_cuero','cuero',74,'f','#8E4F2C'],
   ['chaqueta-jean','Chaqueta de jean clara','outer','f_chaqueta_denim','flyup',28,'f'],
   // inferior · mujer
@@ -96,7 +96,7 @@ const CAT_LIST = [
   ['chaleco-oliva','Chaleco oliva con corbata','top','m_chaleco_oliva','velez',86,'m'],
   ['chaleco-rojo','Chaleco + camisa roja','top','m_chaleco_blanco','velez',74,'m'],
   ['abrigo-camel','Abrigo camel','outer','m_abrigo_camel','velez',86,'m'],
-  ['abrigo-espiga','Abrigo gris espiga','outer','m_abrigo_gris','velez',84,'m'],
+  ['abrigo-espiga','Abrigo gris','outer','m_abrigo_camel','velez',84,'m','#7E7B80'],
   ['blazer-cuero','Blazer de cuero café','outer','m_blazer_cuero','cuero',80,'m'],
   ['blazer-cuero-negro','Blazer de cuero negro','outer','m_blazer_cuero','cuero',82,'m','#2E2B30'],
   ['jean-oscuro','Jean oscuro','bottom','m_jean_oscuro','flyup',38,'m'],
@@ -253,6 +253,104 @@ function fitOf(look) { const f = look.fit || {}; return {sx:clamp(+f.w || 1, FIT
 function headDy(k, sy) { return (k.neck - k.base) * (sy - 1); }
 /* marco común para todos los avatares completos (deja espacio a contextura y estatura) */
 function fullView(g) { const k = K[g]; const ex = k.vb[2] * .1, top = k.base * .07; return [-ex, -top, k.vb[2] + 2 * ex, k.vb[3] + top]; }
+/* ---------------------------------------------------------------------
+   AJUSTE DE CAPAS · la prenda de encima siempre cubre a la de abajo
+   Se mide la silueta de cada prenda fila por fila (canvas + Path2D) y, si el
+   abrigo es más angosto que la prenda interior, se ensancha lo justo.
+   Funciona con cualquier combinación, contextura o prenda cruzada.
+   --------------------------------------------------------------------- */
+const PROF = new Map();
+function profileOf(g, key) {
+  const id = g + ':' + key; if (PROF.has(id)) return PROF.get(id);
+  const it = key === '@body' ? {p:K[g].body.filter(e => !e[3] || e[3] === 'r' || e[3] === 'l'), bb:[0, 0, K[g].vb[2], K[g].vb[3]]}
+    : key.startsWith('@head') ? {p:K[g].heads[+key.slice(5)].p, bb:[0, 0, K[g].vb[2], K[g].face[1] + K[g].face[3] * 1.4]} : K[g].items[key]; let rows = [];
+  try {
+    const [bx, by, bw, bh] = it.bb; const R = 2;
+    const c = document.createElement('canvas'); c.width = Math.ceil(bw * R) + 4; c.height = Math.ceil(bh * R) + 4;
+    const x = c.getContext('2d'); x.setTransform(R, 0, 0, R, -bx * R + 2, -by * R + 2);
+    for (const e of it.p) { if (e.length > 2 && e[2] !== -1) continue; x.fill(new Path2D(e[1]), 'evenodd'); }
+    const d = x.getImageData(0, 0, c.width, c.height).data;
+    for (let r = 0; r < c.height; r += 2) {
+      let l = -1, rr = -1; const o = r * c.width * 4;
+      for (let q = 0; q < c.width; q++) if (d[o + q * 4 + 3] > 60) { if (l < 0) l = q; rr = q; }
+      if (l >= 0) rows.push([by + (r - 2) / R, bx + (l - 2) / R, bx + (rr - 2) / R]);
+    }
+  } catch (e) { rows = []; }
+  PROF.set(id, rows); return rows;
+}
+/* cuánto hay que ensanchar la capa de encima (alrededor del centro del cuerpo) para cubrir la de abajo */
+function coverScale(g, overKey, underKey) {
+  const id = g + ':' + overKey + '>' + underKey; if (PROF.has(id)) return PROF.get(id);
+  const A = profileOf(g, overKey), B = profileOf(g, underKey), cx = K[g].tcx;
+  let sx = 1;
+  if (A.length && B.length) {
+    const top = A[0][0] + 7, ratios = [];
+    let j = 0;
+    for (const [y, al, ar] of A) {
+      if (y < top) continue;
+      while (j < B.length - 1 && B[j + 1][0] <= y) j++;
+      const b = B[j]; if (!b || Math.abs(b[0] - y) > 1.6) continue;
+      const dl = cx - al, dr = ar - cx; if (dl < 5 || dr < 5) continue;
+      ratios.push(Math.max((cx - b[1] + 1.3) / dl, (b[2] - cx + 1.3) / dr));
+    }
+    if (ratios.length) { ratios.sort((p, q) => p - q); sx = clamp(ratios[Math.floor(ratios.length * .85)], 1, 1.06); }
+  }
+  PROF.set(id, sx); return sx;
+}
+/* franjas de la prenda interior que se asoman por el borde del abrigo: si sobresalen menos de 8 u son
+   un «asomo» (mangas o costados más anchos) y se ocultan; si sobresalen más, es la prenda que sigue
+   por debajo (antebrazo bajo una manga corta, bajo de la camisa) y se deja ver */
+function peekBands(g, overKey, underKey, sx, maxY = 1e9) {
+  const id = 'pk:' + g + ':' + overKey + '>' + underKey + ':' + sx.toFixed(3) + ':' + maxY; if (PROF.has(id)) return PROF.get(id);
+  const A = profileOf(g, overKey), B = profileOf(g, underKey), cx = K[g].tcx;
+  const X = x => cx + (x - cx) * sx; const rows = []; let j = 0;
+  /* filas justo encima del hombro del abrigo: lo que sobresalga ahí se oculta siempre */
+  /* y desde el cuello hasta la línea de hombros del abrigo (donde ya alcanza su ancho), también */
+  let shY = -1e9;
+  if (A.length) { const top = A.slice(0, Math.max(3, Math.floor(A.length * .35))); const maxW = Math.max(...top.map(r => r[2] - r[1])); const sh = A.find(r => r[2] - r[1] >= maxW * .85); if (sh) shY = sh[0]; }
+  const A2 = A.length ? [...[8, 7, 6, 5, 4, 3, 2, 1].map(t => [A[0][0] - t, A[0][1], A[0][2], 1]), ...A.map(r => [r[0], r[1], r[2], r[0] < shY ? 1 : 0])] : A;
+  for (const [y, al, ar, pre] of A2) {
+    if (y > maxY) break;
+    while (j < B.length - 1 && B[j + 1][0] <= y) j++;
+    const b = B[j]; if (!b || Math.abs(b[0] - y) > 1.2) continue;
+    rows.push({y, L:X(al), R:X(ar), bl:b[1], br:b[2], pre:!!pre});
+  }
+  /* se decide por tramos continuos (no fila por fila) para no dejar rayas */
+  let d = '';
+  for (const side of ['L', 'R']) {
+    const ex = r => side === 'L' ? r.L - r.bl : r.br - r.R;
+    let run = [];
+    const flush = () => {
+      if (!run.length) return;
+      const m = run.map(ex).sort((p, q) => p - q)[Math.floor(run.length / 2)];
+      if (m < 8 || run.every(r => r.pre)) for (const r of run) d += side === 'L'
+        ? `M${(r.bl - .8).toFixed(1)} ${(r.y - .7).toFixed(1)}H${(r.L + .4).toFixed(1)}v1.5H${(r.bl - .8).toFixed(1)}Z`
+        : `M${(r.R - .4).toFixed(1)} ${(r.y - .7).toFixed(1)}H${(r.br + .8).toFixed(1)}v1.5H${(r.R - .4).toFixed(1)}Z`;
+      run = [];
+    };
+    let prev = null;
+    for (const r of rows) { const e = ex(r); if (e > .2) { if (prev != null && Math.abs(e - prev) > 3) flush(); run.push(r); prev = e; } else { flush(); prev = null; } }
+    flush();
+  }
+  PROF.set(id, d); return d;
+}
+function hatScale(g, head, key) {
+  const id = 'hat:' + g + ':' + head + ':' + key; if (PROF.has(id)) return PROF.get(id);
+  const H = profileOf(g, '@head' + head), T = profileOf(g, key), b = K[g].items[key].bb; let s = 1;
+  if (H.length && T.length) {
+    const yb = b[1] + b[3] - 2; const hr = H.filter(r => Math.abs(r[0] - yb) < 4);
+    if (hr.length) {
+      const hw = Math.max(...hr.map(r => r[2] - r[1])), tw = Math.max(...T.map(r => r[2] - r[1]));
+      s = clamp((hw + 3) / tw, 1, 1.35);
+    }
+  }
+  PROF.set(id, s); return s;
+}
+/* el abrigo corto pide la prenda superior por dentro del pantalón */
+function shortOuter(g, overKey, underKey) {
+  const A = profileOf(g, overKey), B = profileOf(g, underKey); if (!A.length || !B.length) return false;
+  return A[A.length - 1][0] < B[B.length - 1][0] - 6;
+}
 /* look = {g, head, skin, hair, fit, expr, lips, items:{zone:id}} ; opt: {view:[x,y,w,h], cls, w, h, only:item} */
 function avatarSVG(look, opt = {}) {
   const g = look.g || 'f', k = K[g]; const u = 'a' + (++UID) + '_';
@@ -272,7 +370,13 @@ function avatarSVG(look, opt = {}) {
   if (!opt.only) {
     for (const e of k.body) { if (e.length > 3 && hide.has(e[3])) continue; bodyG += `<path d="${e[1]}" fill="${base(e[0])}"/>`; }
   }
-  const order = zs.has('belt') && zs.has('bottom') ? ORDER_TUCK : ORDER;
+  const bodyLen = bodyG.length;
+  const tOuter = items.find(x => x.z === 'outer'), tTop = items.find(x => x.z === 'top');
+  const tBot = items.find(x => x.z === 'bottom');
+  /* con falda, un top que baja más allá de la cintura va por dentro (si no, la tapa) */
+  const longOverSkirt = tTop && tBot && !opt.only && /falda/.test(tBot.it.id) && (() => { const T = profileOf(g, tTop.key), B = profileOf(g, tBot.key); return T.length && B.length && T[T.length - 1][0] > B[0][0] + 14; })();
+  const tuck = zs.has('bottom') && (zs.has('belt') || longOverSkirt || (tOuter && tTop && !opt.only && shortOuter(g, tOuter.key, tTop.key)));
+  const order = tuck ? ORDER_TUCK : ORDER;
   let inHead = false;
   for (const z of order) {
     if (z === 'head') {
@@ -294,11 +398,33 @@ function avatarSVG(look, opt = {}) {
       if (x.key === 'belt') { part += beltSVG(k, x.it); continue; }
       const d = k.items[x.key]; const main = d.main; const tint = x.it.tint;
       const fill = f => { const c = base(f); return tint && c[0] === '#' ? tintColor(c, main, tint) : c; };
-      part += pathsOf(d.p, fill, u + x.key + '_', d.k);
+      const under = z === 'outer' && !opt.only ? items.find(y => y.z === 'top' || y.z === 'dress') : null;
+      const cs = under ? coverScale(g, x.key, under.key) : 1;
+      let svgp = pathsOf(d.p, fill, u + x.key + '_', d.k);
+      /* sombreros: se ensanchan hasta cubrir el pelo de esa cabeza a la altura del ala */
+      if (z === 'hat' && !opt.only) {
+        const hs = hatScale(g, look.head || 0, x.key);
+        if (hs > 1.001) { const b = d.bb, hx = b[0] + b[2] / 2, hy = b[1] + b[3]; svgp = `<g transform="translate(${hx} ${hy}) scale(${hs.toFixed(3)} ${(1 + (hs - 1) * .45).toFixed(3)}) translate(${-hx} ${-hy})">${svgp}</g>`; }
+      }
+      /* prenda interior bajo un abrigo: se ocultan solo las franjas que se asoman por sus bordes */
+      const over = (z === 'top' || z === 'dress') && !opt.only ? items.find(y => y.z === 'outer') : null;
+      if (over) {
+        const ocs = coverScale(g, over.key, x.key); const bands = peekBands(g, over.key, x.key, ocs);
+        part += bands ? `<mask id="${u}pk" maskUnits="userSpaceOnUse" x="-400" y="-400" width="1200" height="1200"><rect x="-400" y="-400" width="1200" height="1200" fill="#fff"/><path d="${bands}" fill="#000"/></mask><g mask="url(#${u}pk)">${svgp}</g>` : svgp;
+      } else part += cs > 1.001 ? `<g transform="translate(${k.tcx} 0) scale(${cs.toFixed(3)} 1) translate(${-k.tcx} 0)">${svgp}</g>` : svgp;
     }
     /* la mano vuelve a dibujarse sobre el asa del bolso: lo sostiene */
     if (z === 'bag' && zs.has('bag') && !opt.only) for (const e of k.body) if (e[3] === 'r') part += `<path d="${e[1]}" fill="${base(e[0])}"/>`;
+    /* las manos salen siempre por el puño del abrigo, aunque la manga sea larga */
+    if (z === 'outer' && zs.has('outer') && !opt.only) for (const e of k.body) if (e[3] === 'r' || e[3] === 'l') part += `<path d="${e[1]}" fill="${base(e[0])}"/>`;
     if (inHead) headG += part; else bodyG += part;
+  }
+  /* la piel que se asoma apenas por el borde de mangas y abrigos se oculta (mismo criterio por tramos) */
+  if (!opt.only) {
+    const cover = items.filter(x => ['top','dress','outer'].includes(x.z) && x.key !== 'belt');
+    let bands = '';
+    for (const c of cover) { const inner = items.find(y => y.z === 'top' || y.z === 'dress'); const ocs = c.z === 'outer' && inner ? coverScale(g, c.key, inner.key) : 1; bands += peekBands(g, c.key, '@body', ocs, k.belt[2] - 12); }
+    if (bands) bodyG = `<mask id="${u}sk" maskUnits="userSpaceOnUse" x="-400" y="-400" width="1200" height="1200"><rect x="-400" y="-400" width="1200" height="1200" fill="#fff"/><path d="${bands}" fill="#000"/></mask><g mask="url(#${u}sk)">${bodyG.slice(0, bodyLen)}</g>` + bodyG.slice(bodyLen);
   }
   const bt = sx !== 1 || sy !== 1 ? ` transform="translate(${k.tcx} ${k.base}) scale(${sx.toFixed(3)} ${sy.toFixed(3)}) translate(${-k.tcx} ${-k.base})"` : '';
   const ht = sy !== 1 ? ` transform="translate(0 ${headDy(k, sy).toFixed(2)})"` : '';
