@@ -1,0 +1,149 @@
+/* Vélez Up · sistema de vidrio.
+   Base neutra y cálida. El azul y el rojo solo aparecen en detalles mínimos. */
+:root{
+  --ink:#232120; --ink2:#5B5752; --mute:#938E86; --line:rgba(35,33,32,.08);
+  --bg:transparent; --paper:rgba(255,255,255,.5); --sand:rgba(255,255,255,.4);
+  --navy2:rgba(255,255,255,.55); --red2:rgba(35,33,32,.08); --peri2:transparent;
+  --glass:rgba(255,255,255,.44); --glass-hi:rgba(255,255,255,.66); --edge:rgba(255,255,255,.72);
+  --lift:inset 0 1px 0 rgba(255,255,255,.75),0 14px 34px -22px rgba(52,44,34,.42);
+  --blur:saturate(150%) blur(22px);
+  --fun:'Glacial Indifference',system-ui,sans-serif;
+}
+
+/* ---- ambiente ---- */
+html{background:#E4DFD6}
+body,body{background:#E4DFD6;background-image:none;color:var(--ink);letter-spacing:.005em}
+body::before{content:"";position:fixed;inset:-10%;z-index:-1;pointer-events:none;background:
+  radial-gradient(46% 36% at 16% 12%,#FBF9F5 0,transparent 72%),
+  radial-gradient(52% 38% at 92% 28%,#C9C1B4 0,transparent 74%),
+  radial-gradient(44% 34% at 8% 62%,#BFB7AA 0,transparent 72%),
+  radial-gradient(58% 40% at 86% 86%,#F7F3EC 0,transparent 74%),
+  radial-gradient(26% 18% at 74% 58%,rgba(26,32,85,.07) 0,transparent 74%),
+  radial-gradient(22% 16% at 26% 88%,rgba(156,7,32,.05) 0,transparent 74%)}
+#app{background:transparent;background-image:none}
+@media (min-width:600px){
+  body{background:#E4DFD6;background-image:none}
+  #app{border:1px solid var(--edge);box-shadow:0 40px 90px -46px rgba(52,44,34,.6);border-radius:38px}
+}
+
+/* ---- tipografía: menos cartel, más aire ---- */
+h1,h2,.h1,.h2{letter-spacing:.045em;line-height:1}
+.h1{font-size:36px}
+.h2{font-size:24px}
+.welcome h1{font-size:52px;line-height:.98}
+.welcome h1 em{background:none;color:inherit;padding:0;border-radius:0;transform:none;display:block}
+.brand{letter-spacing:.34em;font-size:17px}
+.sub{color:var(--ink2)}
+.sticker{display:none}
+#top .hi b{font-size:19px;letter-spacing:.06em}
+#top .hi span{letter-spacing:.2em;font-size:10px}
+
+/* ---- superficies ---- */
+.card,.hero,.mini,.lookcard,.prod,.list,.reward,.part,.combo-it,.okcard,.banner,.tile,.gpick button,.preview,.style-card,.empty,.mile div,.qrbox,.mini-th{
+  background:var(--glass)!important;color:var(--ink)!important;border:1px solid var(--edge)!important;box-shadow:var(--lift)}
+.welcome .tile{transform:none!important;border-radius:26px;background:rgba(255,255,255,.5)!important;-webkit-backdrop-filter:saturate(140%) blur(16px);backdrop-filter:saturate(140%) blur(16px)}
+.banner>*:not(.art){position:relative;max-width:56%}
+.banner .art{height:150px;right:2px;bottom:-8px}
+.c-peri,.c-orange,.c-lime,.c-blue,.c-olive,.c-pink,.c-yellow,.c-cream,.c-sand,.c-ink,.c-navy2,.c-paper{background:var(--glass);color:var(--ink)}
+.c-peri .meter-lbl,.c-orange .meter-lbl,.c-lime .meter-lbl,.c-ink .meter-lbl{color:var(--ink2)}
+.c-peri .tag,.c-orange .tag,.c-lime .tag,.c-ink .tag{color:var(--ink)}
+.c-peri .dots i,.c-orange .dots i,.c-lime .dots i,.c-ink .dots i,.dots i{border:1px solid rgba(35,33,32,.28);background:transparent}
+.c-peri .dots i.on,.c-orange .dots i.on,.c-lime .dots i.on,.c-ink .dots i.on,.dots i.on{background:var(--ink)}
+.c-ink .btn:not(.ghost){background:var(--ink)}
+.prod .th,.lookcard .av,.reward .th,.list .it .ic,.heads button,.heads button.on{background:rgba(255,255,255,.3)!important}
+.lookcard .meta{background:rgba(255,255,255,.34);border-top:1px solid var(--line)}
+.part.ok{border-color:var(--edge)}
+.empty{border-style:dashed!important;border-color:rgba(35,33,32,.2)!important}
+.hero .av{background:rgba(255,255,255,.28);border:1px solid var(--edge);border-radius:22px;margin:0;align-items:center;overflow:hidden}
+.hero .av svg{height:100%;width:100%}
+.mini .ic,.bubble,.icon-btn,.sw,.pts,.search,.input,.seg,.chip,.zchip,.opt,.act,.own,.lookcard .like,.lookcard .pct,.tag,.share-grid i,.src-toggle,.zname{border:1px solid var(--edge)}
+.bubble{background:rgba(255,255,255,.55)}
+.sw{border-color:rgba(35,33,32,.14)}
+.sw.on,.heads button.on,.gpick button.on,.style-card.on{box-shadow:0 0 0 2px var(--ink)!important}
+.gpick button.on::after{background-color:var(--ink)}
+
+/* elementos con vidrio real: flotan sobre contenido */
+#top{background:rgba(232,227,219,.36);-webkit-backdrop-filter:var(--blur);backdrop-filter:var(--blur)}
+#tabbar{background:var(--glass-hi);border:1px solid var(--edge);-webkit-backdrop-filter:var(--blur);backdrop-filter:var(--blur);box-shadow:inset 0 1px 0 rgba(255,255,255,.8),0 18px 38px -20px rgba(52,44,34,.55)}
+#tabbar a{color:var(--ink2)}
+#tabbar a.on,#tabbar a.crear.on{background:rgba(255,255,255,.8);color:var(--ink);box-shadow:0 4px 14px -8px rgba(52,44,34,.5)}
+#tabbar a.crear{background:none;color:var(--ink2)}
+#sheet{background:rgba(242,238,231,.76);border:1px solid var(--edge);border-bottom:0;-webkit-backdrop-filter:saturate(150%) blur(30px);backdrop-filter:saturate(150%) blur(30px)}
+#veil{background:rgba(52,44,34,.26)}
+#toast{background:rgba(35,33,32,.86);-webkit-backdrop-filter:var(--blur);backdrop-filter:var(--blur)}
+#toast .p{background:rgba(255,255,255,.16)}
+.search,.input{background:rgba(255,255,255,.46);-webkit-backdrop-filter:var(--blur);backdrop-filter:var(--blur)}
+.input:focus{box-shadow:0 0 0 3px rgba(35,33,32,.12)}
+
+/* ---- controles ---- */
+.btn{height:50px;font-weight:700;font-size:15px;letter-spacing:.01em;background:rgba(35,33,32,.9)}
+.btn.go{box-shadow:none}
+.btn.go .ar{background:rgba(255,255,255,.14)}
+.btn.ghost{background:rgba(255,255,255,.5);border:1px solid var(--edge)}
+.btn.lime{background:rgba(35,33,32,.9);border:0}
+.chip,.zchip,.pts,.icon-btn,.opt,.act,.seg,.src-toggle{background:rgba(255,255,255,.42);box-shadow:inset 0 1px 0 rgba(255,255,255,.7)}
+.chip.on,.zchip.on,.seg button.on,.src-toggle button.on,.own.on{background:rgba(35,33,32,.9);color:#fff;border-color:transparent}
+.zchip.has::after{width:4px;height:4px;top:6px;right:7px;background:var(--navy);opacity:.7}
+.pts i{background:none;color:var(--red)}
+.pts i svg{width:14px;height:14px}
+.tag{background:rgba(255,255,255,.55);color:var(--ink);font-weight:700;letter-spacing:.01em}
+.tag.ink{background:rgba(35,33,32,.82);color:#fff}
+.tag.lime{background:rgba(255,255,255,.62);color:var(--ink);border:1px solid var(--edge)}
+.own{border-color:rgba(35,33,32,.16)}
+.lookcard .like.on{background:rgba(255,255,255,.75);color:var(--red);border-color:var(--edge)}
+.opt.on{border:1.5px solid var(--ink);box-shadow:none;background:rgba(255,255,255,.72)}
+.opt .dot{width:4px;height:4px;right:5px;top:5px;background:var(--navy);opacity:.6}
+.link{text-decoration-thickness:1px}
+.err{color:var(--red)}
+
+/* porcentaje: una línea fina con la punta en rojo */
+.meter .track{height:3px!important;background:rgba(35,33,32,.12)!important}
+.meter .fill,.c-peri .meter .fill,.c-ink .meter .fill{background:var(--ink);overflow:visible}
+.meter .fill::after{inset:-1px -1px -1px auto;width:5px;height:auto;border-radius:9px;background:var(--red);opacity:.9}
+.meter .num{font-weight:400;letter-spacing:.01em}
+.meter-lbl{font-weight:400}
+.pbar{height:3px;background:rgba(35,33,32,.1)}
+.pbar i,.part:not(.ok) .pbar i{background:var(--ink)}
+.mile div.on{background:rgba(35,33,32,.9)!important;color:#fff!important}
+
+/* ---- Arma: la prenda es protagonista ---- */
+.creator{position:relative}
+.stage{margin:0;border:1px solid var(--edge);border-radius:30px;background:linear-gradient(170deg,rgba(255,255,255,.62),rgba(255,255,255,.2) 70%);box-shadow:var(--lift)}
+.stage .flight{opacity:.1}
+.stage .floor{background:radial-gradient(closest-side,rgba(52,44,34,.16),transparent);bottom:6px}
+.stage .fig svg{filter:drop-shadow(0 10px 16px rgba(52,44,34,.2))}
+.cr-top{position:absolute;z-index:3;left:10px;top:10px;width:134px;margin:0;padding:7px 12px 8px;border-radius:16px;border:1px solid var(--edge);background:rgba(255,255,255,.5);-webkit-backdrop-filter:var(--blur);backdrop-filter:var(--blur)}
+.cr-top u{display:none}
+.cr-top .meter-lbl{display:block;font-size:10.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:var(--ink2)}
+.cr-top .meter{flex-direction:row-reverse;gap:8px}
+.cr-top .meter .num{font-size:17px;min-width:0}
+.cr-top .meter .num small{font-size:11px}
+.cr-actions{position:absolute;z-index:3;top:10px;right:10px;margin:0;display:flex;gap:6px}
+.act{width:40px;height:40px;border-radius:50%;font-size:0;gap:0;background:rgba(255,255,255,.5);-webkit-backdrop-filter:var(--blur);backdrop-filter:var(--blur)}
+.act svg{width:18px;height:18px}
+.act.save{background:rgba(35,33,32,.9);border-color:transparent;box-shadow:none}
+.bigarrows{left:10px;right:10px}
+.zname{display:none}
+.barrow{width:40px;height:40px;background:rgba(255,255,255,.46);color:var(--ink);border:1px solid var(--edge);box-shadow:inset 0 1px 0 rgba(255,255,255,.8);-webkit-backdrop-filter:var(--blur);backdrop-filter:var(--blur)}
+.barrow svg{width:18px;height:18px}
+.zchips{margin-top:8px}
+.zchip{height:32px;font-size:12.5px;font-weight:700;padding:0 13px}
+.car{margin-top:6px}
+.car-name b{font-size:13.5px}
+.opt{width:76px;height:76px;border-radius:18px;padding:4px}
+.prod .th svg{padding:8px}
+.prod,.lookcard{border-radius:22px}
+.banner .art svg{filter:drop-shadow(0 8px 10px rgba(52,44,34,.18))}
+.share-grid i{background:rgba(255,255,255,.5)!important;color:var(--ink)!important}
+
+/* ---- tablero: cada prenda en su espacio ---- */
+.stage .fig{width:calc(100% - 12px)}
+.bigarrows{top:auto;bottom:8px;transform:none}
+.welcome .tile{align-items:center}
+.welcome .tile svg{width:92%;height:94%}
+.lookcard .av,.okcard .av,.style-card .av{align-items:center}
+.lookcard .av svg,.okcard .av svg,.style-card .av svg,.banner .art svg{max-width:100%}
+.brand .mark{display:inline-block;width:26px;height:26px;border-radius:8px;vertical-align:-7px;margin-right:10px}
+.stage .flight,.stage .floor{display:none}
+.hero{grid-template-columns:136px 1fr}
+.lookcard .av,.feed .lookcard .av{box-sizing:border-box;padding:38px 6px 6px}
