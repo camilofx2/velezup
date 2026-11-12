@@ -34,6 +34,12 @@ window.PROBADOR = {
     "w-out-motera|w-bot-falda": "img/w__motera__falda.webp",
     "w-out-motera|w-bot-jean": "img/w__motera__jean.webp",
     "w-out-jean|w-bot-sastre": "img/w__jean__sastre.webp"
+   },
+   "plain": {
+    "w-bot-cargo": "img/w__sin__cargo.webp",
+    "w-bot-falda": "img/w__sin__falda.webp",
+    "w-bot-jean": "img/w__sin__jean.webp",
+    "w-bot-sastre": "img/w__sin__sastre.webp"
    }
   },
   "m": {
@@ -70,6 +76,12 @@ window.PROBADOR = {
     "m-out-bomber|m-bot-jean": "img/m__bomber__jean.webp",
     "m-out-cuero|m-bot-chino": "img/m__cuero__chino.webp",
     "m-out-cuero|m-bot-cargo": "img/m__cuero__cargo.webp"
+   },
+   "plain": {
+    "m-bot-cargo": "img/m__sin__cargo.webp",
+    "m-bot-chino": "img/m__sin__chino.webp",
+    "m-bot-jean": "img/m__sin__jean.webp",
+    "m-bot-sastre": "img/m__sin__sastre.webp"
    }
   }
  },
@@ -94,6 +106,9 @@ window.PROBADOR = {
     "M",
     "L",
     "XL"
+   ],
+   "tags": [
+    "tendencia"
    ]
   },
   "w-out-motera": {
@@ -116,6 +131,9 @@ window.PROBADOR = {
     "M",
     "L",
     "XL"
+   ],
+   "tags": [
+    "tendencia"
    ]
   },
   "w-out-blazer": {
@@ -138,6 +156,9 @@ window.PROBADOR = {
     "M",
     "L",
     "XL"
+   ],
+   "tags": [
+    "nuevo"
    ]
   },
   "w-out-jean": {
@@ -160,6 +181,9 @@ window.PROBADOR = {
     "M",
     "L",
     "XL"
+   ],
+   "tags": [
+    "basico"
    ]
   },
   "w-bot-jean": {
@@ -182,6 +206,9 @@ window.PROBADOR = {
     "M",
     "L",
     "XL"
+   ],
+   "tags": [
+    "basico"
    ]
   },
   "w-bot-sastre": {
@@ -204,6 +231,9 @@ window.PROBADOR = {
     "M",
     "L",
     "XL"
+   ],
+   "tags": [
+    "basico"
    ]
   },
   "w-bot-cargo": {
@@ -226,6 +256,9 @@ window.PROBADOR = {
     "M",
     "L",
     "XL"
+   ],
+   "tags": [
+    "nuevo"
    ]
   },
   "w-bot-falda": {
@@ -248,6 +281,9 @@ window.PROBADOR = {
     "M",
     "L",
     "XL"
+   ],
+   "tags": [
+    "tendencia"
    ]
   },
   "m-out-cuero": {
@@ -270,6 +306,9 @@ window.PROBADOR = {
     "M",
     "L",
     "XL"
+   ],
+   "tags": [
+    "tendencia"
    ]
   },
   "m-out-gamuza": {
@@ -292,6 +331,9 @@ window.PROBADOR = {
     "M",
     "L",
     "XL"
+   ],
+   "tags": [
+    "tendencia"
    ]
   },
   "m-out-bomber": {
@@ -314,6 +356,9 @@ window.PROBADOR = {
     "M",
     "L",
     "XL"
+   ],
+   "tags": [
+    "nuevo"
    ]
   },
   "m-out-sobrecamisa": {
@@ -336,6 +381,9 @@ window.PROBADOR = {
     "M",
     "L",
     "XL"
+   ],
+   "tags": [
+    "nuevo"
    ]
   },
   "m-bot-jean": {
@@ -358,6 +406,9 @@ window.PROBADOR = {
     "M",
     "L",
     "XL"
+   ],
+   "tags": [
+    "basico"
    ]
   },
   "m-bot-chino": {
@@ -380,6 +431,9 @@ window.PROBADOR = {
     "M",
     "L",
     "XL"
+   ],
+   "tags": [
+    "basico"
    ]
   },
   "m-bot-cargo": {
@@ -402,6 +456,9 @@ window.PROBADOR = {
     "M",
     "L",
     "XL"
+   ],
+   "tags": [
+    "tendencia"
    ]
   },
   "m-bot-sastre": {
@@ -424,7 +481,598 @@ window.PROBADOR = {
     "M",
     "L",
     "XL"
+   ],
+   "tags": [
+    "basico"
+   ]
+  },
+  "w-zap-tenis": {
+   "name": "Tenis blancos de cuero",
+   "line": "Fly Up",
+   "price": 239900,
+   "desc": "Los que lleva la modelo: cuero liso, suela de goma y horma minimalista.",
+   "color": "Blanco",
+   "fit": "Horma regular",
+   "material": "Cuero bovino",
+   "lining": "Textil",
+   "care": "Limpiar con paño húmedo",
+   "id": "w-zap-tenis",
+   "kind": "zap",
+   "model": "w",
+   "img": "img/w-zap-tenis.webp",
+   "sizes": [
+    "35",
+    "36",
+    "37",
+    "38",
+    "39",
+    "40"
+   ],
+   "tags": [
+    "basico"
+   ],
+   "worn": true
+  },
+  "w-zap-botin": {
+   "name": "Botín de cuero negro",
+   "line": "Vélez",
+   "price": 459900,
+   "desc": "Caña al tobillo, tacón bloque de 5 cm y cremallera lateral.",
+   "color": "Negro",
+   "fit": "Horma regular",
+   "material": "Cuero bovino",
+   "lining": "Cuero",
+   "care": "Crema nutritiva para cuero",
+   "id": "w-zap-botin",
+   "kind": "zap",
+   "model": "w",
+   "img": "img/w-zap-botin.webp",
+   "sizes": [
+    "35",
+    "36",
+    "37",
+    "38",
+    "39",
+    "40"
+   ],
+   "tags": [
+    "tendencia"
+   ]
+  },
+  "w-zap-mocasin": {
+   "name": "Mocasín de cuero miel",
+   "line": "Vélez",
+   "price": 389900,
+   "desc": "Antifaz clásico, costura a mano y suela delgada.",
+   "color": "Miel",
+   "fit": "Horma regular",
+   "material": "Cuero bovino",
+   "lining": "Cuero",
+   "care": "Crema nutritiva para cuero",
+   "id": "w-zap-mocasin",
+   "kind": "zap",
+   "model": "w",
+   "img": "img/w-zap-mocasin.webp",
+   "sizes": [
+    "35",
+    "36",
+    "37",
+    "38",
+    "39",
+    "40"
+   ],
+   "tags": []
+  },
+  "w-bol-hombro": {
+   "name": "Bolso de hombro coñac",
+   "line": "Vélez",
+   "price": 529900,
+   "desc": "Cuero liso, asa corta y cierre de broche magnético.",
+   "color": "Coñac",
+   "fit": "Mediano",
+   "material": "Cuero de cordero",
+   "lining": "Textil",
+   "care": "Limpieza especializada de cuero",
+   "id": "w-bol-hombro",
+   "kind": "bol",
+   "model": "w",
+   "img": "img/w-bol-hombro.webp",
+   "sizes": [
+    "Única"
+   ],
+   "tags": [
+    "tendencia"
+   ]
+  },
+  "w-bol-bandolera": {
+   "name": "Bandolera mini negra",
+   "line": "Vélez",
+   "price": 339900,
+   "desc": "Correa ajustable y solapa con herraje dorado.",
+   "color": "Negro",
+   "fit": "Pequeño",
+   "material": "Cuero bovino",
+   "lining": "Textil",
+   "care": "Limpieza especializada de cuero",
+   "id": "w-bol-bandolera",
+   "kind": "bol",
+   "model": "w",
+   "img": "img/w-bol-bandolera.webp",
+   "sizes": [
+    "Única"
+   ],
+   "tags": [
+    "nuevo"
+   ]
+  },
+  "w-bol-tote": {
+   "name": "Tote de cuero camel",
+   "line": "Vélez",
+   "price": 589900,
+   "desc": "Amplio, para el día a día, con bolsillo interior con cierre.",
+   "color": "Camel",
+   "fit": "Grande",
+   "material": "Cuero bovino",
+   "lining": "Textil",
+   "care": "Limpieza especializada de cuero",
+   "id": "w-bol-tote",
+   "kind": "bol",
+   "model": "w",
+   "img": "img/w-bol-tote.webp",
+   "sizes": [
+    "Única"
+   ],
+   "tags": []
+  },
+  "m-zap-tenis": {
+   "name": "Tenis blancos de cuero",
+   "line": "Fly Up",
+   "price": 249900,
+   "desc": "Los que lleva el modelo: cuero liso, suela de goma y horma minimalista.",
+   "color": "Blanco",
+   "fit": "Horma regular",
+   "material": "Cuero bovino",
+   "lining": "Textil",
+   "care": "Limpiar con paño húmedo",
+   "id": "m-zap-tenis",
+   "kind": "zap",
+   "model": "m",
+   "img": "img/m-zap-tenis.webp",
+   "sizes": [
+    "38",
+    "39",
+    "40",
+    "41",
+    "42",
+    "43",
+    "44"
+   ],
+   "tags": [
+    "basico"
+   ],
+   "worn": true
+  },
+  "m-zap-chelsea": {
+   "name": "Botas Chelsea café",
+   "line": "Vélez",
+   "price": 529900,
+   "desc": "Cuero engrasado con elástico lateral y tirador trasero.",
+   "color": "Café",
+   "fit": "Horma regular",
+   "material": "Cuero engrasado",
+   "lining": "Cuero",
+   "care": "Crema nutritiva para cuero",
+   "id": "m-zap-chelsea",
+   "kind": "zap",
+   "model": "m",
+   "img": "img/m-zap-chelsea.webp",
+   "sizes": [
+    "38",
+    "39",
+    "40",
+    "41",
+    "42",
+    "43",
+    "44"
+   ],
+   "tags": [
+    "nuevo"
+   ]
+  },
+  "m-zap-derby": {
+   "name": "Zapato derby negro",
+   "line": "Vélez",
+   "price": 459900,
+   "desc": "Cuero pulido de cordones con suela de goma delgada.",
+   "color": "Negro",
+   "fit": "Horma regular",
+   "material": "Cuero pulido",
+   "lining": "Cuero",
+   "care": "Betún y cepillo",
+   "id": "m-zap-derby",
+   "kind": "zap",
+   "model": "m",
+   "img": "img/m-zap-derby.webp",
+   "sizes": [
+    "38",
+    "39",
+    "40",
+    "41",
+    "42",
+    "43",
+    "44"
+   ],
+   "tags": []
+  },
+  "m-bol-mensajero": {
+   "name": "Bolso mensajero de cuero",
+   "line": "Vélez",
+   "price": 489900,
+   "desc": "Solapa con hebillas, correa cruzada y espacio para portátil de 13\".",
+   "color": "Café",
+   "fit": "Mediano",
+   "material": "Cuero bovino",
+   "lining": "Lona",
+   "care": "Limpieza especializada de cuero",
+   "id": "m-bol-mensajero",
+   "kind": "bol",
+   "model": "m",
+   "img": "img/m-bol-mensajero.webp",
+   "sizes": [
+    "Única"
+   ],
+   "tags": []
+  },
+  "m-bol-rinonera": {
+   "name": "Riñonera urbana negra",
+   "line": "Fly Up",
+   "price": 149900,
+   "desc": "Nailon resistente que se lleva cruzada al pecho.",
+   "color": "Negro",
+   "fit": "Pequeño",
+   "material": "Nailon",
+   "lining": "Textil",
+   "care": "Lavar a mano",
+   "id": "m-bol-rinonera",
+   "kind": "bol",
+   "model": "m",
+   "img": "img/m-bol-rinonera.webp",
+   "sizes": [
+    "Única"
+   ],
+   "tags": []
+  },
+  "u-mal-cuero": {
+   "name": "Maleta de cuero café",
+   "line": "Vélez",
+   "price": 649900,
+   "desc": "Morral de cuero con solapa, hebillas y compartimento acolchado.",
+   "color": "Café",
+   "fit": "Mediana",
+   "material": "Cuero bovino",
+   "lining": "Lona",
+   "care": "Limpieza especializada de cuero",
+   "id": "u-mal-cuero",
+   "kind": "mal",
+   "model": "u",
+   "img": "img/u-mal-cuero.webp",
+   "sizes": [
+    "Única"
+   ],
+   "tags": [
+    "tendencia"
+   ]
+  },
+  "u-mal-urbana": {
+   "name": "Maleta urbana negra",
+   "line": "Fly Up",
+   "price": 219900,
+   "desc": "Morral de lona técnica con bolsillo para portátil.",
+   "color": "Negro",
+   "fit": "Mediana",
+   "material": "Lona técnica",
+   "lining": "Textil acolchado",
+   "care": "Lavar a mano",
+   "id": "u-mal-urbana",
+   "kind": "mal",
+   "model": "u",
+   "img": "img/u-mal-urbana.webp",
+   "sizes": [
+    "Única"
+   ],
+   "tags": [
+    "nuevo"
+   ]
+  },
+  "u-mal-viaje": {
+   "name": "Maletín de viaje",
+   "line": "Vélez",
+   "price": 799900,
+   "desc": "Weekender de cuero y lona para escapadas de fin de semana.",
+   "color": "Café y crudo",
+   "fit": "Grande",
+   "material": "Cuero y lona",
+   "lining": "Textil",
+   "care": "Limpieza especializada de cuero",
+   "id": "u-mal-viaje",
+   "kind": "mal",
+   "model": "u",
+   "img": "img/u-mal-viaje.webp",
+   "sizes": [
+    "Única"
+   ],
+   "tags": []
+  },
+  "u-gor-negra": {
+   "name": "Gorra negra",
+   "line": "Fly Up",
+   "price": 89900,
+   "desc": "Algodón de seis paneles con correa ajustable.",
+   "color": "Negro",
+   "fit": "Ajustable",
+   "material": "Sarga de algodón",
+   "lining": "Banda de algodón",
+   "care": "Lavar a mano",
+   "id": "u-gor-negra",
+   "kind": "gor",
+   "model": "u",
+   "img": "img/u-gor-negra.webp",
+   "sizes": [
+    "Única"
+   ],
+   "tags": [
+    "basico"
+   ]
+  },
+  "u-gor-beige": {
+   "name": "Gorra beige",
+   "line": "Fly Up",
+   "price": 89900,
+   "desc": "Algodón lavado de seis paneles con correa ajustable.",
+   "color": "Beige",
+   "fit": "Ajustable",
+   "material": "Sarga de algodón",
+   "lining": "Banda de algodón",
+   "care": "Lavar a mano",
+   "id": "u-gor-beige",
+   "kind": "gor",
+   "model": "u",
+   "img": "img/u-gor-beige.webp",
+   "sizes": [
+    "Única"
+   ],
+   "tags": [
+    "nuevo"
+   ]
+  },
+  "u-gor-lana": {
+   "name": "Gorro de lana gris",
+   "line": "Fly Up",
+   "price": 99900,
+   "desc": "Tejido acanalado con doblez.",
+   "color": "Gris",
+   "fit": "Única",
+   "material": "Mezcla de lana",
+   "lining": "Sin forro",
+   "care": "Lavar a mano en frío",
+   "id": "u-gor-lana",
+   "kind": "gor",
+   "model": "u",
+   "img": "img/u-gor-lana.webp",
+   "sizes": [
+    "Única"
+   ],
+   "tags": []
+  },
+  "u-gaf-negras": {
+   "name": "Gafas de sol negras",
+   "line": "Fly Up",
+   "price": 179900,
+   "desc": "Montura de acetato y lentes con protección UV400.",
+   "color": "Negro",
+   "fit": "Única",
+   "material": "Acetato",
+   "lining": "Lentes UV400",
+   "care": "Guardar en su estuche",
+   "id": "u-gaf-negras",
+   "kind": "gaf",
+   "model": "u",
+   "img": "img/u-gaf-negras.webp",
+   "sizes": [
+    "Única"
+   ],
+   "tags": [
+    "tendencia"
+   ]
+  },
+  "u-gaf-carey": {
+   "name": "Gafas carey",
+   "line": "Vélez",
+   "price": 199900,
+   "desc": "Montura redonda de acetato carey y lentes UV400.",
+   "color": "Carey",
+   "fit": "Única",
+   "material": "Acetato",
+   "lining": "Lentes UV400",
+   "care": "Guardar en su estuche",
+   "id": "u-gaf-carey",
+   "kind": "gaf",
+   "model": "u",
+   "img": "img/u-gaf-carey.webp",
+   "sizes": [
+    "Única"
+   ],
+   "tags": [
+    "nuevo"
+   ]
+  },
+  "u-cin-cafe": {
+   "name": "Cinturón de cuero café",
+   "line": "Vélez",
+   "price": 159900,
+   "desc": "Cuero curtido al vegetal con hebilla metálica.",
+   "color": "Café",
+   "fit": "3,5 cm de ancho",
+   "material": "Cuero curtido al vegetal",
+   "lining": "Sin forro",
+   "care": "Crema nutritiva para cuero",
+   "id": "u-cin-cafe",
+   "kind": "cin",
+   "model": "u",
+   "img": "img/u-cin-cafe.webp",
+   "sizes": [
+    "S",
+    "M",
+    "L"
+   ],
+   "tags": [
+    "basico"
+   ]
+  },
+  "u-cin-negro": {
+   "name": "Cinturón de cuero negro",
+   "line": "Vélez",
+   "price": 159900,
+   "desc": "Cuero liso con hebilla metálica mate.",
+   "color": "Negro",
+   "fit": "3,5 cm de ancho",
+   "material": "Cuero bovino",
+   "lining": "Sin forro",
+   "care": "Crema nutritiva para cuero",
+   "id": "u-cin-negro",
+   "kind": "cin",
+   "model": "u",
+   "img": "img/u-cin-negro.webp",
+   "sizes": [
+    "S",
+    "M",
+    "L"
+   ],
+   "tags": [
+    "basico"
    ]
   }
- }
+ },
+ "looks": [
+  {
+   "id": "c1",
+   "img": "img/look-w-1.webp",
+   "g": "w",
+   "name": "Domingo en Usaquén",
+   "author": "valen.up",
+   "where": "salida",
+   "items": [
+    "w-out-cuero",
+    "w-bot-jean",
+    "w-zap-botin",
+    "w-bol-hombro",
+    "u-gaf-carey"
+   ]
+  },
+  {
+   "id": "c2",
+   "img": "img/look-w-2.webp",
+   "g": "w",
+   "name": "Oficina creativa",
+   "author": "mariajo.ds",
+   "where": "estudio",
+   "items": [
+    "w-out-blazer",
+    "w-bot-sastre",
+    "w-zap-mocasin",
+    "w-bol-tote",
+    "u-cin-negro"
+   ]
+  },
+  {
+   "id": "c3",
+   "img": "img/look-w-3.webp",
+   "g": "w",
+   "name": "Viernes de concierto",
+   "author": "lau.vuela",
+   "where": "evento",
+   "items": [
+    "w-out-motera",
+    "w-bot-falda",
+    "w-zap-botin",
+    "w-bol-bandolera",
+    "u-gaf-negras"
+   ]
+  },
+  {
+   "id": "c4",
+   "img": "img/look-w-4.webp",
+   "g": "w",
+   "name": "Rumbo a Villa de Leyva",
+   "author": "sofi_rmz",
+   "where": "viaje",
+   "items": [
+    "w-out-jean",
+    "w-bot-cargo",
+    "w-zap-tenis",
+    "u-mal-viaje",
+    "u-gor-beige"
+   ]
+  },
+  {
+   "id": "c5",
+   "img": "img/look-m-1.webp",
+   "g": "m",
+   "name": "Café en Chapinero",
+   "author": "andres.vlz",
+   "where": "cita",
+   "items": [
+    "m-out-gamuza",
+    "m-bot-jean",
+    "m-zap-chelsea",
+    "m-bol-mensajero",
+    "u-gaf-carey"
+   ]
+  },
+  {
+   "id": "c6",
+   "img": "img/look-m-2.webp",
+   "g": "m",
+   "name": "Reunión importante",
+   "author": "juanpa.o",
+   "where": "estudio",
+   "items": [
+    "m-out-cuero",
+    "m-bot-sastre",
+    "m-zap-derby",
+    "u-mal-cuero",
+    "u-cin-negro"
+   ]
+  },
+  {
+   "id": "c7",
+   "img": "img/look-m-3.webp",
+   "g": "m",
+   "name": "Ruta urbana",
+   "author": "santi.fly",
+   "where": "salida",
+   "items": [
+    "m-out-bomber",
+    "m-bot-cargo",
+    "m-zap-tenis",
+    "m-bol-rinonera",
+    "u-gor-negra"
+   ]
+  },
+  {
+   "id": "c8",
+   "img": "img/look-m-4.webp",
+   "g": "m",
+   "name": "Sábado sin afán",
+   "author": "cami.orozco",
+   "where": "casa",
+   "items": [
+    "m-out-sobrecamisa",
+    "m-bot-chino",
+    "m-zap-tenis",
+    "u-mal-urbana",
+    "u-gor-lana"
+   ]
+  }
+ ]
 };
