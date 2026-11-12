@@ -416,10 +416,10 @@ V.bienvenida = () => {
   </section>`;
 };
 
-/* ---- registro en 6 pasos ---- */
+/* ---- registro en 5 pasos ---- */
 let REG = null;
-const regDraft = () => REG ||= {name:'', g:modelIds()[0], photo:null, size:'S', height:165, style:null};
-const REG_STEPS = 6;
+const regDraft = () => REG ||= {name:'', g:modelIds()[0], face:null, size:'S', height:165, style:null};
+const REG_STEPS = 5;
 V.registro = step => {
   bare();
   const r = regDraft();
@@ -433,7 +433,7 @@ V.registro = step => {
       <p class="err" id="regErr"></p>`;
     foot = `<button class="btn block" data-act="regName">Seguir</button>`;
   } else if (step === 2) {
-    body = `<h1 class="h2">Elige tu modelo base</h1><p class="small">Es el cuerpo de referencia de tus looks. Con la IA conectada, se reemplaza por tu avatar.</p>
+    body = `<h1 class="h2">Elige tu modelo base</h1><p class="small">Es el cuerpo de tu avatar: tu cara va sobre este modelo.</p>
       <div class="choices">${[['w', 'Mujer'], ['m', 'Hombre']].map(([g, label]) => {
         const M = D.models[g];
         return M ? `<button class="choice ${r.g === g ? 'on' : ''}" data-act="regModel" data-arg="${g}" aria-pressed="${r.g === g}"><div class="ph"><img src="${M.base}" alt=""></div><b>${label}</b><span>${esc(M.info)}</span></button>`
@@ -441,35 +441,32 @@ V.registro = step => {
       }).join('')}</div>`;
     foot = `<a class="btn block" href="#/registro/3">Seguir</a>`;
   } else if (step === 3) {
-    body = `<h1 class="h2">Tómate una foto</h1><p class="small">De frente, cuerpo entero si puedes y con buena luz. Con ella la IA crea tu avatar.</p>
-      <div class="cam" id="cam">${r.photo ? `<img src="${r.photo}" alt="Tu foto">` : `<video id="camVideo" playsinline muted autoplay></video>${SILHOUETTE}<p class="hint" id="camHint">Abriendo la cámara…</p>`}</div>
-      <div class="cam-actions">${r.photo
+    body = `<h1 class="h2">Tómate una foto de la cara</h1><p class="small">De frente, con buena luz y sin gafas de sol. Tu cara + el cuerpo del modelo de tu talla. Tu foto no sale de tu celular.</p>
+      ${r.face ? `<div class="face-pair"><div class="cam face"><img src="${r.face.img}" alt="Tu cara"></div><figure class="face-prev"><img id="facePrev" alt="Así te verás"><figcaption>Así te verás</figcaption></figure></div>`
+        : `<div class="cam face" id="cam"><video id="camVideo" playsinline muted autoplay></video>${FACE_GUIDE}<p class="hint" id="camHint">Abriendo la cámara…</p></div>`}
+      <p class="err" id="faceErr" role="alert"></p>
+      <div class="cam-actions">${r.face
         ? `<button class="btn ghost" data-act="retake">Repetir</button>`
         : `<button class="btn" data-act="shoot" id="shootBtn" disabled>${ic('camera')}Tomar foto</button>`}
         <label class="btn ghost filebtn">Subir una foto<input type="file" accept="image/*" id="photoFile"></label></div>`;
-    foot = r.photo ? `<a class="btn block" href="#/registro/4">Usar esta foto</a>` : `<a class="link" href="#/registro/5" data-act="noPhoto">Seguir sin foto</a>`;
+    foot = r.face ? `<a class="btn block" href="#/registro/4">Usar esta foto</a>` : `<a class="link" href="#/registro/4" data-act="noPhoto">Seguir sin foto</a>`;
   } else if (step === 4) {
-    body = `<h1 class="h2">Conecta la IA</h1>
-      <p class="lead" style="font-size:15px">Tu avatar se crea con la IA de imágenes de Google (Gemini). Pega aquí tu clave de API para que la app lo genere desde tu foto.</p>
-      ${aiForm('reg')}
-      <p class="small">La generación de imágenes con la API de Google puede requerir facturación activa; cuesta centavos por imagen. La clave se guarda solo en este navegador y se envía únicamente a Google.</p>`;
-    foot = `<button class="btn block" data-act="regAi">${aiOn() ? 'Seguir con la IA conectada' : 'Guardar y seguir'}</button><a class="link" href="#/registro/5">Continuar con el modelo base</a>`;
-  } else if (step === 5) {
     body = `<h1 class="h2">Tu talla</h1>
       <div class="field"><label>Talla habitual</label><div class="chips">${SIZES.map(s => `<button class="chip ${r.size === s ? 'on' : ''}" data-act="regSize" data-arg="${s}" aria-pressed="${r.size === s}">${s}</button>`).join('')}</div></div>
       <div class="field"><label for="regHeight">Estatura · <b id="hOut">${r.height} cm</b></label><input class="range" type="range" id="regHeight" min="145" max="200" value="${r.height}"></div>`;
-    foot = `<a class="btn block" href="#/registro/6">Seguir</a>`;
+    foot = `<a class="btn block" href="#/registro/5">Seguir</a>`;
   } else {
     body = `<h1 class="h2">¿Cuál es tu estilo?</h1><p class="small">Con él elegimos tu primer look y sus accesorios.</p>
       <div class="styles">${STYLES.map(s => `<button class="style ${r.style === s.id ? 'on' : ''}" data-act="regStyle" data-arg="${s.id}" aria-pressed="${r.style === s.id}"><b>${s.label}</b><span>${s.hint}</span></button>`).join('')}</div>`;
     foot = `<button class="btn block" data-act="regDone" ${r.style ? '' : 'disabled'}>Crear mi avatar</button>`;
   }
-  if (step === 3 && !r.photo) setTimeout(() => startCamera('user'), 0);
+  if (step === 3 && !r.face) setTimeout(() => { startCamera('user'); Compose.warm().catch(() => {}); }, 0);
   else stopCamera();
+  if (step === 3 && r.face) setTimeout(() => avatarImage(r.g).then(src => { const im = $('#facePrev'); if (im) im.src = src; }), 0);
   return `<section class="reg"><div class="reg-top"><a class="back" href="${back}" aria-label="Atrás">${ic('back')}</a><span class="eyebrow">Paso ${step} de ${REG_STEPS}</span><span style="width:40px"></span></div>
     <div class="steps">${bar}</div><div class="reg-body">${body}</div><div class="reg-foot">${foot}</div></section>`;
 };
-const SILHOUETTE = `<svg viewBox="0 0 300 400" preserveAspectRatio="xMidYMid meet" aria-hidden="true"><g fill="none" stroke="rgba(255,255,255,.85)" stroke-width="2" stroke-dasharray="6 7"><ellipse cx="150" cy="70" rx="30" ry="37"/><path d="M98 130c10-14 32-20 52-20s42 6 52 20l14 120M98 130l-14 120M118 250l-4 135M182 250l4 135M118 250h64"/></g></svg>`;
+const FACE_GUIDE = `<svg viewBox="0 0 300 400" preserveAspectRatio="xMidYMid slice" aria-hidden="true"><path fill="rgba(17,17,17,.38)" fill-rule="evenodd" d="M0 0h300v400H0zM150 62c-52 0-90 46-90 112s38 132 90 132 90-66 90-132-38-112-90-112z"/><path fill="none" stroke="rgba(255,255,255,.9)" stroke-width="2" stroke-dasharray="6 7" d="M150 62c-52 0-90 46-90 112s38 132 90 132 90-66 90-132-38-112-90-112z"/></svg>`;
 /* formulario de la IA: lo usan el registro y el perfil */
 const aiForm = where => `<div class="aiform">
   <div class="field"><label for="aiKey">Clave de API de Gemini</label><input class="input" id="aiKey" type="password" autocomplete="off" spellcheck="false" placeholder="${aiOn() ? 'Clave guardada · pega otra para cambiarla' : 'Pega tu clave'}"></div>
@@ -515,7 +512,23 @@ async function shrinkPhoto(source, w, h, mirror) {
   x.drawImage(source, 0, 0, c.width, c.height);
   return c.toDataURL('image/jpeg', .9);
 }
-async function keepPhoto(dataUrl) { regDraft().photo = dataUrl; await store.set('photo', dataUrl); await store.set('avatar', null); FIT.hasAvatar = false; }
+/* la cara detectada: se guarda solo en este navegador; una cara nueva invalida el avatar de Gemini anterior */
+async function keepFace(face) {
+  regDraft().face = face; FIT.face = face; S.view = 'mine'; save();
+  await Promise.all([store.set('face', face), store.set('photo', face.img), store.set('avatar', null)]);
+  FIT.hasAvatar = false;
+}
+async function detectFace(source, btn) {
+  const err = $('#faceErr'); if (err) err.textContent = '';
+  const label = btn?.innerHTML; if (btn) { btn.disabled = true; btn.textContent = 'Buscando tu cara…'; }
+  try {
+    await keepFace(await Compose.readFace(source));
+    stopCamera(); render(); toast('Cara guardada');
+  } catch (e) {
+    if (err) err.textContent = e.message; else toast(e.message, 5000);
+    if (btn) { btn.disabled = false; btn.innerHTML = label; }
+  }
+}
 
 /* ---- creando el avatar ---- */
 V.creando = () => {
@@ -528,32 +541,23 @@ V.creando = () => {
     <div class="making-actions" id="makingActions"></div></section>`;
 };
 async function runMaking() {
-  const photo = await store.get('photo');
-  const useAi = aiOn() && !!photo;
-  const steps = useAi ? ['Preparando tu foto', 'Conectando con Gemini', 'Generando tu avatar', 'Preparando el probador'] : ['Preparando tu perfil', 'Ajustando talla y estatura', 'Preparando el probador'];
+  const face = FIT.face;
+  const steps = face ? ['Leyendo tu cara', 'Ajustándola al modelo de tu talla', 'Preparando el probador'] : ['Preparando tu perfil', 'Ajustando talla y estatura', 'Preparando el probador'];
   $('#makingSteps').innerHTML = steps.map(s => `<li>${s}</li>`).join('');
   const lis = $$('#making li');
   const mark = i => lis.forEach((li, k) => { li.className = k < i ? 'ok' : k === i ? 'on' : ''; });
-  if (photo) $('#ring').innerHTML = `<img src="${photo}" alt="">`;
+  if (face) $('#ring').innerHTML = `<img src="${face.img}" alt="">`;
   const note = $('#makingNote');
-  note.textContent = useAi ? 'La IA tarda entre 10 y 40 segundos.' : (photo ? 'Sin la IA conectada usamos el modelo base. Puedes conectarla luego en Perfil.' : 'Modo demostración: usaremos el modelo base. Con tu foto y la IA conectada, tu avatar se crea desde tu foto.');
-  mark(0); await wait(700);
-  if (!useAi) { mark(1); await wait(900); mark(2); await wait(600); mark(3); finishMaking(); return; }
-  mark(1); await wait(400); mark(2);
-  try {
-    const av = await createAvatar();
-    mark(4); $('#making').classList.add('done');
-    $('#makingTitle').textContent = 'Tu avatar está listo';
-    $('#ring').classList.add('big'); $('#ring').innerHTML = `<img src="${av}" alt="Tu avatar">`;
-    note.textContent = 'Así te verás en el probador. Puedes crearlo de nuevo desde Perfil.';
-    $('#makingActions').innerHTML = `<button class="btn" data-act="afterMaking">Continuar ${ic('arrow')}</button>`;
-  } catch (e) {
-    $('#making').classList.add('done', 'failed');
-    $('#makingTitle').textContent = 'No se pudo crear tu avatar';
-    note.textContent = e.message;
-    S.view = 'base'; save();
-    $('#makingActions').innerHTML = `<button class="btn" data-act="retryAvatar">Reintentar</button><button class="btn ghost" data-act="afterMaking">Seguir con el modelo base</button><a class="link" href="#/registro/4">Revisar la clave</a>`;
-  }
+  note.textContent = face ? 'Todo ocurre en tu celular: tu foto no se envía a ningún servidor.' : 'Sin foto usamos el modelo base. Puedes tomarte la foto de la cara luego en Perfil.';
+  mark(0); await wait(700); mark(1);
+  const av = face ? await avatarImage(homeModel()) : null;
+  await wait(700); mark(2); await wait(500); mark(3);
+  if (!av) { finishMaking(); return; }
+  $('#making').classList.add('done');
+  $('#makingTitle').textContent = 'Tu avatar está listo';
+  $('#ring').classList.add('big'); $('#ring').innerHTML = `<img src="${av}" alt="Tu avatar">`;
+  note.textContent = 'Tu cara + el cuerpo del modelo de tu talla. Así te verás en el probador.';
+  $('#makingActions').innerHTML = `<button class="btn" data-act="afterMaking">Continuar ${ic('arrow')}</button>`;
 }
 function finishMaking() { $('#making')?.classList.add('done'); setTimeout(() => A.afterMaking(), 500); }
 
@@ -567,13 +571,13 @@ function guideSlides() {
   const pic = src => `<img class="g-model" src="${src}" alt="">`;
   const grid = ids => `<div class="g-grid">${ids.slice(0, 4).map(id => thumb(id, 'g-th')).join('')}</div>`;
   return [
-    {t:'Tu avatar', p:'Con tu foto la IA crea un avatar idéntico a ti. Mientras tanto usas un modelo base de tu talla.', v:pic(M.base)},
+    {t:'Tu avatar', p:'Tu cara + el cuerpo del modelo de tu talla. Tu foto no sale de tu celular.', v:pic(M.base)},
     {t:'Arma tu look', p:'En Arma eliges chaqueta e inferior y la foto cambia al instante. Desliza sobre el modelo o usa las flechas.', v:pic(bankImage(g, sel).src)},
-    {t:'Accesorios con su espacio', p:'Zapatos, bolsos, maletas, gorras, gafas y cinturones aparecen junto al modelo, cada uno en su lugar. Con la IA los ves puestos.', v:accs.length ? grid(accs) : grid(prods)},
+    {t:'Accesorios puestos', p:'Gorras, gafas, bolsos, maletas y zapatos se ven puestos en tu avatar; lo que aún no tiene capa aparece a su lado, en su lugar.', v:accs.length ? grid(accs) : grid(prods)},
     {t:'Descubre', p:'La tienda: nuevos, tendencia, básicos, cuero Vélez y Fly Up. Cada prenda se prueba en Arma con un toque.', v:grid(prods)},
     {t:'Comunidad', p:'Mira looks de otros perfiles, dales me gusta, pruébatelos y publica los tuyos.', v:look ? pic(lookImg(look)) : grid(prods)},
     {t:'Vive y puntos', p:'Sumas puntos al guardar y publicar looks, registrar compras en tienda y aromas. Sube de nivel y canjea recompensas.', v:`<div class="g-pts"><b>${S.points || PTS.welcome}</b><span>puntos</span></div>`},
-    {t:'Conecta la IA', p:aiOn() ? 'Tu IA ya está conectada. Puedes cambiar la clave o el modelo en Perfil.' : 'Pega tu clave de Gemini en Perfil para crear tu avatar desde tu foto y ver looks completos puestos.', v:`<div class="g-pts">${ic('spark', 'icon big')}</div>`},
+    {t:'IA avanzada (opcional)', p:aiOn() ? 'Tu clave de Gemini está guardada. En Perfil puedes crear un avatar de cuerpo entero con IA.' : 'Con una clave de Google AI Studio con facturación activa, en Perfil puedes crear un avatar de cuerpo entero con Gemini y ver looks completos generados.', v:`<div class="g-pts">${ic('spark', 'icon big')}</div>`},
   ];
 }
 V.guia = () => {
@@ -582,7 +586,8 @@ V.guia = () => {
   GUIDE = Math.min(GUIDE, slides.length - 1);
   const s = slides[GUIDE], last = GUIDE === slides.length - 1;
   setTimeout(bindGuideSwipe, 0);
-  if (GUIDE === 0) store.get('avatar').then(av => { const im = $('.g-model'); if (av && im && GUIDE === 0) im.src = av; });
+  if (GUIDE === 0) avatarImage(homeModel()).then(src => { const im = $('.g-model'); if (im && GUIDE === 0) im.src = src; });
+  if (GUIDE === 1) { const g = homeModel(), sel = selection(g); lookImage(g, sel).then(src => { const im = $('.g-model'); if (im && GUIDE === 1) im.src = src; }); }
   return `<section class="guide" id="guide">
     <div class="g-top"><div class="g-bars">${slides.map((_, i) => `<i class="${i <= GUIDE ? 'on' : ''}"></i>`).join('')}</div><button class="link" data-act="guideEnd">Saltar</button></div>
     <div class="g-visual fadein" key="${GUIDE}">${s.v}</div>
@@ -604,11 +609,12 @@ V.inicio = () => {
   const reto = retoDone();
   const news = Object.values(D.items).filter(i => i.tags?.includes('nuevo') && (i.model === g || i.model === 'u')).slice(0, 8).map(i => i.id);
   const feed = communityLooks().slice(0, 4);
+  setTimeout(() => lookImage(g, sel).then(src => { const im = $('#todayImg'); if (im) im.src = src; }), 0);
   return `<section class="page wide">
     <div class="hello"><div><span class="eyebrow">Nivel ${L.id} · ${S.points} puntos</span><h1 class="h1">Hola, <em>${esc(S.profile.name)}</em></h1></div>
       <a class="pts-pill" href="#/vive">${ic('star')}${available()} pts</a></div>
     <div class="today">
-      <a class="today-ph" href="#/arma"><img src="${bankImage(g, sel).src}" alt="Tu look de hoy"></a>
+      <a class="today-ph" href="#/arma"><img id="todayImg" src="${bankImage(g, sel).src}" alt="Tu look de hoy"></a>
       <div class="today-c"><span class="eyebrow">Tu look de hoy</span><h2 class="h2">Tendencia ${tendencia(sel)} %</h2>
         <ul class="today-list">${lookIds(sel).map(id => `<li>${thumb(id)}<span><b>${esc(item(id).name)}</b><i>${catOf(item(id).kind).one}</i></span></li>`).join('')}</ul>
         <div class="chips"><a class="btn" href="#/arma">${ic('hanger')}Editar en Arma</a><a class="btn ghost" href="#/mislooks">Mis looks · ${S.looks.length}</a></div></div>
@@ -629,7 +635,36 @@ V.inicio = () => {
 };
 
 /* ---- arma (probador) ---- */
-const FIT = {busy:0, hasAvatar:false, full:null};
+const FIT = {busy:0, hasAvatar:false, face:null, full:null};
+
+/* ---- avatar con la cara y accesorios puestos (compose.js) ----
+   capas: window.CAPAS[g][itemId] = {src, kind:'head'|'hand'|'feet', side, box} medidas sobre la foto base del modelo */
+const layerOf = (g, id) => { const L = window.CAPAS?.[g]?.[id]; return L ? {...L, id} : null; };
+const wornLayers = (g, sel) => ACC.map(k => sel[k] && layerOf(g, sel[k])).filter(Boolean);
+const aiAvatarOn = () => aiOn() && FIT.hasAvatar;
+const hasMine = () => !!FIT.face || aiAvatarOn();
+const faceOn = () => S.view === 'mine' && !!FIT.face;
+const COMP = new Map();
+async function composed(g, src, layers, face) {
+  if (!face && !layers.length) return src;
+  const key = `comp:${src}:${face ? face.at : '-'}:${layers.map(l => l.id + '@' + l.box.join(',')).join(';')}`;
+  if (COMP.has(key)) return COMP.get(key);
+  let out = await store.get(key);
+  if (!out) {
+    try { out = await Compose.render({src, face, layers, baseSrc:D.models[g].base}); }
+    catch { out = src; }
+    if (out !== src) store.set(key, out);
+  }
+  COMP.set(key, out);
+  return out;
+}
+/* foto del look con la cara (si la vista es «Mi avatar») y los accesorios que tienen capa */
+const lookImage = (g, sel) => composed(g, bankImage(g, sel).src, wornLayers(g, sel), faceOn() ? FIT.face : null);
+/* el avatar en la foto base: tu cara sobre el modelo (o el de Gemini si existe y la IA está conectada) */
+async function avatarImage(g) {
+  if (aiAvatarOn()) { const av = await store.get('avatar'); if (av) return av; }
+  return composed(g, D.models[g].base, [], FIT.face);
+}
 const SAT = {gor:{side:'R', top:3}, gaf:{side:'L', top:7}, mal:{side:'L', top:33}, bol:{side:'R', top:38}, cin:{side:'L', top:59}, zap:{side:'R', top:73}};
 function optionsFor(g, k) {
   const ids = catItems(g, k).map(id => ({id, img:item(id).img, label:item(id).name}));
@@ -652,12 +687,12 @@ V.arma = () => {
     return `<button class="item ${on ? 'on' : ''} ${o.icon ? 'none' : ''}" data-act="pick" data-arg="${S.cat}:${o.id}" style="--col:${col};--row:${row}" aria-pressed="${on}" aria-label="${esc(o.label)}${on ? ', puesto' : ''}">${o.img ? `<img src="${o.img}" alt="" loading="lazy">` : `${ic(o.icon)}<em>${o.label}</em>`}<span class="tip">${esc(o.label)}</span></button>`;
   }).join('');
   const models = modelIds().length > 1 ? `<div class="seg sm">${modelIds().map(x => `<button class="${x === g ? 'on' : ''}" data-act="armaModel" data-arg="${x}">${D.models[x].label}</button>`).join('')}</div>` : '';
-  const views = aiOn() && FIT.hasAvatar ? `<div class="seg sm">${[['base', 'Modelo'], ['mine', 'Mi avatar']].map(([v, l]) => `<button class="${(S.view === 'mine') === (v === 'mine') ? 'on' : ''}" data-act="view" data-arg="${v}">${l}</button>`).join('')}</div>` : '';
+  const views = hasMine() ? `<div class="seg sm">${[['base', 'Modelo'], ['mine', 'Mi avatar']].map(([v, l]) => `<button class="${(S.view === 'mine') === (v === 'mine') ? 'on' : ''}" data-act="view" data-arg="${v}">${l}</button>`).join('')}</div>` : '';
   setTimeout(() => { paintModel(true); bindSwipe(); $('.cats .on')?.scrollIntoView({block:'nearest', inline:'center'}); }, 0);
   return `<section class="arma" style="--r:${M.ratio}">
     <div class="cats" role="tablist" aria-label="Categorías">${cats.map(c => `<button class="${c.k === S.cat ? 'on' : ''} ${ACC.includes(c.k) && sel[c.k] && !item(sel[c.k])?.worn ? 'has' : ''}" role="tab" aria-selected="${c.k === S.cat}" data-act="cat" data-arg="${c.k}">${c.label}</button>`).join('')}</div>
     <div class="opts" id="opts" aria-label="${catOf(S.cat).label}">${optsHtml}</div>
-    <div class="stage" id="stage">
+    <div class="stage ${models && views ? 'two' : ''}" id="stage">
       <div class="stage-tools">${models}${views}</div>
       <figure class="model" id="model" style="aspect-ratio:${M.ratio}"><img class="front" alt=""><img class="back" alt=""><i class="floor"></i><div class="sats" id="sats"></div><div class="busy"><span id="busyText">Probando en tu avatar…</span></div></figure>
       <p class="note" id="note" hidden></p>
@@ -674,6 +709,12 @@ async function paintModel(instant = false) {
   let src = bank.src, note = bank.approx ? 'Vista aproximada' : '';
   const full = FIT.full === selKey(sel);
   const wantAi = aiOn() && (full || (S.view === 'mine' && FIT.hasAvatar));
+  if (!wantAi) {
+    const fr = $('img.front', fig);   // mientras se compone: la última imagen de este modelo, o la foto sola
+    if (!fr.getAttribute('src')) fr.src = FIT.last?.g === g ? FIT.last.src : bank.src;
+    src = await lookImage(g, sel);
+    if (token !== FIT.busy) return;
+  }
   if (wantAi) {
     fig.classList.add('loading');
     $('#busyText').textContent = full ? 'Poniéndote el look completo…' : 'Probando en tu avatar…';
@@ -687,12 +728,14 @@ async function paintModel(instant = false) {
     fig.classList.remove('loading');
   }
   fig.classList.toggle('full', FIT.full === selKey(sel));
+  FIT.last = {g, src};
   crossfade(fig, src, instant);
   const n = $('#note'); n.hidden = !note; n.textContent = note;
 }
 function paintSats(sel) {
   const box = $('#sats'); if (!box) return;
-  box.innerHTML = ACC.filter(k => sel[k] && item(sel[k]) && !item(sel[k]).worn).map(k => {
+  const g = myModel(), onBody = FIT.full === selKey(sel);   // con capa (o en el look completo con IA) ya se ve puesto
+  box.innerHTML = ACC.filter(k => sel[k] && item(sel[k]) && !item(sel[k]).worn && !onBody && !layerOf(g, sel[k])).map(k => {
     const it = item(sel[k]), p = SAT[k];
     return `<button class="sat ${p.side}" style="--y:${p.top}%" data-act="info" data-arg="${it.id}" aria-label="${esc(it.name)}"><img src="${it.img}" alt=""><span>${catOf(k).one}</span></button>`;
   }).join('');
@@ -965,13 +1008,15 @@ V.perfil = () => {
   return `<section class="page">
     <div class="prof"><div class="ph" id="profPhoto">${initials(p.name)}</div><div><h1 class="h2">${esc(p.name)}</h1><p class="small">Talla ${p.size} · ${p.height} cm · ${style ? style.label : 'Sin estilo'} · ${level().L.id}</p></div></div>
     <div class="card"><h3 class="h3">Tu avatar</h3>
-      <div class="avatars"><div><figure id="avMine"></figure><p class="small">Tu avatar con IA</p></div><div><figure><img src="${D.models[homeModel()].base}" alt=""></figure><p class="small">Modelo base</p></div></div>
+      <p class="small">Tu cara + el cuerpo del modelo de tu talla. Tu foto no sale de tu celular.</p>
+      <div class="avatars"><div><figure id="avMine"></figure><p class="small">Tu avatar</p></div><div><figure><img src="${D.models[homeModel()].base}" alt=""></figure><p class="small">Modelo base</p></div></div>
       <div class="chips">${modelIds().map(g => `<button class="chip ${homeModel() === g ? 'on' : ''}" data-act="setModel" data-arg="${g}">${D.models[g].label}</button>`).join('')}</div>
-      <div class="chips"><a class="btn ghost" href="#/registro/3" data-act="redoPhoto">${ic('camera')}Cambiar mi foto</a>${aiOn() ? '<button class="btn" data-act="makeAvatar">Crear avatar con IA</button>' : ''}</div>
+      <div class="chips"><a class="btn ghost" href="#/registro/3" data-act="redoPhoto">${ic('camera')}${FIT.face ? 'Cambiar mi cara' : 'Tomarme la foto de la cara'}</a></div>
     </div>
-    <div class="card"><h3 class="h3">Conectar IA (Gemini)</h3>
-      <p class="small">Con tu clave de Google AI Studio la app crea tu avatar desde tu foto, te prueba las prendas y te muestra el look completo con accesorios. La clave se guarda solo en este navegador y se envía únicamente a Google. Generar imágenes puede requerir facturación activa (centavos por imagen).</p>
+    <div class="card"><h3 class="h3">Avatar con IA avanzada <span class="small">(opcional)</span></h3>
+      <p class="small">Con una clave de Google AI Studio con facturación activa (centavos por imagen), Gemini crea un avatar de cuerpo entero desde tu foto, te prueba las prendas y te muestra el look completo con accesorios. Sin facturación, Google responde que la clave no tiene cuota. La clave se guarda solo en este navegador y se envía únicamente a Google.</p>
       ${aiForm('perfil')}
+      ${aiOn() ? '<div class="chips"><button class="btn" data-act="makeAvatar">Crear avatar con IA avanzada</button></div>' : ''}
     </div>
     <div class="card"><h3 class="h3">Más</h3><div class="chips"><a class="btn ghost" href="#/mislooks">Mis looks · ${S.looks.length}</a><button class="btn ghost" data-act="showGuide">Ver guía</button></div></div>
     <div class="card"><h3 class="h3">Datos</h3><p class="small">Tu foto, tu avatar, tus looks y tus puntos se guardan solo en este navegador.</p><button class="link danger" data-act="wipe" style="align-self:flex-start">Borrar todos mis datos</button></div>
@@ -979,10 +1024,11 @@ V.perfil = () => {
   </section>`;
 };
 async function fillProfileImages() {
-  const [photo, avatar] = await Promise.all([store.get('photo'), store.get('avatar')]);
+  const photo = FIT.face?.img || await store.get('photo');
   if (photo && $('#profPhoto')) $('#profPhoto').innerHTML = `<img src="${photo}" alt="Tu foto">`;
   const box = $('#avMine'); if (!box) return;
-  box.innerHTML = avatar ? `<img src="${avatar}" alt="Tu avatar">` : `<div class="empty small" style="padding:18px">${aiOn() ? (photo ? 'Toca «Crear avatar con IA».' : 'Primero toma tu foto.') : 'Conecta la IA para crearlo desde tu foto.'}</div>`;
+  if (!hasMine()) { box.innerHTML = `<div class="empty small" style="padding:18px">Tómate la foto de la cara para crearlo.</div>`; return; }
+  box.innerHTML = `<img src="${await avatarImage(homeModel())}" alt="Tu avatar">`;
 }
 
 /* ---------------- acciones ---------------- */
@@ -1007,12 +1053,12 @@ const A = {
     regDraft().name = v; go('/registro/2');
   },
   regModel: g => { regDraft().g = g; render(); },
-  shoot: async () => {
+  shoot: async (_, e) => {
     const v = $('#camVideo'); if (!v?.videoWidth) return toast('La cámara aún no está lista');
-    await keepPhoto(await shrinkPhoto(v, v.videoWidth, v.videoHeight, true));
-    stopCamera(); render(); toast('Foto guardada');
+    const frame = new Image(); frame.src = await shrinkPhoto(v, v.videoWidth, v.videoHeight, true); await frame.decode();
+    detectFace(frame, e.target.closest('button'));
   },
-  retake: () => { regDraft().photo = null; render(); },
+  retake: () => { regDraft().face = null; render(); },
   noPhoto: () => toast('Sin foto usamos el modelo base'),
   testAi: async () => {
     const out = $('#aiStatus'), {key, model} = await readAiForm();
@@ -1021,22 +1067,15 @@ const A = {
     const r = await testConnection(key, model);
     out.className = 'ai-status ' + (r.ok ? (r.warn ? 'warn' : 'ok') : 'err'); out.textContent = r.msg;
   },
-  regAi: async () => {
-    const {key, model, changed} = await readAiForm();
-    if (!key) { const out = $('#aiStatus'); out.className = 'ai-status err'; out.textContent = 'Pega tu clave o elige «Continuar con el modelo base».'; return; }
-    S.ai.key = key; S.ai.model = model; if (changed) S.ai.endpoint = null; save(); go('/registro/5');
-  },
   regSize: s => { regDraft().size = s; render(); },
   regStyle: s => { regDraft().style = s; render(); },
   regDone: async () => {
     const r = regDraft(), first = !S.profile;
     S.profile = {name:r.name || 'Invitado', g:D.models[r.g] ? r.g : modelIds()[0], size:r.size, height:r.height, style:r.style};
-    S.sel = {}; S.armaG = null; S.view = 'base'; save();
-    if (r.photo) await store.set('photo', r.photo);
+    S.sel = {}; S.armaG = null; S.view = FIT.face ? 'mine' : 'base'; save();
     if (first) addPts(PTS.welcome, 'Bienvenida a Vélez Up');
     REG = null; go('/creando');
   },
-  retryAvatar: () => render(),
   afterMaking: () => { if (S.flags.guide) go('/inicio'); else { GUIDE = 0; go('/guia'); } },
   guideNext: () => { GUIDE++; if (GUIDE >= guideSlides().length) return A.guideEnd(); render(); },
   guidePrev: () => { if (GUIDE > 0) { GUIDE--; render(); } },
@@ -1139,7 +1178,7 @@ const A = {
   },
   // perfil
   setModel: g => { S.profile.g = g; S.armaG = null; save(); render(); },
-  redoPhoto: () => { REG = {...regDraft(), name:S.profile.name, g:S.profile.g, size:S.profile.size, height:S.profile.height, style:S.profile.style, photo:null}; },
+  redoPhoto: () => { REG = {...regDraft(), name:S.profile.name, g:S.profile.g, size:S.profile.size, height:S.profile.height, style:S.profile.style, face:null}; },
   makeAvatar: async (_, e) => {
     const btn = e.target.closest('button'); btn.disabled = true; btn.textContent = 'Creando… (10 a 40 s)';
     try { await createAvatar(); toast('Tu avatar está listo'); }
@@ -1155,7 +1194,7 @@ const A = {
   forgetAi: () => { S.ai.key = ''; S.view = 'base'; FIT.full = null; save(); toast('Clave eliminada de este navegador'); render(); },
   wipe: async () => {
     if (!confirm('¿Borrar tu perfil, tu foto, tu avatar, tus looks y tus puntos de este navegador?')) return;
-    await store.clear(); S = blank(); save(); FIT.hasAvatar = false; go('/');
+    await store.clear(); S = blank(); save(); FIT.hasAvatar = false; FIT.face = null; COMP.clear(); go('/');
   },
 };
 document.addEventListener('click', e => {
@@ -1177,8 +1216,10 @@ document.addEventListener('change', async e => {
   if (e.target.id !== 'photoFile' || !e.target.files[0]) return;
   const url = URL.createObjectURL(e.target.files[0]);
   const img = new Image();
-  try { await new Promise((res, rej) => { img.onload = res; img.onerror = rej; img.src = url; }); await keepPhoto(await shrinkPhoto(img, img.naturalWidth, img.naturalHeight, false)); stopCamera(); render(); toast('Foto guardada'); }
-  catch { toast('No pudimos leer esa imagen'); }
+  try { await new Promise((res, rej) => { img.onload = res; img.onerror = rej; img.src = url; }); }
+  catch { toast('No pudimos leer esa imagen'); URL.revokeObjectURL(url); return; }
+  const frame = new Image(); frame.src = await shrinkPhoto(img, img.naturalWidth, img.naturalHeight, false); await frame.decode();
+  await detectFace(frame, null);
   URL.revokeObjectURL(url);
 });
 $('#veil').addEventListener('click', () => A.close());
@@ -1213,4 +1254,4 @@ function render() {
   window.scrollTo(0, 0);
 }
 window.addEventListener('hashchange', render);
-store.get('avatar').then(av => { FIT.hasAvatar = !!av; render(); });
+Promise.all([store.get('avatar'), store.get('face')]).then(([av, face]) => { FIT.hasAvatar = !!av; FIT.face = face || null; render(); });

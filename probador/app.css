@@ -337,6 +337,7 @@ ul{list-style:none;padding:0}
 .sat{pointer-events:auto;position:absolute;top:var(--y);width:21%;aspect-ratio:1;border-radius:16px;background:rgba(244,243,241,.94);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;animation:satIn .45s var(--ease);transition:transform .2s var(--ease)}
 .sat:hover{transform:scale(1.05)}
 .sat.L{left:0;top:max(var(--y),48px)}
+.stage.two .sat.L{top:max(var(--y),92px)}
 @media (min-width:900px){ .sat.L{top:var(--y)} }
 .sat.R{right:0}
 .sat img{width:84%;height:84%;object-fit:contain;mix-blend-mode:multiply}
@@ -371,7 +372,7 @@ ul{list-style:none;padding:0}
   .item .tip{display:block;position:absolute;left:50%;top:100%;transform:translateX(-50%);white-space:nowrap;font-size:12.5px;color:var(--ink2);opacity:0;transition:opacity .2s;pointer-events:none}
   .item:not(.none):hover .tip{opacity:1}
   .stage{grid-column:3;grid-row:2/6;height:calc(100dvh - var(--top) - 118px);aspect-ratio:var(--r)}
-  .stage-tools{left:auto;right:calc(100% + 1vw);top:0;align-items:flex-end}
+  .stage-tools{left:auto;right:calc(100% + 1vw);top:-4px;flex-direction:row;align-items:center}
   .lookbar{grid-column:1/-1;grid-row:6;justify-content:center;gap:36px;padding:6px 0 0}
   .lb-sum{flex-direction:row;align-items:baseline;gap:14px}
 }
@@ -437,3 +438,12 @@ ul{list-style:none;padding:0}
 
 @media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
 @media (max-width:420px){ #top .brand b{display:none} }
+
+/* foto de la cara y vista previa del avatar */
+.cam.face{max-height:52vh}
+.cam.face svg{inset:0}
+.face-pair{display:grid;grid-template-columns:1fr 1fr;gap:12px;align-items:end}
+.face-pair .cam.face{aspect-ratio:3/4;max-height:none}
+.face-prev{margin:0;display:flex;flex-direction:column;gap:6px;align-items:center}
+.face-prev img{width:100%;aspect-ratio:var(--r,.62);object-fit:contain;background:#fff;border:1px solid var(--line);border-radius:18px}
+.face-prev figcaption{font-size:12px;color:var(--mute);letter-spacing:.04em}
