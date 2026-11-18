@@ -194,7 +194,12 @@ const Compose = (() => {
     if (hands.length > 1) (hands.find(l => /-mal-/.test(l.id || '')) || hands[1]).mirror = true;
     for (const k of ORDER) {
       if (k === 'face') { if (face) await pasteFace(ctx, W, H, body, face); continue; }
-      for (const l of kinds.filter(x => x.kind === k)) await drawLayer(ctx, W, H, l, baseBody, body);
+      for (const l of kinds.filter(x => x.kind === k)) {
+        /* zapatos: si hay un recorte limpio de esta foto (sin restos del tenis), se usa ese */
+        const clean = k === 'feet' && (window.PIES || {})[src]?.[l.id];
+        if (clean) { const im2 = await loadImage(clean.src); ctx.drawImage(im2, clean.box[0] * W, clean.box[1] * H, clean.box[2] * W, clean.box[3] * H); }
+        else await drawLayer(ctx, W, H, l, baseBody, body);
+      }
     }
     return c.toDataURL('image/jpeg', .9);
   }

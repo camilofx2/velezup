@@ -13,6 +13,14 @@ const cop = n => '$' + Math.round(n).toLocaleString('es-CO');
 const wait = ms => new Promise(r => setTimeout(r, ms));
 const hash = s => [...String(s)].reduce((a, c) => (a * 31 + c.charCodeAt(0)) >>> 0, 7);
 const LEGAL = 'Proyecto universitario · Gestión del Diseño 2. No es una app oficial de Vélez. Imágenes generadas con IA.';
+/* tiendas de ejemplo del prototipo: la disponibilidad es simulada */
+const STORES = [
+  {id:'andino', name:'Andino', city:'Bogotá', hours:'Lunes a sábado 10:00 a 20:00 · Domingos 11:00 a 19:00'},
+  {id:'unicentro', name:'Unicentro', city:'Bogotá', hours:'Lunes a sábado 10:00 a 20:00 · Domingos 11:00 a 19:00'},
+  {id:'santafe', name:'Santafé', city:'Bogotá', hours:'Todos los días 10:00 a 21:00'},
+  {id:'chia', name:'Centro Chía', city:'Chía', hours:'Todos los días 10:00 a 20:00'},
+  {id:'tesoro', name:'El Tesoro', city:'Medellín', hours:'Todos los días 10:00 a 21:00'},
+];
 const SIZES = ['XS', 'S', 'M', 'L', 'XL'];
 const STYLES = [
   {id:'urbano', label:'Urbano', hint:'Jean, cargo y capas Fly Up', prefer:['jean', 'cargo', 'bomber'], acc:['gor', 'mal']},
@@ -51,7 +59,7 @@ const LOOK_NAMES = ['Lunes de estudio', 'Azotea 6 p. m.', 'Café en Usaquén', '
 const month = () => { const m = new Date().toLocaleString('es-CO', {month:'long'}); return m[0].toUpperCase() + m.slice(1); };
 
 const ICONS = {
-  back:'<path d="M15 5l-7 7 7 7"/>', close:'<path d="M6 6l12 12M18 6L6 18"/>', arrow:'<path d="M5 12h14M13 6l6 6-6 6"/>',
+  back:'<path d="M15 5l-7 7 7 7"/>', pin:'<path d="M12 21s-6.5-5.6-6.5-11a6.5 6.5 0 0 1 13 0c0 5.4-6.5 11-6.5 11z"/><circle cx="12" cy="10" r="2.3"/>', close:'<path d="M6 6l12 12M18 6L6 18"/>', arrow:'<path d="M5 12h14M13 6l6 6-6 6"/>',
   home:'<path d="M4 11l8-7 8 7v8.5a.5.5 0 0 1-.5.5H15v-6H9v6H4.5a.5.5 0 0 1-.5-.5z"/>',
   hanger:'<path d="M12 7.5a2 2 0 1 1 2-2M12 7.5V9l8.6 6.2c.7.5.3 1.8-.6 1.8H4c-.9 0-1.3-1.3-.6-1.8L12 9"/>',
   bag:'<path d="M5 8h14l-1.2 12H6.2zM9 8V6.5a3 3 0 0 1 6 0V8"/>',
@@ -73,7 +81,7 @@ const ic = (name, cls = 'icon') => `<svg class="${cls}" viewBox="0 0 24 24" aria
 /* ---------------- estado ---------------- */
 const AI_MODELS = ['gemini-nano-banana-2.1', 'gemini-3.1-flash-image', 'gemini-3.1-flash-lite-image', 'gemini-3-pro-image', 'gemini-2.5-flash-image'];
 const blank = () => ({profile:null, sel:{}, bag:[], ai:{key:'', model:AI_MODELS[0], endpoint:null}, view:'base', armaG:null, cat:'jacket',
-  looks:[], liked:[], closet:[], points:0, spent:0, history:[], frags:[], redeemed:[], scanned:[], flags:{}});
+  looks:[], liked:[], closet:[], points:0, spent:0, history:[], frags:[], redeemed:[], scanned:[], flags:{}, store:'andino', holds:[]});
 let S = load();
 function load() {
   try {
@@ -647,7 +655,7 @@ const faceOn = () => S.view === 'mine' && !!FIT.face;
 const COMP = new Map();
 async function composed(g, src, layers, face) {
   if (!face && !layers.length) return src;
-  const key = `comp:${src}:${face ? face.at : '-'}:${layers.map(l => l.id + '@' + l.box.join(',')).join(';')}`;
+  const key = `comp2:${src}:${face ? face.at : '-'}:${layers.map(l => l.id + '@' + l.box.join(',')).join(';')}`;
   if (COMP.has(key)) return COMP.get(key);
   let out = await store.get(key);
   if (!out) {
@@ -812,6 +820,7 @@ function openItem(id) {
       <div class="p-line"><span class="small">${esc(it.line)}${it.worn ? ' · los lleva el modelo' : ''}</span><span class="price">${cop(it.price)}</span></div>
       <p class="lead" style="font-size:14.5px">${esc(it.desc)}</p>
       ${sizePicker(it)}
+      ${storeBox(it)}
       <div class="tabs" role="tablist"><button class="${PANEL.tab === 'det' ? 'on' : ''}" data-act="tab" data-arg="det" role="tab">Detalles</button><button class="${PANEL.tab === 'car' ? 'on' : ''}" data-act="tab" data-arg="car" role="tab">Características</button></div>
       <dl class="specs">${specsOf(it, PANEL.tab).map(([k, v]) => `<dt>${k}</dt><dd>${esc(v)}</dd>`).join('')}</dl>
       <a class="link" href="#/producto/${id}">Ver en Descubre</a>
@@ -821,6 +830,24 @@ function openItem(id) {
 const sizePicker = it => it.sizes.length > 1
   ? `<div class="field"><label>Talla${PANEL.size ? ` · <b>${PANEL.size}</b>` : ''}</label><div class="chips">${it.sizes.map(s => `<button class="chip ${PANEL.size === s ? 'on' : ''}" data-act="size" data-arg="${s}" aria-pressed="${PANEL.size === s}">${s}</button>`).join('')}</div></div>`
   : '<p class="small">Talla única</p>';
+
+/* tienda: la elegida por la persona, disponibilidad por talla (simulada) y apartar para probárselo */
+const myStore = () => STORES.find(s => s.id === S.store) || STORES[0];
+function stock(id, size, st = myStore()) {
+  const n = hash(`${st.id}|${id}|${size || '-'}`) % 10;
+  return n < 2 ? {cls:'low', label:'Bajo pedido · llega en 3 días'} : n < 5 ? {cls:'few', label:'Últimas unidades'} : {cls:'ok', label:'Disponible'};
+}
+const storeBox = it => {
+  const st = myStore(), s = stock(it.id, PANEL.size, st);
+  return `<div class="instore"><div class="is-h">${ic('pin')}<span><b>Vélez ${esc(st.name)}</b><i>${esc(st.city)}</i></span><button class="link" data-act="storeSheet">Cambiar</button></div>
+    <p class="avail ${s.cls}"><span></span>${s.label}${it.sizes.length > 1 && PANEL.size ? ` en talla ${esc(PANEL.size)}` : ''}</p>
+    <button class="btn ghost sm" data-act="holdItem" data-arg="${it.id}">${ic('hanger')}Apartar para probármelo</button></div>`;
+};
+function storeSheet() {
+  sheet(`${sheetHead('Elige tu tienda')}<div class="sheet-body"><p class="small">Verás la disponibilidad de cada prenda en esa tienda y allí te apartamos lo que quieras probarte.</p>
+    <div class="stores">${STORES.map(s => `<button class="store ${S.store === s.id ? 'on' : ''}" data-act="pickStore" data-arg="${s.id}">${ic('pin')}<span><b>Vélez ${esc(s.name)}</b><i>${esc(s.city)} · ${esc(s.hours)}</i></span>${S.store === s.id ? ic('check') : ''}</button>`).join('')}</div>
+    <p class="small">Tiendas de ejemplo del prototipo. La disponibilidad es simulada.</p></div>`);
+}
 
 /* guardar look */
 function saveLookSheet() {
@@ -875,6 +902,7 @@ V.producto = id => {
       <div class="prod-c"><span class="eyebrow">${esc(it.line)} · ${catOf(it.kind).one}</span><h1 class="h1">${esc(it.name)}</h1><p class="price big">${cop(it.price)}</p>
         <p class="lead">${esc(it.desc)}${it.worn ? ' Son los que lleva el modelo en el probador.' : ''}</p>
         ${sizePicker(it)}
+        ${storeBox(it)}
         <dl class="specs">${specsOf(it, 'det').map(([k, v]) => `<dt>${k}</dt><dd>${esc(v)}</dd>`).join('')}</dl>
         <div class="chips"><button class="btn" data-act="tryIt" data-arg="${id}">${ic('hanger')}Pruébalo en Arma</button><button class="btn ghost" data-act="addBag" data-arg="${id}">Agregar a la bolsa</button></div>
         <button class="own ${owned(id) ? 'on' : ''}" data-act="own" data-arg="${id}">${ic('check')}${owned(id) ? 'Ya la tengo' : 'La tengo'}</button>
@@ -947,7 +975,9 @@ V.vive = () => {
       <div class="card"><h3 class="h3">Registra tu compra</h3><p class="small">Compraste en una tienda Vélez? Registra el código de tu factura y suma 1 punto por cada ${cop(PTS.buyPer)}. Las prendas quedan en «la tienes».</p><button class="btn" data-act="buySheet">${ic('receipt')}Registrar compra</button></div>
       <div class="card"><h3 class="h3">Tus aromas suman</h3><p class="small">Registra cada fragancia Vélez que compres. ${n} ${n === 1 ? 'aroma registrado' : 'aromas registrados'}.</p>
         <div class="mile">${OLFATO.map(m => `<div class="${n >= m.n ? 'on' : ''}"><b>${m.n}</b><span>${m.label}</span></div>`).join('')}</div><button class="btn ghost" data-act="aromaSheet">${ic('drop')}Registrar aroma</button></div>
-      <div class="card"><h3 class="h3">Escanea en la tienda</h3><p class="small">Cada look tiene un código QR. Escanéalo en la tienda para ver qué prendas tienes y cuáles te faltan.</p><button class="btn ghost" data-act="scanSheet">${ic('qr')}Escanear look</button></div>
+      <div class="card"><h3 class="h3">Tu tienda: Vélez ${esc(myStore().name)}</h3><p class="small">${esc(myStore().city)} · ${esc(myStore().hours)}. En la tienda escanea el código QR de un look para ver qué prendas tienes, cuáles te faltan y probártelas.</p>
+        <div class="chips"><button class="btn ghost" data-act="scanSheet">${ic('qr')}Escanear look</button><button class="btn ghost" data-act="storeSheet">${ic('pin')}Cambiar tienda</button></div>
+        ${S.holds.length ? `<p class="small">Apartados: ${S.holds.slice(0, 3).map(h => `<b>${h.code}</b> en ${esc((STORES.find(s => s.id === h.store) || myStore()).name)}`).join(' · ')}</p>` : ''}</div>
     </div>
     <div class="sec"><div class="sec-h"><h2 class="h3">Recompensas</h2></div>
       <div class="rewards">${REWARDS.map(r => { const got = S.redeemed.find(x => x.id === r.id), can = available() >= r.cost; return `<div class="reward ${got ? 'got' : can ? 'can' : ''}">${r.item && item(r.item) ? thumb(r.item) : `<span class="th">${ic('gift')}</span>`}<div><b>${esc(r.label)}</b><span class="small">${r.cost} puntos</span></div>${got ? `<span class="tag">${got.code}</span>` : `<button class="btn sm ${can ? '' : 'ghost'}" data-act="redeem" data-arg="${r.id}" ${can ? '' : 'disabled'}>${can ? 'Canjear' : `Faltan ${r.cost - available()}`}</button>`}</div>`; }).join('')}</div></div>
@@ -993,7 +1023,8 @@ V.bolsa = () => {
         ${b.it.sizes.length > 1 ? `<label class="size-sel">Talla <select data-bag="${b.i}">${b.it.sizes.map(s => `<option ${s === b.size ? 'selected' : ''}>${s}</option>`).join('')}</select></label>` : '<span>Talla única</span>'}</div>
         <button class="link" data-act="rmBag" data-arg="${b.i}">Quitar</button></div>`).join('')}</div>
       <div class="total"><span>Total</span><b>${cop(total)}</b></div>
-      <button class="btn block" data-act="reserve">Reservar en tienda</button>
+      <div class="instore"><div class="is-h">${ic('pin')}<span><b>Vélez ${esc(myStore().name)}</b><i>${esc(myStore().city)} · ${lines.filter(b => stock(b.id, b.size).cls !== 'low').length} de ${lines.length} disponibles hoy</i></span><button class="link" data-act="storeSheet">Cambiar</button></div></div>
+      <button class="btn block" data-act="reserve">Reservar en Vélez ${esc(myStore().name)}</button>
       <p class="small">Es una reserva de prueba: no hay pagos. Muestras el código en la tienda, pagas allá y luego registras tu factura en Vive para sumar puntos.</p>`
     : `<div class="empty"><p>Tu bolsa está vacía.</p><a class="btn ghost" href="#/arma">Ir a Arma</a></div>`}
   </section>`;
@@ -1173,8 +1204,19 @@ const A = {
   // bolsa
   rmBag: i => { S.bag.splice(+i, 1); save(); render(); },
   reserve: () => {
-    const code = 'VU-' + Math.random().toString(36).slice(2, 6).toUpperCase();
-    sheet(`${sheetHead('Reserva de prueba')}<div class="sheet-body"><h2 class="h2">Tu código: ${code}</h2><p class="lead">Muéstralo en la tienda Vélez más cercana. Te tendremos las prendas listas en tu talla durante 48 horas.</p><p class="small">Prototipo: no se envió ninguna reserva real. Cuando pagues, registra tu factura en Vive para sumar puntos.</p><button class="btn block" data-act="close">Listo</button></div>`);
+    const code = 'VU-' + Math.random().toString(36).slice(2, 6).toUpperCase(), st = myStore();
+    S.holds.unshift({code, store:st.id, ids:S.bag.map(b => b.id), at:Date.now()}); save();
+    sheet(`${sheetHead('Reserva de prueba')}<div class="sheet-body center"><div class="qr">${qrSvg(code)}</div><h2 class="h2">${code}</h2><p class="lead">Te esperamos en <b>Vélez ${esc(st.name)}</b> (${esc(st.city)}). Tendremos las prendas listas en tu talla durante 48 horas, en el probador.</p><p class="small">${esc(st.hours)}</p><p class="small">Prototipo: no se envió ninguna reserva real. Cuando pagues, registra tu factura en Vive para sumar puntos.</p><button class="btn block" data-act="close">Listo</button></div>`);
+  },
+  storeSheet: () => storeSheet(),
+  pickStore: id => { S.store = id; save(); closeSheet(); render(); toast(`Tu tienda: Vélez ${myStore().name}`); },
+  holdItem: id => {
+    const it = item(id), st = myStore(), size = it.sizes.length > 1 ? PANEL.size || defaultSize(it) : 'Única';
+    const code = 'AP-' + Math.random().toString(36).slice(2, 6).toUpperCase();
+    S.holds.unshift({code, store:st.id, ids:[id], size, at:Date.now()}); save();
+    sheet(`${sheetHead('Apartado para probar')}<div class="sheet-body center"><div class="qr">${qrSvg(code)}</div><h2 class="h2">${code}</h2>
+      <p class="lead"><b>${esc(it.name)}</b>${size !== 'Única' ? `, talla ${esc(size)}` : ''}, te espera en el probador de <b>Vélez ${esc(st.name)}</b> durante 48 horas.</p>
+      <p class="small">${esc(stock(id, size, st).label)} · ${esc(st.hours)}</p><p class="small">Prototipo: no se envió ningún apartado real.</p><button class="btn block" data-act="close">Listo</button></div>`);
   },
   // perfil
   setModel: g => { S.profile.g = g; S.armaG = null; save(); render(); },
@@ -1254,4 +1296,24 @@ function render() {
   window.scrollTo(0, 0);
 }
 window.addEventListener('hashchange', render);
+/* modo demo para grabar el video: ?demo (mujer) o ?demo=m (hombre). Deja un perfil de ejemplo con puntos y looks. */
+(() => {
+  const q = new URLSearchParams(location.search);
+  if (!q.has('demo')) return;
+  const g = q.get('demo') === 'm' && D.models.m ? 'm' : 'w';
+  const pick = (k, id) => (D.items[id] ? id : catItems(g, k)[0]);
+  const w = g === 'w';
+  const look = (id, name, where, sel, pub) => ({id, g, sel, name, where, published:pub, likes:pub ? 18 : 0, at:Date.now() - 86400000 * (pub ? 2 : 1), img:bankImage(g, sel).src});
+  const s1 = w ? {jacket:'w-out-hueso', bottom:'w-bot-cuero', zap:pick('zap', 'w-zap-botin'), bol:pick('bol', 'w-bol-baguette'), gaf:'u-gaf-carey'}
+               : {jacket:'m-out-aviador', bottom:'m-bot-pana', zap:pick('zap', 'm-zap-chelsea'), bol:pick('bol', 'm-bol-tote')};
+  const s2 = w ? {jacket:'w-out-motera', bottom:'w-bot-jean', zap:pick('zap', 'w-zap-tenis'), gor:'u-gor-negra', mal:'u-mal-urbana'}
+               : {jacket:'m-out-bomber', bottom:'m-bot-cargo', zap:pick('zap', 'm-zap-tenis'), gor:'u-gor-negra', mal:'u-mal-urbana'};
+  S = {...blank(), profile:{name:w ? 'Valentina' : 'Santiago', g, size:w ? 'S' : 'M', height:w ? 165 : 178, style:'mixto'},
+    sel:{[g]:{...s1}}, store:'andino', points:560, spent:0, liked:['c2', 'c5'],
+    looks:[look('vu-demo1', w ? 'Cuero de noche' : 'Aviador de fin de semana', 'salida', s1, true), look('vu-demo2', 'Urbano de estudio', 'estudio', s2, false)],
+    history:[{n:30, label:'Look publicado', at:Date.now() - 172800000}, {n:20, label:'Look guardado', at:Date.now() - 86400000}, {n:410, label:'Compra en Vélez Andino', at:Date.now() - 400000000}, {n:50, label:'Bienvenida', at:Date.now() - 500000000}],
+    closet:[w ? 'w-bot-jean' : 'm-bot-jean'], flags:{guide:true}};
+  save();
+  history.replaceState(null, '', location.pathname + (location.hash && location.hash !== '#/' ? location.hash : '#/inicio'));
+})();
 Promise.all([store.get('avatar'), store.get('face')]).then(([av, face]) => { FIT.hasAvatar = !!av; FIT.face = face || null; render(); });

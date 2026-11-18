@@ -447,3 +447,23 @@ ul{list-style:none;padding:0}
 .face-prev{margin:0;display:flex;flex-direction:column;gap:6px;align-items:center}
 .face-prev img{width:100%;aspect-ratio:var(--r,.62);object-fit:contain;background:#fff;border:1px solid var(--line);border-radius:18px}
 .face-prev figcaption{font-size:12px;color:var(--mute);letter-spacing:.04em}
+
+/* tienda: disponibilidad y apartar */
+.instore{display:grid;gap:10px;padding:14px 16px;border:1px solid var(--line);border-radius:16px;background:#fff}
+.is-h{display:flex;align-items:center;gap:10px}
+.is-h .icon{width:18px;height:18px;flex:none}
+.is-h span{display:grid;flex:1;line-height:1.25}
+.is-h b{font-size:14px;font-weight:600}
+.is-h i{font-style:normal;font-size:12.5px;color:var(--mute)}
+.avail{display:flex;align-items:center;gap:8px;font-size:13.5px;margin:0}
+.avail span{width:8px;height:8px;border-radius:50%;background:#2e9e5b;flex:none}
+.avail.few span{background:#d08a1c}
+.avail.low span{background:var(--mute)}
+.instore .btn{justify-self:start}
+.stores{display:grid;gap:8px}
+.store{display:flex;align-items:center;gap:12px;padding:12px 14px;border:1px solid var(--line);border-radius:14px;text-align:left;width:100%}
+.store .icon{width:18px;height:18px;flex:none}
+.store span{display:grid;flex:1;line-height:1.3}
+.store b{font-size:14px;font-weight:600}
+.store i{font-style:normal;font-size:12px;color:var(--mute)}
+.store.on{border-color:var(--ink)}
