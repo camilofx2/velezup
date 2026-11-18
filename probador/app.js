@@ -655,7 +655,7 @@ const faceOn = () => S.view === 'mine' && !!FIT.face;
 const COMP = new Map();
 async function composed(g, src, layers, face) {
   if (!face && !layers.length) return src;
-  const key = `comp2:${src}:${face ? face.at : '-'}:${layers.map(l => l.id + '@' + l.box.join(',')).join(';')}`;
+  const key = `comp3:${src}:${face ? face.at : '-'}:${layers.map(l => l.id + '@' + l.box.join(',')).join(';')}`;
   if (COMP.has(key)) return COMP.get(key);
   let out = await store.get(key);
   if (!out) {
@@ -673,7 +673,7 @@ async function avatarImage(g) {
   if (aiAvatarOn()) { const av = await store.get('avatar'); if (av) return av; }
   return composed(g, D.models[g].base, [], FIT.face);
 }
-const SAT = {gor:{side:'R', top:3}, gaf:{side:'L', top:7}, mal:{side:'L', top:33}, bol:{side:'R', top:38}, cin:{side:'L', top:59}, zap:{side:'R', top:73}};
+const SAT = {gor:{side:'R', top:3}, gaf:{side:'L', top:7}, mal:{side:'L', top:33}, bol:{side:'R', top:38}, cin:{side:'R', top:20}, zap:{side:'R', top:73}};
 function optionsFor(g, k) {
   const ids = catItems(g, k).map(id => ({id, img:item(id).img, label:item(id).name}));
   if (k === 'jacket' && hasPlain(g)) ids.unshift({id:'', icon:'tee', label:'Sin chaqueta'});

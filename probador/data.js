@@ -10,45 +10,66 @@ window.PROBADOR = {
     "w-out-motera",
     "w-out-blazer",
     "w-out-jean",
-    "w-out-hueso"
+    "w-out-hueso",
+    "w-out-gamuza",
+    "w-out-bomber"
    ],
    "bottoms": [
     "w-bot-jean",
     "w-bot-sastre",
     "w-bot-cargo",
     "w-bot-falda",
-    "w-bot-cuero"
+    "w-bot-cuero",
+    "w-bot-blanco"
    ],
    "combos": {
     "w-out-cuero|w-bot-jean": "img/w__cuero__jean.webp",
     "w-out-blazer|w-bot-jean": "img/w__blazer__jean.webp",
+    "w-out-gamuza|w-bot-cargo": "img/w__gamuza__cargo.webp",
     "w-out-cuero|w-bot-sastre": "img/w__cuero__sastre.webp",
     "w-out-motera|w-bot-sastre": "img/w__motera__sastre.webp",
     "w-out-blazer|w-bot-falda": "img/w__blazer__falda.webp",
     "w-out-hueso|w-bot-jean": "img/w__hueso__jean.webp",
+    "w-out-bomber|w-bot-sastre": "img/w__bomber__sastre.webp",
     "w-out-cuero|w-bot-cuero": "img/w__cuero__cuero.webp",
     "w-out-jean|w-bot-falda": "img/w__jean__falda.webp",
     "w-out-hueso|w-bot-cargo": "img/w__hueso__cargo.webp",
     "w-out-motera|w-bot-cargo": "img/w__motera__cargo.webp",
     "w-out-jean|w-bot-cuero": "img/w__jean__cuero.webp",
     "w-out-cuero|w-bot-falda": "img/w__cuero__falda.webp",
+    "w-out-bomber|w-bot-blanco": "img/w__bomber__blanco.webp",
+    "w-out-bomber|w-bot-cargo": "img/w__bomber__cargo.webp",
     "w-out-blazer|w-bot-cuero": "img/w__blazer__cuero.webp",
+    "w-out-motera|w-bot-blanco": "img/w__motera__blanco.webp",
+    "w-out-cuero|w-bot-blanco": "img/w__cuero__blanco.webp",
+    "w-out-jean|w-bot-blanco": "img/w__jean__blanco.webp",
+    "w-out-gamuza|w-bot-falda": "img/w__gamuza__falda.webp",
     "w-out-blazer|w-bot-sastre": "img/w__blazer__sastre.webp",
+    "w-out-bomber|w-bot-jean": "img/w__bomber__jean.webp",
+    "w-out-gamuza|w-bot-jean": "img/w__gamuza__jean.webp",
+    "w-out-gamuza|w-bot-blanco": "img/w__gamuza__blanco.webp",
     "w-out-blazer|w-bot-cargo": "img/w__blazer__cargo.webp",
+    "w-out-bomber|w-bot-cuero": "img/w__bomber__cuero.webp",
     "w-out-jean|w-bot-cargo": "img/w__jean__cargo.webp",
     "w-out-hueso|w-bot-falda": "img/w__hueso__falda.webp",
     "w-out-jean|w-bot-jean": "img/w__jean__jean.webp",
     "w-out-hueso|w-bot-sastre": "img/w__hueso__sastre.webp",
     "w-out-motera|w-bot-cuero": "img/w__motera__cuero.webp",
+    "w-out-gamuza|w-bot-sastre": "img/w__gamuza__sastre.webp",
     "w-out-hueso|w-bot-cuero": "img/w__hueso__cuero.webp",
     "w-out-cuero|w-bot-cargo": "img/w__cuero__cargo.webp",
     "w-out-motera|w-bot-falda": "img/w__motera__falda.webp",
+    "w-out-bomber|w-bot-falda": "img/w__bomber__falda.webp",
+    "w-out-hueso|w-bot-blanco": "img/w__hueso__blanco.webp",
+    "w-out-gamuza|w-bot-cuero": "img/w__gamuza__cuero.webp",
     "w-out-motera|w-bot-jean": "img/w__motera__jean.webp",
-    "w-out-jean|w-bot-sastre": "img/w__jean__sastre.webp"
+    "w-out-jean|w-bot-sastre": "img/w__jean__sastre.webp",
+    "w-out-blazer|w-bot-blanco": "img/w__blazer__blanco.webp"
    },
    "plain": {
     "w-bot-cargo": "img/w__sin__cargo.webp",
     "w-bot-falda": "img/w__sin__falda.webp",
+    "w-bot-blanco": "img/w__sin__blanco.webp",
     "w-bot-jean": "img/w__sin__jean.webp",
     "w-bot-sastre": "img/w__sin__sastre.webp",
     "w-bot-cuero": "img/w__sin__cuero.webp"
@@ -61,6 +82,8 @@ window.PROBADOR = {
    "ratio": 0.62,
    "jackets": [
     "m-out-aviador",
+    "m-out-jean",
+    "m-out-vino",
     "m-out-cuero",
     "m-out-gamuza",
     "m-out-bomber",
@@ -68,6 +91,7 @@ window.PROBADOR = {
    ],
    "bottoms": [
     "m-bot-pana",
+    "m-bot-crudo",
     "m-bot-jean",
     "m-bot-chino",
     "m-bot-cargo",
@@ -76,33 +100,51 @@ window.PROBADOR = {
    "combos": {
     "m-out-bomber|m-bot-chino": "img/m__bomber__chino.webp",
     "m-out-sobrecamisa|m-bot-cargo": "img/m__sobrecamisa__cargo.webp",
+    "m-out-bomber|m-bot-crudo": "img/m__bomber__crudo.webp",
     "m-out-sobrecamisa|m-bot-sastre": "img/m__sobrecamisa__sastre.webp",
     "m-out-cuero|m-bot-sastre": "img/m__cuero__sastre.webp",
     "m-out-gamuza|m-bot-cargo": "img/m__gamuza__cargo.webp",
     "m-out-aviador|m-bot-cargo": "img/m__aviador__cargo.webp",
+    "m-out-vino|m-bot-cargo": "img/m__vino__cargo.webp",
+    "m-out-vino|m-bot-jean": "img/m__vino__jean.webp",
+    "m-out-vino|m-bot-pana": "img/m__vino__pana.webp",
     "m-out-aviador|m-bot-sastre": "img/m__aviador__sastre.webp",
     "m-out-sobrecamisa|m-bot-pana": "img/m__sobrecamisa__pana.webp",
     "m-out-sobrecamisa|m-bot-jean": "img/m__sobrecamisa__jean.webp",
+    "m-out-sobrecamisa|m-bot-crudo": "img/m__sobrecamisa__crudo.webp",
+    "m-out-gamuza|m-bot-crudo": "img/m__gamuza__crudo.webp",
     "m-out-bomber|m-bot-cargo": "img/m__bomber__cargo.webp",
     "m-out-sobrecamisa|m-bot-chino": "img/m__sobrecamisa__chino.webp",
     "m-out-gamuza|m-bot-chino": "img/m__gamuza__chino.webp",
+    "m-out-vino|m-bot-crudo": "img/m__vino__crudo.webp",
     "m-out-aviador|m-bot-chino": "img/m__aviador__chino.webp",
     "m-out-cuero|m-bot-jean": "img/m__cuero__jean.webp",
     "m-out-cuero|m-bot-pana": "img/m__cuero__pana.webp",
+    "m-out-vino|m-bot-chino": "img/m__vino__chino.webp",
+    "m-out-aviador|m-bot-crudo": "img/m__aviador__crudo.webp",
     "m-out-bomber|m-bot-sastre": "img/m__bomber__sastre.webp",
     "m-out-gamuza|m-bot-sastre": "img/m__gamuza__sastre.webp",
+    "m-out-jean|m-bot-chino": "img/m__jean__chino.webp",
+    "m-out-jean|m-bot-crudo": "img/m__jean__crudo.webp",
     "m-out-gamuza|m-bot-pana": "img/m__gamuza__pana.webp",
     "m-out-gamuza|m-bot-jean": "img/m__gamuza__jean.webp",
     "m-out-bomber|m-bot-jean": "img/m__bomber__jean.webp",
+    "m-out-vino|m-bot-sastre": "img/m__vino__sastre.webp",
     "m-out-bomber|m-bot-pana": "img/m__bomber__pana.webp",
+    "m-out-jean|m-bot-jean": "img/m__jean__jean.webp",
+    "m-out-jean|m-bot-pana": "img/m__jean__pana.webp",
+    "m-out-cuero|m-bot-crudo": "img/m__cuero__crudo.webp",
     "m-out-aviador|m-bot-jean": "img/m__aviador__jean.webp",
     "m-out-aviador|m-bot-pana": "img/m__aviador__pana.webp",
     "m-out-cuero|m-bot-chino": "img/m__cuero__chino.webp",
+    "m-out-jean|m-bot-sastre": "img/m__jean__sastre.webp",
+    "m-out-jean|m-bot-cargo": "img/m__jean__cargo.webp",
     "m-out-cuero|m-bot-cargo": "img/m__cuero__cargo.webp"
    },
    "plain": {
     "m-bot-cargo": "img/m__sin__cargo.webp",
     "m-bot-chino": "img/m__sin__chino.webp",
+    "m-bot-crudo": "img/m__sin__crudo.webp",
     "m-bot-jean": "img/m__sin__jean.webp",
     "m-bot-pana": "img/m__sin__pana.webp",
     "m-bot-sastre": "img/m__sin__sastre.webp"
@@ -224,6 +266,56 @@ window.PROBADOR = {
    "kind": "jacket",
    "model": "w",
    "img": "img/w-out-hueso.webp",
+   "sizes": [
+    "XS",
+    "S",
+    "M",
+    "L",
+    "XL"
+   ],
+   "tags": [
+    "nuevo"
+   ]
+  },
+  "w-out-gamuza": {
+   "name": "Chaqueta de gamuza terracota",
+   "line": "Vélez",
+   "price": 649900,
+   "desc": "Gamuza suave con cuello camisero, broches y bolsillos de solapa.",
+   "color": "Terracota",
+   "fit": "Entallada, a la cintura",
+   "material": "Gamuza",
+   "lining": "Viscosa",
+   "care": "Limpieza especializada de cuero",
+   "id": "w-out-gamuza",
+   "kind": "jacket",
+   "model": "w",
+   "img": "img/w-out-gamuza.webp",
+   "sizes": [
+    "XS",
+    "S",
+    "M",
+    "L",
+    "XL"
+   ],
+   "tags": [
+    "nuevo"
+   ]
+  },
+  "w-out-bomber": {
+   "name": "Bomber satinada oliva",
+   "line": "Fly Up",
+   "price": 269900,
+   "desc": "Satín liviano con cuello, puños y cintura en rib.",
+   "color": "Verde oliva",
+   "fit": "Amplia y corta",
+   "material": "Satín de poliéster",
+   "lining": "Poliéster",
+   "care": "Lavar en frío",
+   "id": "w-out-bomber",
+   "kind": "jacket",
+   "model": "w",
+   "img": "img/w-out-bomber.webp",
    "sizes": [
     "XS",
     "S",
@@ -360,6 +452,31 @@ window.PROBADOR = {
     "nuevo"
    ]
   },
+  "w-bot-blanco": {
+   "name": "Jean blanco recto",
+   "line": "Fly Up",
+   "price": 229900,
+   "desc": "Tiro alto, pierna recta y cinco bolsillos.",
+   "color": "Blanco",
+   "fit": "Tiro alto, recto",
+   "material": "Denim de algodón",
+   "lining": "Sin forro",
+   "care": "Lavar en frío por separado",
+   "id": "w-bot-blanco",
+   "kind": "bottom",
+   "model": "w",
+   "img": "img/w-bot-blanco.webp",
+   "sizes": [
+    "XS",
+    "S",
+    "M",
+    "L",
+    "XL"
+   ],
+   "tags": [
+    "nuevo"
+   ]
+  },
   "m-out-aviador": {
    "name": "Chaqueta aviador de cuero",
    "line": "Vélez",
@@ -374,6 +491,56 @@ window.PROBADOR = {
    "kind": "jacket",
    "model": "m",
    "img": "img/m-out-aviador.webp",
+   "sizes": [
+    "XS",
+    "S",
+    "M",
+    "L",
+    "XL"
+   ],
+   "tags": [
+    "nuevo"
+   ]
+  },
+  "m-out-jean": {
+   "name": "Chaqueta de jean",
+   "line": "Fly Up",
+   "price": 259900,
+   "desc": "Denim de lavado medio con bolsillos de solapa y botones de cobre.",
+   "color": "Azul medio",
+   "fit": "Recta, a la cadera",
+   "material": "Denim 100 % algodón",
+   "lining": "Sin forro",
+   "care": "Lavar en frío y al revés",
+   "id": "m-out-jean",
+   "kind": "jacket",
+   "model": "m",
+   "img": "img/m-out-jean.webp",
+   "sizes": [
+    "XS",
+    "S",
+    "M",
+    "L",
+    "XL"
+   ],
+   "tags": [
+    "nuevo"
+   ]
+  },
+  "m-out-vino": {
+   "name": "Chaqueta café racer vino",
+   "line": "Vélez",
+   "price": 799900,
+   "desc": "Cuero liso color vino con cuello de banda, broche y cierre plateado.",
+   "color": "Vino",
+   "fit": "Recta, a la cadera",
+   "material": "Cuero bovino",
+   "lining": "Viscosa",
+   "care": "Limpieza especializada de cuero",
+   "id": "m-out-vino",
+   "kind": "jacket",
+   "model": "m",
+   "img": "img/m-out-vino.webp",
    "sizes": [
     "XS",
     "S",
@@ -499,6 +666,31 @@ window.PROBADOR = {
    "kind": "bottom",
    "model": "m",
    "img": "img/m-bot-pana.webp",
+   "sizes": [
+    "XS",
+    "S",
+    "M",
+    "L",
+    "XL"
+   ],
+   "tags": [
+    "nuevo"
+   ]
+  },
+  "m-bot-crudo": {
+   "name": "Pantalón crudo de gabardina",
+   "line": "Vélez",
+   "price": 279900,
+   "desc": "Gabardina de algodón, pierna recta y bolsillos sesgados.",
+   "color": "Crudo",
+   "fit": "Recto",
+   "material": "Gabardina de algodón",
+   "lining": "Sin forro",
+   "care": "Lavar en frío",
+   "id": "m-bot-crudo",
+   "kind": "bottom",
+   "model": "m",
+   "img": "img/m-bot-crudo.webp",
    "sizes": [
     "XS",
     "S",
@@ -687,6 +879,32 @@ window.PROBADOR = {
    ],
    "tags": []
   },
+  "w-zap-baletas": {
+   "name": "Baletas de cuero negras",
+   "line": "Vélez",
+   "price": 319900,
+   "desc": "Punta redonda, lazo delgado y suela flexible.",
+   "color": "Negro",
+   "fit": "Horma regular",
+   "material": "Cuero de cordero",
+   "lining": "Cuero",
+   "care": "Crema nutritiva para cuero",
+   "id": "w-zap-baletas",
+   "kind": "zap",
+   "model": "w",
+   "img": "img/w-zap-baletas.webp",
+   "sizes": [
+    "35",
+    "36",
+    "37",
+    "38",
+    "39",
+    "40"
+   ],
+   "tags": [
+    "nuevo"
+   ]
+  },
   "w-bol-hombro": {
    "name": "Bolso de hombro coñac",
    "line": "Vélez",
@@ -762,6 +980,27 @@ window.PROBADOR = {
    "kind": "bol",
    "model": "w",
    "img": "img/w-bol-baguette.webp",
+   "sizes": [
+    "Única"
+   ],
+   "tags": [
+    "nuevo"
+   ]
+  },
+  "w-bol-balde": {
+   "name": "Bolso balde oliva",
+   "line": "Vélez",
+   "price": 499900,
+   "desc": "Cuero liso con cierre de cordón y asa corta al hombro.",
+   "color": "Verde oliva",
+   "fit": "Mediano",
+   "material": "Cuero de ternera",
+   "lining": "Textil",
+   "care": "Limpieza especializada de cuero",
+   "id": "w-bol-balde",
+   "kind": "bol",
+   "model": "w",
+   "img": "img/w-bol-balde.webp",
    "sizes": [
     "Única"
    ],
@@ -849,6 +1088,33 @@ window.PROBADOR = {
    ],
    "tags": []
   },
+  "m-zap-mocasin": {
+   "name": "Mocasín de cuero coñac",
+   "line": "Vélez",
+   "price": 429900,
+   "desc": "Antifaz clásico, costura a mano y suela de cuero.",
+   "color": "Coñac",
+   "fit": "Horma regular",
+   "material": "Cuero bovino",
+   "lining": "Cuero",
+   "care": "Crema nutritiva para cuero",
+   "id": "m-zap-mocasin",
+   "kind": "zap",
+   "model": "m",
+   "img": "img/m-zap-mocasin.webp",
+   "sizes": [
+    "38",
+    "39",
+    "40",
+    "41",
+    "42",
+    "43",
+    "44"
+   ],
+   "tags": [
+    "nuevo"
+   ]
+  },
   "m-bol-tote": {
    "name": "Tote de cuero negro",
    "line": "Vélez",
@@ -863,6 +1129,27 @@ window.PROBADOR = {
    "kind": "bol",
    "model": "m",
    "img": "img/m-bol-tote.webp",
+   "sizes": [
+    "Única"
+   ],
+   "tags": [
+    "nuevo"
+   ]
+  },
+  "m-bol-portafolio": {
+   "name": "Portafolio de cuero chocolate",
+   "line": "Vélez",
+   "price": 699900,
+   "desc": "Asa superior, solapa con dos hebillas y espacio para portátil.",
+   "color": "Chocolate",
+   "fit": "Mediano",
+   "material": "Cuero bovino",
+   "lining": "Lona",
+   "care": "Limpieza especializada de cuero",
+   "id": "m-bol-portafolio",
+   "kind": "bol",
+   "model": "m",
+   "img": "img/m-bol-portafolio.webp",
    "sizes": [
     "Única"
    ],
@@ -907,6 +1194,27 @@ window.PROBADOR = {
     "Única"
    ],
    "tags": []
+  },
+  "u-mal-mini": {
+   "name": "Morral mini de cuero negro",
+   "line": "Vélez",
+   "price": 589900,
+   "desc": "Compacto, con asa superior y bolsillo frontal con cierre.",
+   "color": "Negro",
+   "fit": "Pequeña",
+   "material": "Cuero bovino",
+   "lining": "Textil",
+   "care": "Limpieza especializada de cuero",
+   "id": "u-mal-mini",
+   "kind": "mal",
+   "model": "u",
+   "img": "img/u-mal-mini.webp",
+   "sizes": [
+    "Única"
+   ],
+   "tags": [
+    "nuevo"
+   ]
   },
   "u-mal-cuero": {
    "name": "Maleta de cuero café",
@@ -969,6 +1277,27 @@ window.PROBADOR = {
    ],
    "tags": []
   },
+  "u-gor-pana": {
+   "name": "Gorra de pana tabaco",
+   "line": "Fly Up",
+   "price": 99900,
+   "desc": "Pana de seis paneles con correa de cuero.",
+   "color": "Tabaco",
+   "fit": "Ajustable",
+   "material": "Pana de algodón",
+   "lining": "Banda de algodón",
+   "care": "Lavar a mano",
+   "id": "u-gor-pana",
+   "kind": "gor",
+   "model": "u",
+   "img": "img/u-gor-pana.webp",
+   "sizes": [
+    "Única"
+   ],
+   "tags": [
+    "nuevo"
+   ]
+  },
   "u-gor-negra": {
    "name": "Gorra negra",
    "line": "Fly Up",
@@ -1029,6 +1358,27 @@ window.PROBADOR = {
     "Única"
    ],
    "tags": []
+  },
+  "u-gaf-aviador": {
+   "name": "Gafas aviador doradas",
+   "line": "Fly Up",
+   "price": 189900,
+   "desc": "Montura metálica delgada y lentes verdes UV400.",
+   "color": "Dorado",
+   "fit": "Única",
+   "material": "Metal",
+   "lining": "Lentes UV400",
+   "care": "Guardar en su estuche",
+   "id": "u-gaf-aviador",
+   "kind": "gaf",
+   "model": "u",
+   "img": "img/u-gaf-aviador.webp",
+   "sizes": [
+    "Única"
+   ],
+   "tags": [
+    "nuevo"
+   ]
   },
   "u-gaf-negras": {
    "name": "Gafas de sol negras",
