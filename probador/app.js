@@ -1,4 +1,4 @@
-/* Vélez Up · Probador
+/* Fly Up · Probador
    Prototipo universitario. Las fotos del banco se generaron con IA; con una clave de Gemini
    la persona crea su avatar desde su foto y se prueba las prendas en él. */
 'use strict';
@@ -360,7 +360,7 @@ function shell(tab) {
   const top = $('#top'), bar = $('#tabbar');
   top.hidden = false; bar.hidden = false;
   const links = TABS.map(([r, i, l]) => `<a href="#/${r}" class="${r === tab ? 'on' : ''}"${r === tab ? ' aria-current="page"' : ''}>${ic(i)}<span>${l}</span></a>`).join('');
-  top.innerHTML = `<a class="brand" href="#/inicio" aria-label="Vélez Up, inicio"><img src="icons/icon-192.png" alt=""><b>Vélez Up</b></a>
+  top.innerHTML = `<a class="brand" href="#/inicio" aria-label="Fly Up, inicio"><svg class="mark" viewBox="0 0 100 100" aria-hidden="true"><path d="M24 50 50 26 76 50"/><path d="M24 76 50 52 76 76"/></svg><b>FLY UP<small>VÉLEZ</small></b></a>
     <nav class="nav" aria-label="Secciones">${links}</nav>
     <div class="top-r"><a class="bagbtn" href="#/bolsa" aria-label="Bolsa, ${S.bag.length} prendas">${ic('bag')}<i>${S.bag.length}</i></a>
     <a class="me" href="#/perfil" aria-label="Mi perfil">${S.profile ? esc(S.profile.name[0].toUpperCase()) : '·'}</a></div>`;
@@ -414,7 +414,7 @@ V.bienvenida = () => {
   cleanup = () => clearInterval(timer);
   return `<section class="welcome">
     <div class="copy">
-      <a class="brand" href="#/"><img src="icons/icon-192.png" alt=""><b>Vélez Up</b></a>
+      <a class="brand" href="#/" aria-label="Fly Up"><svg class="mark" viewBox="0 0 100 100" aria-hidden="true"><path d="M24 50 50 26 76 50"/><path d="M24 76 50 52 76 76"/></svg><b>FLY UP<small>VÉLEZ</small></b></a>
       <h1 class="h1">Tu probador,<br><em>con tu foto.</em></h1>
       <p class="lead">Crea tu avatar con una foto, arma tu look con prendas y accesorios Vélez y Fly Up, compártelo con la comunidad y suma puntos en la tienda.</p>
       <div class="actions"><a class="btn" href="#/registro/1">Crear mi avatar ${ic('arrow')}</a><button class="link" data-act="guest">Probar sin registrarme</button></div>
@@ -655,7 +655,7 @@ const faceOn = () => S.view === 'mine' && !!FIT.face;
 const COMP = new Map();
 async function composed(g, src, layers, face) {
   if (!face && !layers.length) return src;
-  const key = `comp3:${src}:${face ? face.at : '-'}:${layers.map(l => l.id + '@' + l.box.join(',')).join(';')}`;
+  const key = `comp4:${src}:${face ? face.at : '-'}:${layers.map(l => l.id + '@' + l.box.join(',')).join(';')}`;
   if (COMP.has(key)) return COMP.get(key);
   let out = await store.get(key);
   if (!out) {
@@ -967,7 +967,7 @@ V.vive = () => {
     ['drop', 'Registrar un aroma', `+${PTS.aroma}`], ['qr', 'Escanear un look en tienda', `+${PTS.scan}`], ['star', `Reto de ${month()}`, `+${PTS.reto}`]];
   return `<section class="page wide">
     <div class="sec-h"><div><h1 class="h1">Vive</h1><p class="small">Tus puntos, tus compras, tus aromas y tu look en la tienda.</p></div></div>
-    <div class="level card"><div class="ring-pts"><svg viewBox="0 0 84 84"><circle cx="42" cy="42" r="${R}" fill="none" stroke="var(--line)" stroke-width="2.5"/><circle cx="42" cy="42" r="${R}" fill="none" stroke="var(--ink)" stroke-width="2.5" stroke-linecap="round" stroke-dasharray="${C}" stroke-dashoffset="${C * (1 - pct)}" transform="rotate(-90 42 42)"/></svg><b>${S.points}</b><span>puntos</span></div>
+    <div class="level card"><div class="ring-pts"><svg viewBox="0 0 84 84"><circle cx="42" cy="42" r="${R}" fill="none" stroke="var(--line)" stroke-width="2.5"/><circle cx="42" cy="42" r="${R}" fill="none" stroke="var(--red)" stroke-width="2.5" stroke-linecap="round" stroke-dasharray="${C}" stroke-dashoffset="${C * (1 - pct)}" transform="rotate(-90 42 42)"/></svg><b>${S.points}</b><span>puntos</span></div>
       <div><span class="eyebrow">Nivel ${L.id}</span><h2 class="h2">${N ? `${N.min - S.points} puntos para ${N.id}` : 'Nivel máximo'}</h2>
         <div class="lv">${LEVELS.map(x => `<span class="${S.points >= x.min ? 'on' : ''}">${x.id}</span>`).join('')}</div><p class="small">Disponibles para canjear: <b>${available()}</b></p></div></div>
     <div class="vgrid">
@@ -1104,7 +1104,7 @@ const A = {
     const r = regDraft(), first = !S.profile;
     S.profile = {name:r.name || 'Invitado', g:D.models[r.g] ? r.g : modelIds()[0], size:r.size, height:r.height, style:r.style};
     S.sel = {}; S.armaG = null; S.view = FIT.face ? 'mine' : 'base'; save();
-    if (first) addPts(PTS.welcome, 'Bienvenida a Vélez Up');
+    if (first) addPts(PTS.welcome, 'Bienvenida a Fly Up');
     REG = null; go('/creando');
   },
   afterMaking: () => { if (S.flags.guide) go('/inicio'); else { GUIDE = 0; go('/guia'); } },

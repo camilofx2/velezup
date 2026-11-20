@@ -1,4 +1,4 @@
-/* Vélez Up · Probador — avatar con la cara y accesorios puestos, sin IA de pago.
+/* Fly Up · Probador — avatar con la cara y accesorios puestos, sin IA de pago.
    - Detecta la cara de la selfie en el navegador (MediaPipe FaceLandmarker, se carga solo al usarla).
    - Pega esa cara sobre cada foto del modelo, alineada por ojos y boca (window.CUERPOS).
    - Pone las capas de accesorios (window.CAPAS) medidas sobre la foto base del modelo.
