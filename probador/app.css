@@ -65,10 +65,8 @@ ul{list-style:none;padding:0}
 /* ---- cabecera y pestañas ---- */
 #top{position:sticky;top:0;z-index:20;height:var(--top);display:flex;align-items:center;justify-content:space-between;gap:20px;padding:0 clamp(16px,3vw,32px);background:rgba(245,244,240,.9);-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px)}
 .brand{display:flex;align-items:center;gap:10px}
-.brand img{width:30px;height:30px;border-radius:8px}
-.brand .mark{width:26px;height:26px;fill:none;stroke:var(--ink);stroke-width:13;stroke-linecap:round;stroke-linejoin:round;flex:none}
-.brand b{font-family:var(--ui);font-weight:700;font-size:17px;letter-spacing:.06em;line-height:1}
-.brand b small{display:block;font-family:Georgia,'Times New Roman',serif;font-weight:400;font-size:8.5px;letter-spacing:.42em;margin-top:3px;color:var(--ink2)}
+.brand .logo{display:block;height:30px;width:auto}
+.brand.big .logo{height:112px}
 .nav{display:none}
 .top-r{display:flex;align-items:center;gap:10px}
 .bagbtn{height:38px;padding:0 8px 0 12px;border:1px solid var(--line);border-radius:999px;display:flex;align-items:center;gap:8px;font-size:14px}
@@ -93,7 +91,7 @@ ul{list-style:none;padding:0}
 
 /* ---- bienvenida ---- */
 .welcome{min-height:100dvh;display:grid;grid-template-columns:1fr;gap:28px;padding:28px 20px calc(24px + var(--safe))}
-.welcome .brand{margin-bottom:6px}
+.welcome .brand{margin-bottom:22px}
 .welcome .copy{display:flex;flex-direction:column;gap:18px;justify-content:center}
 .welcome .show{position:relative;height:min(46vh,520px);order:-1}
 .welcome .show img{position:absolute;inset:0;height:100%;width:100%;object-fit:contain;mix-blend-mode:multiply;transition:opacity .9s var(--ease)}
@@ -442,7 +440,7 @@ ul{list-style:none;padding:0}
 
 
 @media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
-@media (max-width:340px){ #top .brand b{display:none} }
+@media (max-width:340px){ #top .brand .logo{height:24px} }
 
 /* foto de la cara y vista previa del avatar */
 .cam.face{max-height:52vh}

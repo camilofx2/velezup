@@ -360,7 +360,7 @@ function shell(tab) {
   const top = $('#top'), bar = $('#tabbar');
   top.hidden = false; bar.hidden = false;
   const links = TABS.map(([r, i, l]) => `<a href="#/${r}" class="${r === tab ? 'on' : ''}"${r === tab ? ' aria-current="page"' : ''}>${ic(i)}<span>${l}</span></a>`).join('');
-  top.innerHTML = `<a class="brand" href="#/inicio" aria-label="Fly Up, inicio"><svg class="mark" viewBox="0 0 100 100" aria-hidden="true"><path d="M24 50 50 26 76 50"/><path d="M24 76 50 52 76 76"/></svg><b>FLY UP<small>VÉLEZ</small></b></a>
+  top.innerHTML = `<a class="brand" href="#/inicio" aria-label="Fly Up Vélez, inicio"><img class="logo" src="icons/flyup-logo-horizontal.svg?v=14" alt="Fly Up Vélez"></a>
     <nav class="nav" aria-label="Secciones">${links}</nav>
     <div class="top-r"><a class="bagbtn" href="#/bolsa" aria-label="Bolsa, ${S.bag.length} prendas">${ic('bag')}<i>${S.bag.length}</i></a>
     <a class="me" href="#/perfil" aria-label="Mi perfil">${S.profile ? esc(S.profile.name[0].toUpperCase()) : '·'}</a></div>`;
@@ -414,7 +414,7 @@ V.bienvenida = () => {
   cleanup = () => clearInterval(timer);
   return `<section class="welcome">
     <div class="copy">
-      <a class="brand" href="#/" aria-label="Fly Up"><svg class="mark" viewBox="0 0 100 100" aria-hidden="true"><path d="M24 50 50 26 76 50"/><path d="M24 76 50 52 76 76"/></svg><b>FLY UP<small>VÉLEZ</small></b></a>
+      <a class="brand big" href="#/" aria-label="Fly Up Vélez"><img class="logo" src="icons/flyup-logo.svg?v=14" alt="Fly Up Vélez"></a>
       <h1 class="h1">Tu probador,<br><em>con tu foto.</em></h1>
       <p class="lead">Crea tu avatar con una foto, arma tu look con prendas y accesorios Vélez y Fly Up, compártelo con la comunidad y suma puntos en la tienda.</p>
       <div class="actions"><a class="btn" href="#/registro/1">Crear mi avatar ${ic('arrow')}</a><button class="link" data-act="guest">Probar sin registrarme</button></div>
@@ -655,7 +655,7 @@ const faceOn = () => S.view === 'mine' && !!FIT.face;
 const COMP = new Map();
 async function composed(g, src, layers, face) {
   if (!face && !layers.length) return src;
-  const key = `comp4:${src}:${face ? face.at : '-'}:${layers.map(l => l.id + '@' + l.box.join(',')).join(';')}`;
+  const key = `comp5:${src}:${face ? face.at : '-'}:${layers.map(l => l.id + '@' + l.box.join(',')).join(';')}`;
   if (COMP.has(key)) return COMP.get(key);
   let out = await store.get(key);
   if (!out) {

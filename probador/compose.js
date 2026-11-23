@@ -171,7 +171,18 @@ const Compose = (() => {
       const wx = px(base.pose[layer.side || 'rw'], Wb, Hb)[0];
       ctx.translate(wx, 0); ctx.scale(-1, 1); ctx.translate(-wx, 0);
     }
-    ctx.drawImage(im, x * Wb, y * Hb, w * Wb, h * Hb);
+    let src = im;
+    if (layer.kind === 'hand') {
+      /* la capa empieza en la muñeca del modelo base: se desvanece arriba para que se vea el puño de la prenda puesta */
+      const c = document.createElement('canvas'); c.width = im.width; c.height = im.height;
+      const g = c.getContext('2d'); g.drawImage(im, 0, 0);
+      const fh = Math.min(im.height * .5, im.height * .04 / h);
+      const gr = g.createLinearGradient(0, 0, 0, fh);
+      gr.addColorStop(0, 'rgba(0,0,0,1)'); gr.addColorStop(.5, 'rgba(0,0,0,.55)'); gr.addColorStop(1, 'rgba(0,0,0,0)');
+      g.globalCompositeOperation = 'destination-out'; g.fillStyle = gr; g.fillRect(0, 0, c.width, fh);
+      src = c;
+    }
+    ctx.drawImage(src, x * Wb, y * Hb, w * Wb, h * Hb);
     ctx.restore();
   }
 
